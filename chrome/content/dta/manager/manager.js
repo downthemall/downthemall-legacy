@@ -2799,6 +2799,20 @@ var ConflictManager = {
 			}
 		}.bind(this));
 	},
+	_findUnique: function*(newDest, basename, conflicts) {
+		for (;; ++conflicts) {
+			newDest.leafName = Utils.formatConflictName(basename, conflicts);
+			let exists = this._pinned.has(newDest.path);
+			if (!exists) {
+				exists = yield OS.File.exists(newDest.path);
+				// recheck
+				exists = exists || this._pinned.has(newDest.path);
+			}
+			if (!exists) {
+				return conflicts;
+			}
+		}
+	},
 	_processOne: function*(download, data) {
 		log(LOG_DEBUG, "ConflictManager: Starting conflict resolution for " + download);
 		let dest = download.destinationLocalFile;
@@ -2819,7 +2833,7 @@ var ConflictManager = {
 		let cr = -1;
 
 		let conflicts = 0;
-		let basename = download.destinationName;
+		const basename = download.destinationName;
 		let newDest = download.destinationLocalFile.clone();
 
 		if (Prefs.conflictResolution !== 3) {
@@ -2838,18 +2852,7 @@ var ConflictManager = {
 				dialog.resolve = resolve;
 				dialog.reject = reject;
 			});
-			for (;; ++conflicts) {
-				newDest.leafName = Utils.formatConflictName(basename, conflicts);
-				exists = this._pinned.has(newDest.path);
-				if (!exists) {
-					exists = yield OS.File.exists(newDest.path);
-					// recheck
-					exists = exists || this._pinned.has(newDest.path);
-				}
-				if (!exists) {
-					break;
-				}
-			}
+			conflicts = yield this._findUnique(newDest, basename, conflicts);
 			let options = {
 				url: Utils.cropCenter(download.urlManager.usable, 45),
 				fn: Utils.cropCenter(newDest.leafName, 45),
@@ -2879,18 +2882,7 @@ var ConflictManager = {
 					// Check will be performed once we pin
 					return;
 				}
-				for (;; ++conflicts) {
-					newDest.leafName = Utils.formatConflictName(basename, conflicts);
-					exists = this._pinned.has(newDest.path);
-					if (!exists) {
-						exists = yield OS.File.exists(newDest.path);
-						// recheck
-						exists = exists || this._pinned.has(newDest.path);
-					}
-					if (!exists) {
-						break;
-					}
-				}
+				conflicts = yield this._findUnique(newDest, basename, conflicts);
 				let pinned = null;
 				if (data.pinned) {
 					download.conflicts = conflicts;
