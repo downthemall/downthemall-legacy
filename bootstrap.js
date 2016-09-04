@@ -25,6 +25,9 @@ function startup(data) {
 			if (_g.canUnload()) {
 				upgrade.install();
 			}
+			else {
+				_g.unload("eventual-shutdown", upgrade);
+			}
 		});
 	}
 }

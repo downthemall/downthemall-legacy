@@ -256,13 +256,21 @@ LRUMap.prototype = Object.freeze({
 		}
 	};
 	const _registry = new Map();
-	const shutdown = function() {
-		if (arguments.length > 1 && arguments[1]) {
+	let _upgrade = null;
+	const shutdown = function(...args) {
+		if (args.length && args[0]) {
 			if (!canUnload()) {
 				log(LOG_INFO, "Not going down right now - vetoed!");
 				return;
 			}
 		}
+
+		if (_upgrade) {
+			log(LOG_INFO, "Opting to install pending update");
+			_upgrade.install();
+			return;
+		}
+
 		for (let i = _unloaders.length; ~(--i);) {
 			_runUnloader(_unloaders[i]);
 		}
@@ -301,10 +309,15 @@ LRUMap.prototype = Object.freeze({
 		Cu.unload(SELF_PATH);
 		return;
 	}
-	exports.unload = function unload(fn) {
+	exports.unload = function unload(fn, ...args) {
 		if (fn == "shutdown") {
-			return shutdown();
+			return shutdown(args.unshift());
 		}
+		if (fn == "eventual-shutdown") {
+			_upgrade = args.shift();
+			return;
+		}
+
 		// add an unloader
 		if (typeof(fn) != "function") {
 			throw new Error("unloader is not a function");
