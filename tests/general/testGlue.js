@@ -215,24 +215,6 @@ test("lazyProto very frozen", function() {
 	throws(() => o.testnum, "Cannot mess with frozen objects");
 });
 
-test("require simple", function() {
-	var {require} = requireJSM("chrome://dta-modules/content/glue.jsm");
-
-	var simple = require("testsupport/require/simple");
-	strictEqual(JSON.stringify(simple.exports), JSON.stringify({
-		"module": {
-			"id": "testsupport/require/simple",
-			"relid": "./simple",
-			"uri": "chrome://dta-modules/content/tests/require/simple.js"
-		}
-	}));
-	strictEqual(JSON.stringify(simple.module), JSON.stringify({
-		"id": "testsupport/require/simple",
-		"relid": "./simple",
-		"uri": "chrome://dta-modules/content/tests/require/simple.js"
-	}));
-});
-
 test("require recursive", function() {
 	var {require} = requireJSM("chrome://dta-modules/content/glue.jsm");
 
