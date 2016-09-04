@@ -65,15 +65,20 @@ const URL = function(u) {
 
 const composeURL = function composeURL(doc, rel) {
 	// find <base href>
-	let base = doc.location.href;
+	let base = Services.io.newURI(doc.location.href, doc.characterSet, null);
 	let bases = doc.getElementsByTagName('base');
 	for (var i = 0; i < bases.length; ++i) {
 		if (bases[i].hasAttribute('href')) {
-			base = bases[i].getAttribute('href');
-			break;
+			try {
+				base = Services.io.newURI(bases[i].getAttribute('href'), doc.characterSet, base);
+				break;
+			}
+			catch (ex) {
+				log(LOG_DEBUG, "Cannot convert invalid base href", ex);
+			}
 		}
 	}
-	return Services.io.newURI(rel, doc.characterSet, Services.io.newURI(base, doc.characterSet, null));
+	return Services.io.newURI(rel, doc.characterSet, base);
 };
 
 const getRef = function getRef(doc) {
