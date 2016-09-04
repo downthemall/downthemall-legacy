@@ -1,0 +1,95 @@
+<!ENTITY lp.localedir "ltr">
+<!ENTITY language "正體中文">
+<!ENTITY transAuthor "rayx000, scsi, tiffblue, Sakura3814, Goldie Lin.">
+<!ENTITY fulltranslation "正體中文翻譯：rayx000, scsi, tiffblue, Sakura3814, Goldie Lin.">
+<!ENTITY amo.summary2 "第一且唯一一個在瀏覽器裡面的下載管理員／加速器。">
+<!ENTITY amo.description.intro "DownThemAll! 可以滿足您對下載的需求；安裝後不僅可以加速下載至 4 倍速，而且可隨時暫停／續傳。">
+<!ENTITY amo.description.feat2 "DownThemAll! 快速、可靠、易上手！讓您可以下載網頁中的所有鏈結或圖片以及更多：您可以透過全自訂條件只下載您想要的東西，以優化您的下載流程。您隨時都可以完全操控您要下載的東西、速度限制、並行下載連線數。除此之外，也能同時使用 Metalinks 或手動加入其它鏡射站臺從不同伺服器中下載同一檔案。">
+<!ENTITY amo.description.free2 "DownThemAll! 不僅開放源始碼，而且也是免費軟體。不含廣告軟體、不含間碟軟體、不會追蹤隱私、完全沒有任何隱藏的費用！">
+<!ENTITY amo.description.more "請至我們的<a href='http://www.downthemall.net/howto/features/'>功能說明頁面</a>取得更多資訊。">
+<!ENTITY lp.title "關於 DownThemAll!">
+<!ENTITY lp.welcome "歡迎使用 DownThemAll!">
+<!ENTITY lp.info "看一下影片來學習怎麼使用 DownThemAll! 並且瞭解隱私權和您的權利">
+<!ENTITY lp.moreinfo "請至<a href='http://www.downthemall.net/howto/features/'>我們的網頁</a>取得更多資訊。">
+<!ENTITY lp.gettingstarted "開始">
+<!ENTITY lp.toolbar "工作列按鍵">
+<!ENTITY lp.privacy "隱私權">
+<!ENTITY lp.yourrights "您的權利">
+<!ENTITY lp.contact "連絡">
+<!ENTITY lp.pleasenote "請記得：">
+<!ENTITY lp.donate2 "請考慮貢獻一下">
+<!ENTITY lp.tut.firsttitle "您的第一次下載">
+<!ENTITY lp.tut.fd2 "在 dTa 裡下載一個檔案不僅相當容易而且非常強大。若跳出提示要開啟或儲存一個檔案，您可以使用 DownThemAll! 項目。在選完儲存下載的目錄後，您可以開始立即下載或佇列檔案以晚點下載。">
+<!ENTITY lp.tut.selecttitle "「選擇性下載」視窗">
+<!ENTITY lp.tut.selintro "在右鍵選單中多了一個「DownThemAll!」的選項，點下去將會開始 DownThemAll! 的選擇性下載視窗，有了它就可以輕鬆地下載網頁中的各個鏈結。">
+<!ENTITY lp.tut.seloptions "在這裡，您可以用很多方法選擇要下載的檔案：">
+<!ENTITY lp.tut.selopthand2 "您可以手動檢查要下載的檔案鏈結。">
+<!ENTITY lp.tut.seloptfilters2 "您可以使用內建或自訂的過濾條件，例如下載所有圖片。">
+<!ENTITY lp.tut.seloptfast2 "此外，您可以在快速過濾方塊裡輸入您自訂的過濾條件，例如 <code>*.pdf,*.doc</code> 或甚至使用正規表示式。">
+<!ENTITY lp.tut.seltypes "選擇性下載視窗中有兩個分頁，分別對應兩種不同的下載方式：">
+<!ENTITY lp.tut.seltypelinks "「鏈結」分頁中列出網頁中所有可以下載的鏈結">
+<!ENTITY lp.tut.seltypepics "而「圖片與影像」分頁中則列出網頁中所有圖片與影像的實際網址">
+<!ENTITY lp.tut.selgalleries "在相簿裡面，原始尺寸的圖片通常是外部鏈結，所以它們會在「鏈結」頁籤之中。">
+<!ENTITY lp.tut.seldone2 "一旦您選好要下載的檔案，要麼點擊「開始」立即開始下載，要麼點擊「加入並暫停」以晚點下載。">
+<!ENTITY lp.tut.batchestitle "批次下載">
+<!ENTITY lp.tut.batches1 "很多使用者表示他們想要下載流水號的檔案。就像上面影片展示的那樣，而使用 DownThemAll! 即可輕鬆辦到！">
+<!ENTITY lp.tut.batches2 "基本語法為：<code>[start:end]</code> 或 <code>[start:end:step]</code>。其中 <code>start</code> 和 <code>end</code> 可以是數字或一個字元。<code>step</code> 則是定義逐次遞增量，預設為 1 。">
+<!ENTITY lp.tut.batches3 "比如說，如果您想要下載圖片檔 001～100 ，那你就應該輸入：<code>http://example.org/[001:100].jpg</code>">
+<!ENTITY lp.tut.batchesctx "此外，新增下載視窗的網址欄位的右鍵選單可讓您輕易地轉換所選的一段文字成一個批次描述。">
+<!ENTITY lp.tut.oneclicktitle "DownThemAll! 單鍵下載">
+<!ENTITY lp.tut.oneclick1.2 "一旦您做過一次下載，會多另一個項目可用：DownThemAll! 單鍵下載，您可用來延用上一回的設定，略過下載選項與／或選取對話方塊，而直接下載。">
+<!ENTITY lp.tut.oneclick2 "所以單鍵下載可以讓您快速地下載大量鏈結內容。">
+<!ENTITY lp.tut.oneclickn "不過「清除最近的歷史記錄」功能也會順便把單鍵下載的設定清掉…這時您得再重新設定一次才能使用單鍵下載。">
+<!ENTITY lp.tut.tabstitle "一次從所有分頁下載多個項目">
+<!ENTITY lp.tut.alltabs "可透過使用工具列按鈕的下拉式選單，一次從所有分頁佇列多個下載項目。">
+<!ENTITY lp.tut.tabrestore "僅從完全恢復的分頁之鏈結才可用。">
+<!ENTITY lp.tb.intro "DownThemAll! 也提供了一些按鍵，方便您的使用。">
+<!ENTITY lp.tb.install "新增工具列按鍵">
+<!ENTITY lp.tb.add.title "新增且使用工具列按鍵">
+<!ENTITY lp.tb.add.p1 "DownThemAll! 提供了四個按鍵讓您">
+<!ENTITY lp.tb.add.dta "DownThemAll! 按鍵">
+<!ENTITY lp.tb.add.dtadesc "開啟「DownThemAll! 選擇性下載」視窗">
+<!ENTITY lp.tb.add.tdta "一鍵式下載按鍵">
+<!ENTITY lp.tb.add.tdtadesc "依照上次的設定和條件下載此頁面中所有項目">
+<!ENTITY lp.tb.add.manager "DownThemAll! 管理按鍵">
+<!ENTITY lp.tb.add.managerdesc "開啟管理視窗">
+<!ENTITY lp.tb.add.selector "DownThemAll! 選擇器按鍵">
+<!ENTITY lp.tb.add.selectordesc "左鍵點選以增加項目">
+<!ENTITY lp.tb.add.p2 "您可以進入 <code>檢視 → 工具列 → 自訂</code> 後增加工具列按鍵">
+<!ENTITY lp.tb.dnd.title "拖放功能">
+<!ENTITY lp.tb.dnd.p1 "您可以拖放任何鏈結或圖片至 DownThemAll! 或 單鍵下載 按鍵後下載。">
+<!ENTITY lp.tb.dnd.p2 "也可以拖放至管理視窗後下載。">
+<!ENTITY lp.tb.dnd.order "您可以使用拖曳來排序您的下載佇列。即選擇幾個下載，並拖到需要的位置放開它們。">
+<!ENTITY lp.tb.selector.title "使用 DownThemAll! 選擇器">
+<!ENTITY lp.tb.selector.queueing "DownThemAll! 選擇器讓您直接點擊鏈結或圖片就可以佇列多個下載項目。">
+<!ENTITY lp.tb.selector.how "要啟用選擇器，請點擊對應的工具列按鍵。一但您好了要關掉它，直接再按一次按鍵即可。">
+<!ENTITY lp.pr.title "隱私權">
+<!ENTITY lp.pr.intro2 "DownThemAll! 尊重您的隱私權。">
+<!ENTITY lp.pr.settings2 "您可以透過修改「偏好設定」→「隱私」頁面的設定，讓 DownThemAll! 在關閉視窗後就自動移除下載清單裡所有已完成、已取消、未完成的下載。">
+<!ENTITY lp.pr.diag2 "您可以透過「偏好設定」→「隱私」頁面啟用診斷訊息，並且會被記錄到錯誤主控台 (error console) 以及寫入到 dta_log.txt 檔案。診斷訊息可能含有敏感資訊，例如您要下載的網址、存檔路徑、存檔檔名，或甚至 cookie 資訊。此選項預設是停用的，以保護您的個人隱私。若您要提交一個診斷訊記錄檔，您可能會想要刪改任何敏感資訊。診斷記錄絕對不會被自動地傳輸或公開出去。">
+<!ENTITY lp.pr.pwpbm "DownThemAll! 支援 Firefox 各別視窗的隱私瀏覽模式：當您從一個隱私瀏覽視窗中新增下載，DownThemAll! 將不會儲存任何跟下載檔案、下載資料夾、或重新命名遮罩等有關的資訊。請注意其他資料，例如新增的過濾條件、或者當然就是下載檔案，仍會寫回您的硬碟。">
+<!ENTITY lp.pr.link "這個注意事項將會一直顯示在這個網頁(about:downthemall)，並另外有一個附加的連結在偏好設定裡面">
+<!ENTITY lp.yr.usagetitle "使用和重新頒布">
+<!ENTITY lp.yr.usage "作者允許您自由使用 DownThemAll! 於以下方式:">
+<!ENTITY lp.yr.usageuse "使用 DownThemAll!">
+<!ENTITY lp.yr.usagemod "修改 DownThemAll!">
+<!ENTITY lp.yr.usagedist "重新頒布 DownThemAll!，不管有無修改">
+<!ENTITY lp.yr.usagemore "更多資訊請參考下面「許可」的部份">
+<!ENTITY lp.yr.logo "DownThemAll! 標誌是 Copyright © 2004-2010 by Stefano Verna.">
+<!ENTITY lp.languagetitle "語言">
+<!ENTITY lp.language.babelzilla "如果您熟悉多種語言，請考慮加入 <a href='http://babelzilla.org'>babelzilla.org</a> 幫忙翻譯這個擴充套件或其他許多優秀的附加元件。">
+<!ENTITY lp.yr.licensetitle "版權與許可">
+<!ENTITY lp.yr.licensed "DownThemAll! 授權隸屬 <a href='http://www.gnu.org/licenses/old-licenses/gpl-2.0.html'>GPL 2.0</a> 。參見 GNU GPL 的文件。這適用於所有的原始碼檔案。">
+<!ENTITY lp.yr.morelicense3 "個別檔案可能有額外或不同的授權條款。請至 <a href='http://code.downthemall.net/repos/'>http://code.downthemall.net/repos/</a> 查看可用的對應檔案倉儲。大多數檔案以 GPL/LGPL-compatible MPL 2.0 授權，或 MPL 1.1/GPL 2.0/LGPL 2.1 三重授權。詳情請參閱個別的 MPL, GPL, LGPL 授權條款文件。">
+<!ENTITY lp.yr.gplintro "在 GPL 2.0，無擔保和賠償的免責聲明，最重要的部分如下：">
+<!ENTITY lp.yr.icons "美工、圖案以及按鈕">
+<!ENTITY lp.yr.iconsbased4 "為基於 Mike Matas, Mark James, 以及 Noun 專案與 Tango 專案的成果。">
+<!ENTITY lp.yr.artwork3 "原美術作品為：版權所有 © 2004-2013 by Stefano Verna, Federico Parodi 與 Nils Maier。">
+<!ENTITY lp.yr.artworklicense "原美術作品授權於：">
+<!ENTITY lp.yr.logo3 "DownThemAll! 商標圖示設計：版權所有 © 2004-2013 by Stefano Verna。">
+<!ENTITY lp.yr.logopermissions "DownThemAll! 名稱和商標圖示不能擅自使用於任何衍生作品，與信用和許可有關例外。">
+<!ENTITY lp.ct.bugstitle "回報軟體缺陷(Bug)/新功能要求">
+<!ENTITY lp.ct.bugs2 "請至我們的 <a href='https://bugs.downthemall.net/'>Bug 追蹤系統</a> 回報軟體缺陷(Bug)與新功能要求。">
+<!ENTITY lp.ct.contactstitle "聯繫">
+<!ENTITY lp.ct.contactsfeed2 "我們樂於收到您的反饋、建議和／或提供幫助。">
+<!ENTITY lp.ct.contacts "請參訪線上 <a href='http://www.downthemall.net/main/contacts/'>聯絡網頁</a> .">

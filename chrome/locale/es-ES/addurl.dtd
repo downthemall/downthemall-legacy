@@ -1,0 +1,6 @@
+<!ENTITY windowtitle "Añadir descargas">
+<!ENTITY adddescription.value "Introduzca la URL de descarga y (opcionalmente) la página de referencia.">
+<!ENTITY createbatchdescriptor.label "Crear descriptor de lote">
+<!ENTITY createbatchdescriptor.tooltip "Crear un descriptor de lote de la selección actual de texto">
+<!ENTITY desc.batches.value "También puede usar descriptores de lote para descargar varios archivos a la vez.">
+<!ENTITY examples.value "Ejemplos:">

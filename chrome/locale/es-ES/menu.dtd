@@ -1,0 +1,25 @@
+<!ENTITY dta-tbinstall "Añadir iconos">
+<!ENTITY dta-pref.label "Preferencias...">
+<!ENTITY dta-about2.label "Acerca de DownThemAll!">
+<!ENTITY dta-manager-button "Administrador de dTa!">
+<!ENTITY dta-manager-button.desc "Abre ventana de Gestor.">
+<!ENTITY dta-selector-button2.label "Selector de OneClick">
+<!ENTITY dta-selector-button.desc "Añade elementos al hacer click izquierdo en ellos.">
+<!ENTITY dta-tb-all.label "Todas las pestañas">
+<!ENTITY dta-tb-single.label "Pestaña actual">
+<!ENTITY dta-selection2.label "Selección de DownThemAll!">
+<!ENTITY dta-selection-turbo2.label "Selección de OneClick">
+<!ENTITY dta-regular2.label "DownThemAll!">
+<!ENTITY dta-regular.desc "Abre la ventana de Selección de DownThemAll! para la pestaña actual.">
+<!ENTITY dta-regular-turbo2.label "dTa! OneClick">
+<!ENTITY dta-regular-turbo.desc "Descarga todos los elementos de la página actual según las últimas preferencias y filtros usados.">
+<!ENTITY dta-img-save2.label "Guardar imagen con DownThemAll!">
+<!ENTITY dta-img-save-turbo2.label "Guardar imagen con dTa! OneClick">
+<!ENTITY dta-video-save2.label "Guardar vídeo con DownThemAll!">
+<!ENTITY dta-video-save-turbo2.label "Guardar vídeo con dTa! OneClick">
+<!ENTITY dta-audio-save2.label "Guardar audio con DownThemAll!">
+<!ENTITY dta-audio-save-turbo2.label "Guardar audio con dTa! OneClick">
+<!ENTITY dta-link-save2.label "Guardar enlace con DownThemAll!">
+<!ENTITY dta-link-save-turbo2.label "Guardar enlace con dTa! OneClick">
+<!ENTITY dta-form-save2.label "Guardar objeto de formulario con DownThemAll!">
+<!ENTITY dta-form-save-turbo2.label "Guardar objeto de formulario con dTa! OneClick">

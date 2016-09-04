@@ -1,0 +1,123 @@
+<!ENTITY windowstyle.3 "width:48em;height:44em;">
+<!ENTITY filterspane.label "過濾器">
+<!ENTITY listhead1.label "標題">
+<!ENTITY listhead2.label "副檔名">
+<!ENTITY filter.label "過濾後的副檔名：">
+<!ENTITY useAs.label "把這個當作：">
+<!ENTITY filter.images.label "圖片過濾條件">
+<!ENTITY filter.links.label "鏈結過濾條件">
+<!ENTITY add.label "新增過濾條件">
+<!ENTITY dtacontext2.label "偏好設定">
+<!ENTITY buttonlabelextra2 "還原預設值">
+<!ENTITY dtaPreferences.title "DownThemAll! 偏好設定…">
+<!ENTITY manager "dTa! 管理員">
+<!ENTITY mainpane.label "主要">
+<!ENTITY mainpane.defaults.caption "預設">
+<!ENTITY mainpane.defaults.desc "dTa 單鍵式所用的下載目錄、重新命名規則以及過濾器，可在 DownThemAll! 選擇性下載視窗中設定。">
+<!ENTITY mainpane.nameclash.caption "當已存在一個相同名稱的檔案時:">
+<!ENTITY mainpane.rename.label "重新命名">
+<!ENTITY mainpane.overwrite.label "覆寫">
+<!ENTITY mainpane.skip.label "略過">
+<!ENTITY mainpane.ask.label "詢問">
+<!ENTITY mainpane.misc.caption "其它">
+<!ENTITY mainpane.sounderror2.label "出錯時播放一個音效">
+<!ENTITY mainpane.alert.caption "當下載完成時：">
+<!ENTITY mainpane.alert.label "提示：">
+<!ENTITY mainpane.alertbox.label "使用提示方塊">
+<!ENTITY mainpane.alertnotifications2.label "使用桌面通知">
+<!ENTITY mainpane.alertnone.label "不必提示">
+<!ENTITY mainpane.sounddone.label "所有下載都完成時播放音效">
+<!ENTITY mainpane.closedta.label "下載完成後關閉 DownThemAll!">
+<!ENTITY mainpane.settime.label "設定檔案時間為伺服器上的檔案修改時間或是佇列時間">
+<!ENTITY mainpane.rememberoneclick.label "讓 dTa 單鍵式記住要套用至所有分頁或是目前分頁">
+<!ENTITY mainpane.confirmremove2.label "確認刪除下載">
+<!ENTITY mainpane.textlinks.label "辨識純文字鏈結">
+<!ENTITY mainpane.listsniffedvideos.label "辨識並列出 Flash 影片">
+<!ENTITY privacypane.label "隱私">
+<!ENTITY privacypane.closing.caption "當管理視窗關閉時">
+<!ENTITY privacypane.removecompleted2.label "刪除已完成的下載">
+<!ENTITY privacypane.removecanceled2.label "刪除已取消/失敗的下載">
+<!ENTITY privacypane.removeaborted2.label "刪除未完成的下載">
+<!ENTITY privacypane.deletefoldershistory.label "刪除資料夾記錄">
+<!ENTITY privacypane.deletefiltershistory.label "刪除額外的過濾條件記錄">
+<!ENTITY privacypane.showlog.label "檢視記錄">
+<!ENTITY privacypane.reveallog.label "顯示檔案">
+<!ENTITY privacypane.deletelog.label "刪除記錄">
+<!ENTITY privacypane.dropdowns.caption "下拉式選單">
+<!ENTITY privacypane.dropdownresults2.label "要保留的項目個數">
+<!ENTITY privacypane.logs.caption "診斷記錄">
+<!ENTITY privacypane.enablelogs.label "啟用診斷記錄">
+<!ENTITY privacypane.notice.caption "注意">
+<!ENTITY privacypane.notice.desc "DownThemAll! 將整合到 Firefox 的隱私資料清理功能中(若可用)">
+<!ENTITY privacypane.privacynotice.label "我們的隱私聲明">
+<!ENTITY serverspane.label "網路">
+<!ENTITY serverspane.downloads.caption "下載">
+<!ENTITY serverspane.concurrent2.label "並行下載數:">
+<!ENTITY serverspane.perserver2.label "每個伺服器的下載數:">
+<!ENTITY serverspane.url.label "網址或網域：">
+<!ENTITY serverspane.new.label "新增限制">
+<!ENTITY serverspane.limits.label "每個伺服器限制">
+<!ENTITY serverpane.limits.noitems "不指定每個伺服器限制">
+<!ENTITY serverspane.connections.label "連線：">
+<!ENTITY serverspane.speed2.label "速度限制:">
+<!ENTITY serverspane.segments.label "分割數:">
+<!ENTITY serverspane.unlimited "無限制">
+<!ENTITY serverspane.limited "限制">
+<!ENTITY serverspane.autoretry2.caption "自動重試">
+<!ENTITY serverspane.autoretry.interval.label "重試每">
+<!ENTITY serverspane.autoretry.max.label "最多重試">
+<!ENTITY serverspane.cancel.label "取消">
+<!ENTITY serverspane.edit.label "編輯">
+<!ENTITY serverspane.remove.label "移除">
+<!ENTITY schedpane.label "排程">
+<!ENTITY schedpane.enable.label "啟用排程">
+<!ENTITY schedpane.start.label "僅啟動下載介於:">
+<!ENTITY schedpane.end.label "且結束於:">
+<!ENTITY schedpane.open.label "自動開啟管理員">
+<!ENTITY advancedpane.label "進階">
+<!ENTITY advancedpane.downloads.caption "進階下載控制">
+<!ENTITY advancedpane.miscellaneous.caption "其他設定">
+<!ENTITY advancedpane.files.caption "檔案">
+<!ENTITY advancedpane.chunks2.label "每個下載的最大分割數:">
+<!ENTITY advancedpane.chunksdisabled "關閉">
+<!ENTITY advancedpane.autosegments.label "前一分割下載完成之後就開始一個新的分割下載">
+<!ENTITY advancedpane.timeout2.label "下載逾時">
+<!ENTITY advancedpane.seconds "秒">
+<!ENTITY advancedpane.minute "分">
+<!ENTITY advancedpane.minutes "分">
+<!ENTITY advancedpane.hour "時">
+<!ENTITY advancedpane.hours "時">
+<!ENTITY advancedpane.tempfiles.caption "暫存檔案">
+<!ENTITY advancedpane.usetemp.label "將分割下載儲存在暫存資料夾">
+<!ENTITY advancedpane.tempdir.label "使用指定目錄：">
+<!ENTITY advancedpane.permissions "檔案權限">
+<!ENTITY advancedpane.permissions.groupmay "群組">
+<!ENTITY advancedpane.permissions.everybodymay "所有人">
+<!ENTITY advancedpane.permissions.read "可讀">
+<!ENTITY advancedpane.permissions.write "可寫">
+<!ENTITY advancedpane.loadendfirst2.label "先下載最後幾 kB">
+<!ENTITY advancedpane.scheduler.caption "下載開始順序：">
+<!ENTITY advancedpane.scheduler.fast "快速：依照佇列順序">
+<!ENTITY advancedpane.scheduler.fair "公平 + 緩慢：平均分佈">
+<!ENTITY advancedpane.scheduler.legacy "既有方式：無限制">
+<!ENTITY advancedpane.exposeinua.label "在 User-Agent 中顯示 DownThemAll!">
+<!ENTITY advancedpane.sparsefiles.caption "稀疏檔案">
+<!ENTITY advancedpane.sparsefiles.label "當有支援時使用稀疏檔案">
+<!ENTITY advancedpane.sparsefiles.tooltip "稀疏檔案為不會立即在硬碟上保留所需最大空間的檔案。稀疏檔案會有較快的檔案預配置速度，但有較差的寫入效能，且/或造成較多的檔案破碎！">
+<!ENTITY uipane.label "使用者介面">
+<!ENTITY uipane.namesonly.label "僅顯示檔名於管理視窗">
+<!ENTITY uipane.integration.caption "整合">
+<!ENTITY uipane.downloadwin.label "增加 DownThemAll! 項目到「儲存檔案」對話方塊">
+<!ENTITY uipane.context.caption "右鍵選單">
+<!ENTITY uipane.tools.caption "工具選單">
+<!ENTITY uipane.compact.label "使用階層式選單">
+<!ENTITY uipane.hide.label "隱藏選單">
+<!ENTITY uipane.showtooltip.label "顯示下載提示">
+<!ENTITY uipane.manager.caption "管理視窗">
+<!ENTITY uipane.startminimized.label "啟動時最小化">
+<!ENTITY uipane.minimizetotray.label "縮小至工作列">
+<!ENTITY uipane.getmintrayr.label "取得 MinTrayR">
+<!ENTITY uipane.notification.label "當使用單鍵式新增下載項目時，顯示：">
+<!ENTITY uipane.notification.nonotification.radio "不必通知">
+<!ENTITY uipane.notification.doorhangernotification.radio "懸掛式通知">
+<!ENTITY uipane.notification.desktopnotification.radio "桌面通知">

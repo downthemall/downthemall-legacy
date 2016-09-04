@@ -1,0 +1,67 @@
+<!ENTITY tooladddownload.label "Añadir descargas">
+<!ENTITY tooladd.tooltip "Añadir URL manualmente a DownThemAll">
+<!ENTITY tooldonate.tooltiptext "Puede ayudarnos a mejorar DownThemAll con una pequeña donación.">
+<!ENTITY movetop.label "Comienzo">
+<!ENTITY movebottom.label "Final">
+<!ENTITY moveup.label "Arriba">
+<!ENTITY movedown.label "Abajo">
+<!ENTITY search.placeholder "Buscar descargas">
+<!ENTITY download.label "Descarga/Nombre">
+<!ENTITY domain.label "Dominio">
+<!ENTITY percent.label "Porcentaje">
+<!ENTITY pct.label "Progreso">
+<!ENTITY dim.label "Tamaño">
+<!ENTITY time2.label "Tiempo est.">
+<!ENTITY parts.label "Partes">
+<!ENTITY speed.label "Velocidad">
+<!ENTITY infoURLTitle.value "Desde:">
+<!ENTITY infoSizeTitle.value "Tamaño:">
+<!ENTITY infoDateTitle.value "Fecha añadida:">
+<!ENTITY infoMultiple.value "Ítems múltiples">
+<!ENTITY infoPrivate.value "Descarga privada">
+<!ENTITY elapsedTitle.value "Transcurrido:">
+<!ENTITY remainingTitle.value "Pendiente:">
+<!ENTITY currentSpeedTitle.value "Velocidad actual:">
+<!ENTITY avgSpeedTitle.value "Velocidad media:">
+<!ENTITY path.label "Ruta guardado">
+<!ENTITY hash.label "Checksum">
+<!ENTITY infos.label "Info descargas">
+<!ENTITY launch.label "Abrir archivo">
+<!ENTITY rename.label "Renombrar archivo">
+<!ENTITY delete.label "Eliminar archivo(s)">
+<!ENTITY targetdir.label "Abrir carpeta destino">
+<!ENTITY pause.label "Parar">
+<!ENTITY resume.label "Reanudar">
+<!ENTITY cancel.label "Cancelar">
+<!ENTITY removemenu.label "Eliminar descargas">
+<!ENTITY removeselected.label "Eliminar seleccionadas">
+<!ENTITY removehost.label "Eliminar descargas de dominio">
+<!ENTITY removebatch.label "Eliminar lote actual">
+<!ENTITY removecompleted.label "Eliminar descargas completas">
+<!ENTITY removeAll.label "Eliminar todas">
+<!ENTITY removeFailed.label "Eliminar fallidas">
+<!ENTITY removePaused.label "Eliminar detenidas">
+<!ENTITY removeDupes.label "Eliminar duplicadas">
+<!ENTITY removeGone.label "Eliminar archivos movidos">
+<!ENTITY advanced.label "Avanzados">
+<!ENTITY addchunk.label "Añadir parte">
+<!ENTITY removechunk.label "Eliminar parte">
+<!ENTITY force.label "Forzar inicio">
+<!ENTITY import.label "Importar de archivo">
+<!ENTITY exportto.label "Exportar selección a archivo">
+<!ENTITY addlimits.label "Añadir límites específicos de dominio">
+<!ENTITY options.caption "Opciones">
+<!ENTITY loading2.label "Cargando…">
+<!ENTITY restore.label "Restaurar">
+<!ENTITY close.label "Cerrar">
+<!ENTITY invertmatcher.label "Invertir filtros de columna">
+<!ENTITY clearmatcher.label "Borrar filtros de columnas">
+<!ENTITY speedlimit2.tooltip "Cambiar el límite global de velocidad. La lista se actualiza dinámicamente.">
+<!ENTITY perdownloadspeedlimit2.label "Límite de velocidad">
+<!ENTITY perdownloadspeedlimit2.tooltip "Cambia el límite de velocidad de descarga. Pero el límite de velocidad global sigue en vigor.">
+<!ENTITY mirrors.label "Administrar mirrors">
+<!ENTITY mirrors.tooltip "Administrar ubicaciones alternativas (mirrors) de descarga">
+<!ENTITY toolbar.icons "Usar iconos">
+<!ENTITY toolbar.full "Usar iconos y texto">
+<!ENTITY sortascending.label "Ordenar A &gt; Z">
+<!ENTITY sortdescending.label "Ordenar Z &gt; A">
