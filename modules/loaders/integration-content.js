@@ -517,7 +517,7 @@ const handleSaveTarget = m => {
 		sendAsyncMessage("DTA:saveTarget:" + m.data.job, rv);
 	}
 	catch (ex) {
-		log(LOG_ERROR, "Failed to get form data", ex);
+		log(LOG_ERROR, "Failed to get target data", ex);
 		sendAsyncMessage("DTA:saveTarget:" + m.data.job, {exception: ex.message || ex});
 	}
 };
