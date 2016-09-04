@@ -130,6 +130,26 @@ function load(window, document) {
 		}
 		revertUI();
 
+		// Overlay dialog.initDialog as it might be called... somewhen... after us,
+		// reverting our revertUI changed, which causes
+		// https://github.com/downthemall/downthemall/issues/36
+		// dta-2 did not have this problem as it was quaranteed we run after
+		// initDialog due to the different loading mechanism
+		window.dialog = Object.create(dialog, {
+			"initDialog": {
+				enumerable: true,
+				value: function(...args) {
+					log(LOG_DEBUG, "initDialog called");
+					try {
+						return dialog.initDialog.apply(dialog, args);
+					}
+					finally {
+						revertUI();
+					}
+				}
+			}
+		});
+
 		if (!doOverlay) {
 			// we do not actually overlay!
 			// but we revert to help FlashGot ;)
