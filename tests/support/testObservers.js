@@ -1,7 +1,7 @@
 module("support/observers.js");
 
 test("exports", function() {
-	checkExports("support/observers", ["add", "addExit", "remove", "topics", "notify", "notifyLocal"]);
+	checkExports("support/observers", ["add", "addExit", "remove", "removeExit", "topics", "notify", "notifyLocal"]);
 });
 
 test("plain", function() {
