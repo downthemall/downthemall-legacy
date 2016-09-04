@@ -53,7 +53,6 @@ _worker.onerror = onerror;
 
 const asyncShutdown = function() {
 	obs.removeExit(asyncShutdown);
-	log(LOG_DEBUG, "asyncShutdown");
 	const dead = () => {
 		try {
 			AsyncShutdown.webWorkersShutdown.removeBlocker(asyncShutdown);
