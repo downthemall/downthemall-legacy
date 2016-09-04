@@ -31,6 +31,14 @@ test("hxp", function() {
 	deepEqual(getTextLinks("fxp://downthemall.net/"), ["ftp://downthemall.net/"]);
 });
 
+test("$", function() {
+	var {getTextLinks} = require("support/textlinks");
+	deepEqual(
+		getTextLinks("www.example.com/folder$file1\nwww.example.com/folder$file2"),
+		["http://www.example.com/folder$file1", "http://www.example.com/folder$file2"]
+	);
+});
+
 test("3dots", function() {
 	var {getTextLinks} = require("support/textlinks");
 	deepEqual(getTextLinks("http://downthemall.net/crop...ped"), []);
