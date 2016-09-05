@@ -225,6 +225,7 @@ LRUMap.prototype = Object.freeze({
 
 	// init
 	itor("AsyncStreamCopier", "@mozilla.org/network/async-stream-copier;1","nsIAsyncStreamCopier", "init");
+	itor("AsyncStreamCopier2", "@mozilla.org/network/async-stream-copier;1","nsIAsyncStreamCopier2", "init");
 	itor("BinaryInputStream", "@mozilla.org/binaryinputstream;1", "nsIBinaryInputStream", "setInputStream");
 	itor("BinaryOutputStream", "@mozilla.org/binaryoutputstream;1", "nsIBinaryOutputStream", "setOutputStream");
 	itor("BufferedOutputStream", "@mozilla.org/network/buffered-output-stream;1", "nsIBufferedOutputStream", "init");

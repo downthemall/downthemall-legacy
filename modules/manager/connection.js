@@ -162,8 +162,12 @@ function Connection(d, c, isInfoGetter) {
 	this.prepareChannel(this._chan);
 
 	c.running = true;
-	this._chan.asyncOpen(this, null);
-	log(LOG_INFO, c + "is now open");
+	c.open().then(() => {
+		this._chan.asyncOpen(this, null);
+		log(LOG_INFO, `chunk ${c} ${isInfoGetter ? "InfoGetter" : "Regular"} is now open!`);
+	}).catch(ex => {
+		this.writeFailed(ex);
+	});
 }
 
 Connection.prototype = {

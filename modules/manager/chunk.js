@@ -3,7 +3,7 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
-/* global BUFFER_SIZE, MAX_PENDING_SIZE */
+/* global BUFFER_SIZE, PIPE_SEGMENT_SIZE, MAX_PIPE_SEGMENTS */
 requireJoined(this, "constants");
 const Prefs = require("preferences");
 const {ByteBucketTee} = require("support/bytebucket");
@@ -49,22 +49,7 @@ const _thread = (function() {
 	return AsyncCopierThread;
 })();
 
-var buffer_size = Math.max(1<<18, BUFFER_SIZE);
-
-function roundp2(s) {
-	s |= (--s) >> 1;
-	s |= s >> 2;
-	s |= s >> 4;
-	s |= s >> 8;
-	s |= s >> 16;
-	return ++s;
-}
-
 exports.hintChunkBufferSize = function(bs) {
-	if (!bs) {
-		return;
-	}
-	buffer_size = Math.max(1<<18, Math.min(BUFFER_SIZE * 32, roundp2(bs * 2)));
 };
 
 const Observer = {
@@ -84,72 +69,14 @@ const Observer = {
 };
 Prefs.addObserver("extensions.dta.permissions", Observer);
 
-function Buffer(size) {
-	this.size = size;
-	this._pipe = new Instances.Pipe(true, true, size, 1);
-	this._out = this._pipe.outputStream;
-}
-Buffer.prototype = Object.seal({
-	length: 0,
-	get free() {
-		return this.size - this.length;
-	},
-	writeFrom: function(inputStream, length) {
-		if (length > this.free) {
-			throw new Error(`Buffer overflow, free: ${this.free}, length: ${length}, blen: ${this.length}`);
-		}
-		let exception = null;
-		for (let i = 0; i < 10; ++i) {
-			try {
-				this._out.writeFrom(inputStream, length);
-				exception = null;
-				break;
-			}
-			catch (ex) {
-				exception = ex;
-				try {
-					Services.memrm.minimizeMemoryUsage(() => {});
-				}
-				catch (iex) {
-					log(LOG_ERROR, "Failed to minimize memory usage", iex);
-				}
-				for (let j = 0; j < (i + 1) * 1000; ++j) {
-					// Do some busy looping
-				}
-			}
-		}
-		if (exception) {
-			throw exception;
-		}
-		this.length += length;
-		return length;
-	},
-	unlink: function() {
-		if (this._out) {
-			this._out.close();
-			this._out = null;
-		}
-		if (this._pipe) {
-			this._pipe = null;
-			delete this._pipe;
-		}
-		this.length = this.size = 0;
-	},
-	get stream() {
-		return this._pipe.inputStream;
-	}
-});
-
-function shipStream(instream, outstream, closeSink) {
-	let copier = new Instances.AsyncStreamCopier(
+function asyncCopy(instream, outstream, close) {
+	let copier = new Instances.AsyncStreamCopier2(
 		instream,
 		outstream,
 		_thread,
-		true, // source buffered
-		false, // sink buffered
-		instream.available(),
-		true, // close source
-		closeSink // close sink
+		PIPE_SEGMENT_SIZE,
+		false, // close source
+		close // close sink
 		);
 	return new Promise(function(resolve, reject) {
 		copier.asyncCopy({
@@ -181,17 +108,11 @@ function Chunk(download, start, end, written) {
 
 Chunk.prototype = {
 	_inited: false,
-	_buffered: 0,
 	_written: 0,
-	_pendingWrites: 0,
 	_wnd: 2048,
 
 	running: false,
 	safeBytes: 0,
-
-	get _hasBuffer() {
-		return !!this._buffer;
-	},
 
 	get starter() {
 		return this.end <= 0;
@@ -212,14 +133,29 @@ Chunk.prototype = {
 	get written() {
 		return this._written;
 	},
-	get bufferedPending() {
-		return this._buffered;
-	},
-	get bufferedCached() {
-		return this._hasBuffer ? this._buffer.length : 0;
-	},
 	get buffered() {
-		return this.bufferedPending + this.bufferedCached;
+		let rv = 0;
+		try {
+			if (this._inStream) {
+				rv += this._inStream.available();
+			}
+		}
+		catch (ex) {
+			log(LOG_DEBUG, "Failed to get buffered size, which is probably OK", ex);
+		}
+		try {
+			if (this._overflowPipe) {
+				rv += this._overflowPipe.inputStream.available();
+			}
+		}
+		catch (ex) {
+			log(LOG_DEBUG, "Failed to get overflow size, which is probably OK", ex);
+		}
+		if (rv) {
+			// Add a segment size on top to be on the safer side
+			rv += PIPE_SEGMENT_SIZE;
+		}
+		return rv;
 	},
 	get currentPosition() {
 		return this.start + this.written;
@@ -240,12 +176,11 @@ Chunk.prototype = {
 		return this._sessionBytes;
 	},
 
-	_init: function() {
+	open: function() {
 		if (this._inited) {
-			return;
+			return new Promise(r => r());
 		}
 		this._inited = true;
-		this.errored = false;
 
 		this._sessionBytes = 0;
 		this._canceled = false;
@@ -256,11 +191,7 @@ Chunk.prototype = {
 			);
 		this.buckets.register(this);
 		memoryReporter.registerChunk(this);
-	},
-	_open: function() {
-		if (this._outStream) {
-			return new Promise(r => r(this._outStream));
-		}
+
 		if (this._openPromise) {
 			return this._openPromise;
 		}
@@ -271,86 +202,47 @@ Chunk.prototype = {
 		this.errored = false;
 		return this._openPromise = Task.spawn(function*() {
 			try {
-				yield makeDir(file.parent, Prefs.dirPermissions);
+				try {
+					yield makeDir(file.parent, Prefs.dirPermissions);
+				}
+				catch (ex if ex.becauseExists) {
+					// no op
+				}
+				let outStream = new Instances.FileOutputStream(
+					file,
+					0x02 | 0x08,
+					Prefs.permissions,
+					Ci.nsIFileOutputStream.DEFER_OPEN
+					);
+				if (pos) {
+					let seekable = outStream.QueryInterface(Ci.nsISeekableStream);
+					seekable.seek(0x00, pos);
+				}
+				this._pipe = new Instances.Pipe(
+					true,
+					true,
+					PIPE_SEGMENT_SIZE,
+					MAX_PIPE_SEGMENTS);
+				this._inStream = this._pipe.inputStream;
+				this._outStream = this._pipe.outputStream;
+				this._copier = asyncCopy(this._inStream, outStream, true);
+				this._copier.catch(status => {
+					this.errored = true;
+					this.download.writeFailed(status);
+				});
 			}
-			catch (ex if ex.becauseExists) {
-				// no op
+			finally {
+				delete this._openPromise;
 			}
-			let outStream = new Instances.FileOutputStream(
-				file,
-				0x02 | 0x08,
-				Prefs.permissions,
-				Ci.nsIFileOutputStream.DEFER_OPEN
-				);
-			if (pos) {
-				let seekable = outStream.QueryInterface(Ci.nsISeekableStream);
-				seekable.seek(0x00, pos);
-			}
-			delete this._openPromise;
-			return (this._outStream = outStream);
 		}.bind(this));
 	},
 	_noteBytesWritten: function(bytes) {
 		this._written += bytes;
 		this._sessionBytes += bytes;
+		this.safeBytes =  Math.max(this.safeBytes, this._written - this.buffered);
 		memoryReporter.noteBytesWritten(bytes);
 
 		this.parent.timeLastProgress = getTimestamp();
-	},
-	_ensureBuffer: function() {
-		if (this._hasBuffer) {
-			return;
-		}
-		this.buffer_size = buffer_size;
-		this._buffer = new Buffer(this.buffer_size);
-	},
-	_shipBuffer: function() {
-		let buffer = this._buffer;
-		delete this._buffer;
-		if (!buffer) {
-			return;
-		}
-		let length = buffer.length;
-		if (!length) {
-			log(LOG_DEBUG, "Not shipping buffer, zero length");
-			return;
-		}
-
-		log(LOG_DEBUG, "shipping buffer: " + length);
-		let stream = buffer.stream;
-		buffer.unlink();
-		this._buffered += length;
-		++this._pendingWrites;
-		if (this.errored) {
-			log(LOG_DEBUG, "Not shipping buffer, we're errored");
-			return;
-		}
-		Task.spawn(function* _shipBufferTask() {
-			try {
-				yield shipStream(stream, (yield this._open()), false);
-				this._buffered -= length;
-				--this._pendingWrites;
-				this.safeBytes += length;
-				if (!this.running) {
-					this.close();
-				}
-			}
-			catch (ex) {
-				try {
-					this.errored = true;
-					this._buffered -= length;
-					--this._pendingWrites;
-					log(LOG_ERROR, "Failed to write", ex);
-					this.download.writeFailed(ex);
-				}
-				catch (ex2) {
-					log(LOG_ERROR, "aggregate failure", ex2);
-				}
-				if (!this.running) {
-					this.close();
-				}
-			}
-		}.bind(this));
 	},
 	close: function() {
 		if (this._closing) {
@@ -362,15 +254,67 @@ Chunk.prototype = {
 		this.running = false;
 		return (this._closing = Task.spawn(function*() {
 			try {
-				if (this._hasBuffer) {
-					this._shipBuffer();
+				if (this._openPromise) {
+					yield this._openPromise;
 				}
-				if (this._outStream || this._openPromise) {
-					// hacky way to close the stream off the main thread
-					let is = new Instances.StringInputStream("", 0);
-					yield shipStream(is, (yield this._open()), true);
+				// drain the overflowPipe, if any
+				if (this._overflowPipe && !this.errored) {
+					log(LOG_DEBUG, "draining overflow");
+					try {
+						yield asyncCopy(this._overflowPipe.inputStream, this._outStream, false);
+					}
+					catch (status) {
+						this.download.writeFailed(status);
+					}
+				}
+				if (this._overflowPipe) {
+					// Still got an overflow pipe, meaning we failed a write
+					// Since we kill the pipe now, we need to adjust written sizes
+					// beforehand accordingly so saveBytes and rollback() are still
+					// correct
+					try {
+						let pending = this._overflowPipe.inputStream.available();
+						this._written -= pending;
+						this._sessionBytes -= pending;
+					}
+					catch (ex) {
+						log(LOG_DEBUG, "failed to substract overflow, which is probably OK", ex);
+					}
+					this._overflowPipe.outputStream.close();
+					this._overflowPipe.inputStream.close();
+					delete this._overflowPipe;
+				}
+				// we are done writing to the pipe
+				if (this._outStream) {
+					this._outStream.close();
+					delete this._pipe;
 					delete this._outStream;
 				}
+				// but still need to wait for the copy into the file
+				if (this._copier) {
+					try {
+						yield this._copier;
+					}
+					catch (ex) {
+						// ignore here!
+					}
+					delete this._copier;
+				}
+
+				// upate the counters one last time
+				this._noteBytesWritten(0);
+				// and close the input stream end of the pipe
+				if (this._inStream) {
+					try {
+						this._inStream.close();
+					}
+					catch (ex) {
+						// no op
+					}
+					delete this._inStream; // ... before deleting the instream
+				}
+
+				// and do some cleanup
 				if (this.buckets) {
 					this.buckets.unregister(this);
 					delete this.buckets;
@@ -380,14 +324,13 @@ Chunk.prototype = {
 				this._inited = false;
 
 				this._sessionBytes = 0;
-				this._buffered = 0;
 				this._written = this.safeBytes;
-				delete this.download;
 			}
 			catch (ex) {
 				log(LOG_ERROR, "Damn!", ex);
 			}
 			finally {
+				delete this.download;
 				delete this._closing;
 			}
 		}.bind(this)));
@@ -408,18 +351,8 @@ Chunk.prototype = {
 		this._sessionBytes = 0;
 	},
 	cancelChunk: function() {
-		this.running = false;
 		this._canceled = true;
-
-		// prevent shipping the current buffer
-		if (this._hasBuffer) {
-			this._buffer.unlink();
-			delete this._buffer;
-		}
-		this.close();
-		if (this.download) {
-			this.download.cancel();
-		}
+		this.pauseChunk();
 	},
 	pauseChunk: function() {
 		this.running = false;
@@ -434,7 +367,6 @@ Chunk.prototype = {
 			if (!this.running) {
 				return -1;
 			}
-			this._init();
 			let bytes = this.remainder;
 			if (!this.total || aCount < bytes) {
 				bytes = aCount;
@@ -463,48 +395,38 @@ Chunk.prototype = {
 			// or in our case all remainder bytes
 			// reqPending from above makes sure that we won't re-schedule
 			// the download too early
-			let written = 0;
-			if (this._hasBuffer) {
-				let fill = Math.min(bytes, this._buffer.free);
-				bytes -= fill;
-				if (fill && this._buffer.writeFrom(aInputStream, fill) !== fill) {
-					throw new Error("Failed to fill current stream. fill: " +
-						fill + " bytes: " + bytes + "chunk: " + this);
-				}
-				if (!this._buffer.free) {
-					this._shipBuffer();
-				}
-				written += fill;
+			if (this._overflowPipe) {
+				// We still got overflow
+				log(LOG_DEBUG, "writing to overflow");
+				this._overflowPipe.outputStream.writeFrom(aInputStream, bytes);
 			}
-			this._ensureBuffer();
-			while (bytes >= this.buffer_size) {
-				if (this._buffer.writeFrom(aInputStream, this.buffer_size) !== this.buffer_size) {
-					throw new Error("Failed to write full stream. " + this);
-				}
-				this._shipBuffer();
-				bytes -= this.buffer_size;
-				written += this.buffer_size;
-				this._ensureBuffer();
-			}
-			if (bytes) {
-				this._ensureBuffer();
+			else {
+				let written = 0;
 				try {
-					let part = this._buffer.writeFrom(aInputStream, bytes);
-					if (part !== bytes) {
-						throw new Error("Failed to write all requested bytes to current stream. bytes: " +
-							bytes + " actual: " + part + " chunk: " + this);
-					}
-					written += part;
-					bytes -= part;
+					written = this._outStream.writeFrom(aInputStream, bytes);
 				}
-				catch (ex) {
-					log(LOG_ERROR, "Failed to write: " + bytes + "/" + this._buffer.free + "/" + this.buffer_size, ex);
-					throw ex;
+				catch (ex if ex.result == Cr.NS_BASE_STREAM_WOULD_BLOCK || ex == NS_BASE_STREAM_WOULD_BLOCK) {
+					// aka still nothing written
+				}
+				let remain = bytes - written;
+				if (remain > 0) {
+					if (!this._overflowPipe) {
+						// If everything goes according to plan, we won't need much!
+						// Having an overflow pipe will eventually suspend the request
+						// until it clears up!
+						log(LOG_DEBUG, "creating overflow pipe");
+						this._overflowPipe = new Instances.Pipe(
+							false,
+							true,
+							PIPE_SEGMENT_SIZE,
+							MAX_PIPE_SEGMENTS * 10);
+					}
+					log(LOG_DEBUG, "writing to remainder to overflow");
+					this._overflowPipe.outputStream.writeFrom(aInputStream, remain);
 				}
 			}
-			this._noteBytesWritten(got);
-
-			return written;
+			this._noteBytesWritten(bytes);
+			return bytes;
 		}
 		catch (ex) {
 			log(LOG_ERROR, 'write: ' + this.parent.tmpFile.path, ex);
@@ -516,12 +438,39 @@ Chunk.prototype = {
 		this.run();
 	},
 	requestBytes: function(requested) {
-		if (memoryReporter.pendingBytes > MAX_PENDING_SIZE) {
-			log(LOG_INFO, `Under pressure: pending total: ${memoryReporter.pendingBytes} this: ${this.bufferedPending} and cached ${this.bufferedCached}`);
-			// basically stop processing while under memory pressure
-			this.schedule();
-			return 0;
+		if (this._overflowPipe) {
+			let instream = this._overflowPipe.inputStream;
+			let avail = instream.available();
+			if (!avail) {
+				this._overflowPipe.outputStream.close();
+				this._overflowPipe.inputStream.close();
+				delete this._overflowPipe;
+			}
+			else {
+				log(LOG_DEBUG, `still overflow: ${avail}`);
+				// decreasing requested will put the stream into suspended mode, need
+				// to schedule
+				requested = Math.max(requested - avail, 0);
+				let written = 0;
+				try {
+					written = this._outStream.writeFrom(instream, avail);
+				}
+				catch (ex if ex.result == Cr.NS_BASE_STREAM_WOULD_BLOCK || ex == NS_BASE_STREAM_WOULD_BLOCK) {
+					// nothing written
+				}
+				avail -= written;
+				log(LOG_DEBUG, `overflow written: ${written} ${avail}`);
+				if (!avail) {
+					log(LOG_DEBUG, "overflow cleared");
+					this._overflowPipe.outputStream.close();
+					this._overflowPipe.inputStream.close();
+					delete this._overflowPipe;
+				}
+				// .. which we do here
+				this.schedule();
+			}
 		}
+
 		if (memoryReporter.memoryPressure > 0) {
 			log(LOG_INFO, "Under some pressure: " + memoryReporter.pendingBytes +
 				" : " + memoryReporter.memoryPressure + " : " + requested);
@@ -551,7 +500,6 @@ Chunk.prototype = {
 			if (!got) {
 				return;
 			}
-			this._noteBytesWritten(got);
 			if (got < requested) {
 				this._wnd = Math.round(Math.min(this._wnd / 2, 1024));
 			}

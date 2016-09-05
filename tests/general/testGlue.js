@@ -13,6 +13,7 @@ test("Service contents", function() {
 test("Instances contents", function() {
 	var expected = [
 		"AsyncStreamCopier",
+		"AsyncStreamCopier2",
 		"BinaryInputStream",
 		"BinaryOutputStream",
 		"BufferedOutputStream",
@@ -27,6 +28,7 @@ test("Instances contents", function() {
 		"MimeInputStream",
 		"Pipe",
 		"PlainAsyncStreamCopier",
+		"PlainAsyncStreamCopier2",
 		"PlainBinaryInputStream",
 		"PlainBinaryOutputStream",
 		"PlainBufferedOutputStream",

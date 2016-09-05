@@ -33,19 +33,12 @@ MemoryReporter.prototype = {
 			}
 		}
 		this._pendingBytes = 0;
-		this._cachedBytes = 0;
-		this._overflow = 0;
 		this._chunksScheduled = 0;
 		this._chunksActive = 0;
 
 		for (let c of this.chunks) {
 			let bs = c.buffer_size;
-			let pending = c.bufferedPending;
-			this._pendingBytes += pending;
-			this._overflow += (bs - (pending % bs)) % bs;
-			let cached = c.bufferedCached;
-			this._cachedBytes += cached;
-			this._overflow += (bs - (cached % bs)) % bs;
+			this._pendingBytes += c.buffered;
 			if (c._req) {
 				++this._chunksScheduled;
 			}
@@ -74,24 +67,6 @@ MemoryReporter.prototype = {
 			Ci.nsIMemoryReporter.UNITS_BYTES,
 			this._pendingBytes,
 			"Downloaded bytes waiting or in the process of being written to disk.",
-			closure
-			);
-		callback.callback(
-			this.process,
-			"downthemall-downloads-memory-cached",
-			Ci.nsIMemoryReporter.KIND_OTHER,
-			Ci.nsIMemoryReporter.UNITS_BYTES,
-			this._cachedBytes,
-			"Downloaded bytes currently residing in memory.",
-			closure
-			);
-		callback.callback(
-			this.process,
-			"downthemall-downloads-memory-overflow",
-			Ci.nsIMemoryReporter.KIND_OTHER,
-			Ci.nsIMemoryReporter.UNITS_BYTES,
-			this._overflow,
-			"Unused memory that was (potentially) over-committed.",
 			closure
 			);
 		callback.callback(
