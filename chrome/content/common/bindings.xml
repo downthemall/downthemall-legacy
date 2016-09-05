@@ -419,22 +419,20 @@
 
 					let iv = Math.max(this.limit, -1);
 					let m = Math.round((iv > 0 ? iv : this.hint / 2) / 1024);
-					m = this.scale(iv > 1 ? m : 250);
-					let vals = [0,10,20,50,100];
-					if (m >= 1000) {
-						vals = [0,100,200,500,1000];
-					}
-					else if (m > 400) {
-						vals = [0,50,100,200,500];
-					}
-
-					let items = [10, 50, 100, 250, 1000]; // always include these
+					m = this.scale(iv > 1 ? m : 1000);
+					let vals = [0, 10, 20, 50, 100, 1000, 2000, 5000];
+					let items = [10, 50, 100, 250, 1000, 10000]; // always include these
 					for (let v of vals) {
 						if (v && m - v > 1) {
 							items.push(m - v);
 						}
 						items.push(m + v);
 					}
+					// push some multiples
+					items.push(m * 2);
+					items.push(m * 5);
+					items.push(m * 10);
+
 					mapFilterInSitu(
 						items,
 						this.scale,

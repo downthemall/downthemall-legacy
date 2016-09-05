@@ -439,11 +439,11 @@ var Dialog = {
 		this._speeds.clear();
 	},
 	changeSpeedLimitUp: function() {
-		$('listSpeeds').limit = Math.max(0, $('listSpeeds').limit) + 25600;
+		$('listSpeeds').limit = Math.max(0, $('listSpeeds').limit) + 102400;
 		this.changeSpeedLimit();
 	},
 	changeSpeedLimitDown: function() {
-		$('listSpeeds').limit -= 25600;
+		$('listSpeeds').limit -= 102400;
 		this.changeSpeedLimit();
 	},
 	_loadDownloads: function() {
