@@ -1,4 +1,4 @@
-<!ENTITY windowstyle.3 "width:48em;height:44em;">
+<!ENTITY windowstyle.3 "width:60em;height:44em;">
 <!ENTITY filterspane.label "Filtres">
 <!ENTITY listhead1.label "Légende">
 <!ENTITY listhead2.label "Extensions">
