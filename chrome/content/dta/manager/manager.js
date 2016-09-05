@@ -1940,20 +1940,23 @@ QueueItem.prototype = {
 		Tree.invalidate(this, cell);
 	},
 
-	safeRetry: function() {
-		// reset flags
-		this.progress = this.totalSize = this.partialSize = 0;
-		this.compression = null;
-		this.activeChunks = this.maxChunks = 0;
-		for (let c of this.chunks) {
-			c.cancelChunk();
-		}
-		this.chunks.length = 0;
-		this.speeds.clear();
-		this.otherBytes = 0;
-		this.visitors = new VisitorManager();
-		this.setState(QUEUED);
-		Dialog.run(this);
+	safeRetry: function(resumable) {
+		this.cancel().then(() => {
+			// reset flags
+			this.progress = this.totalSize = this.partialSize = 0;
+			this.compression = null;
+			this.activeChunks = this.maxChunks = 0;
+			for (let c of this.chunks) {
+				c.cancelChunk();
+			}
+			this.chunks.length = 0;
+			this.speeds.clear();
+			this.otherBytes = 0;
+			this.visitors = new VisitorManager();
+			this.resumable = resumable !== false;
+			this.setState(QUEUED);
+			Dialog.run(this);
+		});
 	},
 
 	refreshPartialSize: function(){
@@ -2356,7 +2359,7 @@ QueueItem.prototype = {
 				this.activeChunks = 0;
 			}
 			this.setState(CANCELED);
-			Task.spawn(function*() {
+			return Task.spawn(function*() {
 				try {
 					yield this.closeChunks();
 					if (this._preallocTask) {
@@ -2549,7 +2552,7 @@ QueueItem.prototype = {
 			}
 		}
 		function downloadNewChunk(download, start, end, header) {
-			var chunk = new Chunk(download, start, end);
+			let chunk = new Chunk(download, start, end);
 			download.chunks.push(chunk);
 			download.chunks.sort(function(a,b) { return a.start - b.start; });
 			downloadChunk(download, chunk, header);

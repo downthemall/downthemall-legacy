@@ -778,7 +778,6 @@ Connection.prototype = {
 
 			if (c.starter && d.urlManager.markBad(this.url)) {
 				log(LOG_ERROR, "caught bad server (Error: " + code + ")", d.toString());
-				d.cancel();
 				d.safeRetry();
 				return false;
 			}
@@ -859,9 +858,7 @@ Connection.prototype = {
 					aChannel.visitResponseHeaders(vis);
 					log(LOG_ERROR, vis.value);
 				}
-				d.cancel();
-				d.resumable = false;
-				d.safeRetry();
+				d.safeRetry(false);
 				return false;
 			}
 		}
@@ -874,9 +871,7 @@ Connection.prototype = {
 			log(LOG_ERROR, "header failed! " + d, ex);
 			// restart download from the beginning
 			if (!this.handleError()) {
-				d.cancel();
-				d.resumable = false;
-				d.safeRetry();
+				d.safeRetry(false);
 			}
 			return false;
 		}
@@ -991,9 +986,7 @@ Connection.prototype = {
 		catch (ex) {
 			log(LOG_ERROR, "header failed! " + d, ex);
 			// restart download from the beginning
-			d.cancel();
-			d.resumable = false;
-			d.safeRetry();
+			d.safeRetry(false);
 			return false;
 		}
 		return false;
@@ -1044,7 +1037,16 @@ Connection.prototype = {
 
 		this.started = true;
 
-		if (!d || !d.chunks || !~d.chunks.indexOf(c)) {
+		if (!d) {
+			this.writeFailed("invalid connection state (download)");
+			return;
+		}
+		if (!d.chunks) {
+			this.writeFailed("invalid connection state (chunks)");
+			return;
+		}
+		if (!~d.chunks.indexOf(c)) {
+			log(LOG_DEBUG, "invalid connection state (chunk index): " + d.chunks.indexOf(c) + " / " + JSON.stringify(c) + " / " + JSON.stringify(d.chunks));
 			return;
 		}
 
@@ -1146,7 +1148,6 @@ Connection.prototype = {
 					}
 					else {
 						log(LOG_ERROR, "caught bad server", d.toString());
-						d.cancel();
 						d.safeRetry();
 					}
 					return;
@@ -1176,7 +1177,6 @@ Connection.prototype = {
 					}
 					else {
 						log(LOG_ERROR, "caught bad server", d.toString());
-						d.cancel();
 						d.safeRetry();
 					}
 					return;
