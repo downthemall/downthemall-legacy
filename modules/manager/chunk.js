@@ -517,7 +517,7 @@ Chunk.prototype = {
 	},
 	requestBytes: function(requested) {
 		if (memoryReporter.pendingBytes > MAX_PENDING_SIZE) {
-			log(LOG_INFO, "Under pressure: " + memoryReporter.pendingBytes + " : " + memoryReporter.memoryPressure);
+			log(LOG_INFO, `Under pressure: pending total: ${memoryReporter.pendingBytes} this: ${this.bufferedPending} and cached ${this.bufferedCached}`);
 			// basically stop processing while under memory pressure
 			this.schedule();
 			return 0;

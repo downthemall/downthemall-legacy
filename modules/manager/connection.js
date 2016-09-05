@@ -260,6 +260,12 @@ Connection.prototype = {
 			if (!aReason) {
 				aReason = NS_ERROR_BINDING_ABORTED;
 			}
+			try {
+				this._chan.resume();
+			}
+			catch (ex) {
+				// no op
+			}
 			this._chan.cancel(aReason);
 			this._closed = true;
 		}

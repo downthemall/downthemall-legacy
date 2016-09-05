@@ -40,7 +40,7 @@ MemoryReporter.prototype = {
 
 		for (let c of this.chunks) {
 			let bs = c.buffer_size;
-			let pending = 0;
+			let pending = c.bufferedPending;
 			this._pendingBytes += pending;
 			this._overflow += (bs - (pending % bs)) % bs;
 			let cached = c.bufferedCached;

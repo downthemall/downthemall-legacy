@@ -9,7 +9,7 @@ Object.defineProperties(exports, {
 	QUEUED: {value: 1<<6, enumerable: true},
 	SPEED_COUNT: {value: 100, enumerable: true},
 	MIN_CHUNK_SIZE: {value: 1<<19, enumerable: true},
-	MAX_PENDING_SIZE: {value: 1<<27, enumerable: true},
+	MAX_PENDING_SIZE: {value: 1<<28, enumerable: true},
 	BUFFER_SIZE: {value: 1<<19, enumerable: true},
 	REFRESH_FREQ: {value: 1000, enumerable: true},
 	TOOLTIP_FREQ: {value: 500, enumerable: true},
