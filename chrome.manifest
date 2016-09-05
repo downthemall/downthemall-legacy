@@ -15,6 +15,7 @@ content	dta-modules	modules/
 locale dta de chrome/locale/de/
 locale dta es-ES chrome/locale/es-ES/
 locale dta et chrome/locale/et/
+locale dta fr chrome/locale/fr/
 locale dta gl chrome/locale/gl/
 locale dta gl-ES chrome/locale/gl-ES/
 locale dta nl chrome/locale/nl/

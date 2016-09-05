@@ -1,0 +1,31 @@
+<!ENTITY mask.tags "Renommage des balises">
+<!ENTITY mask.name "Nom de fichier">
+<!ENTITY mask.ext "Extension">
+<!ENTITY mask.url "URL de base">
+<!ENTITY mask.curl "URL complète">
+<!ENTITY mask.flatcurl "URL complète plate">
+<!ENTITY mask.batch "Numéro de lot">
+<!ENTITY mask.inum "Numéro de l'élément">
+<!ENTITY mask.hh "Heures">
+<!ENTITY mask.mm "Minutes">
+<!ENTITY mask.ss "Secondes">
+<!ENTITY mask.d "Jour">
+<!ENTITY mask.m "Mois">
+<!ENTITY mask.y "Année">
+<!ENTITY mask.subdirs "Sous-dossiers de l'URL">
+<!ENTITY mask.flatsubdirs "Sous-dossiers de l'URL plate">
+<!ENTITY mask.linktext "Texte du lien">
+<!ENTITY mask.flatlinktext "Texte du lien (flat)">
+<!ENTITY mask.refername "Nom du referrer">
+<!ENTITY mask.referext "Extension du referrer">
+<!ENTITY mask.refer "URL de provenance">
+<!ENTITY mask.crefer "Referrer entier">
+<!ENTITY mask.flatcrefer "Flat full referrer">
+<!ENTITY mask.referdirs "Sous-dossiers du referrer">
+<!ENTITY mask.flatreferdirs "Sous-dossiers du flat referrer">
+<!ENTITY mask.qstring "Chaîne de requête (Query string)">
+<!ENTITY mask.referqstring "Query string du referrer">
+<!ENTITY mask.title "Titre associé au lien">
+<!ENTITY mask.flattitle2 "Titre flat associé au lien">
+<!ENTITY mask.tip "Cliquez ou glissez pour renommer le masque">
+<!ENTITY mask.open.tip "Table de référence de marqueurs de renommage">

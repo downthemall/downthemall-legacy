@@ -1,0 +1,26 @@
+<!ENTITY start.label "Démarrer !">
+<!ENTITY start.key "D">
+<!ENTITY queue.label "Mettre en pause">
+<!ENTITY queue.key "p">
+<!ENTITY options.label "Préférences">
+<!ENTITY url.value "Téléchargement">
+<!ENTITY url.placeholder "Indiquer l'URI de téléchargement">
+<!ENTITY override.filename.value "Nom de fichier personnalisé">
+<!ENTITY override.filename.placeholder "Indiquer le nouveau nom de fichier">
+<!ENTITY override.filename.tip "Indiquer le nouveau nom de fichier ou laisser vide pour le nom par défaut">
+<!ENTITY directory.caption "Enregistrer les fichiers dans :">
+<!ENTITY directory.placeholder "Indiquer ou choisir un dossier">
+<!ENTITY mirrors.value "Miroirs :">
+<!ENTITY referrer.value "Page d'origine :">
+<!ENTITY referrer.placeholder "Indiquer l'URI du referrer">
+<!ENTITY referrer.tip "Indiquer l'URI du referrer ou laisser vide pour n'envoyer aucun referrer">
+<!ENTITY description.value "Description :">
+<!ENTITY checksum.value "Checksum (Hash) :">
+<!ENTITY browse.tooltip "Parcourir…">
+<!ENTITY mirrormanager.tip "Gérer les miroirs de téléchargement">
+<!ENTITY mask3.label "Masque">
+<!ENTITY mask.tip "Les fichiers sélectionnés seront enregistrés et renommés en utilisant ce masque">
+<!ENTITY mask.once.label "Utiliser le masque juste maintenant">
+<!ENTITY selectall.label "Tout sélectionner">
+<!ENTITY selectinv.label "Inverser la sélection">
+<!ENTITY selectnone.label "Ne rien sélectionner">

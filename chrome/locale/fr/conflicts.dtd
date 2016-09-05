@@ -1,0 +1,7 @@
+<!ENTITY window.title "Conflit de fichier !">
+<!ENTITY text.value "Se souvenir de ce paramétrage :">
+<!ENTITY download.label "Juste pour ce téléchargement">
+<!ENTITY session.label "Uniquement pour cette session">
+<!ENTITY always.label "À partir de maintenant">
+<!ENTITY overwrite.label "Remplacer le fichier existant">
+<!ENTITY skip.label "Passer/Annuler">

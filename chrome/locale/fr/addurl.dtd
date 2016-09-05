@@ -1,0 +1,6 @@
+<!ENTITY windowtitle "Ajout de téléchragements">
+<!ENTITY adddescription.value "Indiquez l'URL de téléchargement et (facultativement) la page de référence.">
+<!ENTITY createbatchdescriptor.label "Créer un descripteur de lots">
+<!ENTITY createbatchdescriptor.tooltip "Créer un descripteur de lots à partir de la sélection courante">
+<!ENTITY desc.batches.value "Vous pouvez également utiliser des descripteurs de lots pour télécharger plusieurs fichiers à la fois.">
+<!ENTITY examples.value "Exemples :">
