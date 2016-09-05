@@ -2425,12 +2425,11 @@ QueueItem.prototype = {
 			log(LOG_DEBUG, "pa: no totalsize");
 			return;
 		}
-		if (this.preallocating) {
+		if (this._preallocTask) {
 			log(LOG_DEBUG, "pa: already working");
 			return;
 		}
 
-		this.preallocating = true;
 		this._preallocTask = Task.spawn(function*() {
 			try {
 				try {
@@ -2467,7 +2466,6 @@ QueueItem.prototype = {
 			}
 			finally {
 				this._preallocTask = null;
-				this.preallocating = false;
 				this.maybeResumeDownload();
 			}
 		}.bind(this));
@@ -2588,7 +2586,7 @@ QueueItem.prototype = {
 			let paused = this.chunks.filter(chunk => !(chunk.running || chunk.complete));
 
 			while (this.activeChunks < this.maxChunks) {
-				if (this.preallocating && this.activeChunks) {
+				if (this._preallocTask && this.activeChunks) {
 					log(LOG_DEBUG, "not resuming download " + this + " because preallocating");
 					return true;
 				}
