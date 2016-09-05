@@ -2465,9 +2465,11 @@ QueueItem.prototype = {
 			catch(ex) {
 				log(LOG_ERROR, "pa: failed", ex);
 			}
-			this._preallocTask = null;
-			this.preallocating = false;
-			this.maybeResumeDownload();
+			finally {
+				this._preallocTask = null;
+				this.preallocating = false;
+				this.maybeResumeDownload();
+			}
 		}.bind(this));
 	},
 
