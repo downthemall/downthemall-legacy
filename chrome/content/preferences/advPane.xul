@@ -80,7 +80,7 @@
 									<label id="loadendfirstlabel" style="min-width: 6em;" />
 								</hbox>
 							</row>
-							<checkbox label="&mainpane.settime.label;" preference="dtasettime" />
+							<checkbox style="max-width: 44em;" label="&mainpane.settime.label;" preference="dtasettime" />
 						</rows>
 					</grid>
 				</tabpanel>
