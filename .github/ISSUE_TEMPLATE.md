@@ -1,4 +1,4 @@
-### Your DownThemAll! and Browser Version and Operating System
+### Your DownThemAll! and Browser Version and Language and Operating System
 
 
 ### Expected Behavior
