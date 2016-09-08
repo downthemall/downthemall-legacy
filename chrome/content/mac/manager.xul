@@ -31,6 +31,8 @@
 
 	<keyset id="mainkeys">
 		<key id="kLaunch" modifiers="accel" key="O" command="cmdLaunch" />
+		<key id="kGetInfo" modifiers="accel" key="I" command="cmdGetInfo" />
+		<key id="kSelectInv" modifiers="accel,shift" key="I" command="cmdSelectInv" />
 		<key id="kOpenFolder" modifiers="accel,shift" key="O" command="cmdOpenFolder" />
 		<key id="kRename" keycode="VK_RETURN" command="cmdRename"/>
 		<key id="kCloseMac" modifiers="accel" key="W" command="cmdClose" />
