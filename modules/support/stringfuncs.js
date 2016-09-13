@@ -121,6 +121,10 @@ exports.cropCenter = function(str, newLength) {
 	return str;
 };
 
+exports.symbolize = function(value) {
+	return typeof(value) === "symbol" ? value : Symbol.for(value);
+}
+
 function toURI(str, charset, baseURI) {
 	return Services.io.newURI(str, charset, baseURI);
 }

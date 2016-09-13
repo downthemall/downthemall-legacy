@@ -17,6 +17,7 @@ test("exports", function() {
 																			"removeLeadingChar",
 																			"removeLeadingSlash",
 																			"replaceSlashes",
+																			"symbolize",
 																			"toURI",
 																			"toURL"]);
 });
@@ -164,6 +165,16 @@ test("cropCenter", function() {
 	strictEqual(cropCenter("abcde", 4), "ab...de");
 	strictEqual(cropCenter("abcdef", 4), "ab...ef");
 	strictEqual(cropCenter("abcdefg", 4), "ab...fg");
+});
+
+test("symbolize", function() {
+	const {symbolize} = require("support/stringfuncs");
+	strictEqual(symbolize("abc"), symbolize("abc"));
+	notEqual(symbolize("abcd"), symbolize("abc"));
+	notEqual(symbolize("abc"), Symbol("abc"));
+	strictEqual(symbolize("abc"), Symbol.for("abc"));
+	strictEqual(symbolize("abc"), symbolize(Symbol.for("abc")));
+	strictEqual(symbolize(Symbol.for("abc")), symbolize(Symbol.for("abc")));
 });
 
 test("toURI", function() {
