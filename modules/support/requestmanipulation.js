@@ -122,7 +122,6 @@ exports.registerDownload(
 	"chan CDN",
 	/^https?:\/\/(?:media\.8ch\.net|(?:[^.]?\.)?4cdn\.org)\//i,
 	function() {
-		log(LOG_ERROR, `4cdn ${this.urlManager.spec}`);
 		this.cleanRequest = true;
 	}
 );

@@ -54,6 +54,11 @@ const {filterInSitu, filterMapInSitu, unique} = require("support/uniquelinks");
 /* **
  * Helpers and tools
  */
+
+// This will be handled more finegrained in the main process, so just throw
+// out some obvious stuff.
+const blocked_schemes = new Set(["javascript", "file", "blob", "data"]);
+
 const trimMore = function(t) {
 	return t.replace(/^[\s_]+|[\s_]+$/gi, '').replace(/(_){2,}/g, "_");
 };
@@ -151,6 +156,10 @@ const addLinksToArray = function* addLinksToArray(lnks, urls, doc) {
 		try {
 			let url = Services.io.newURI(link.href, doc.characterSet, null);
 
+			let scheme = url.scheme;
+			if (blocked_schemes.has(scheme)) {
+				continue;
+			}
 			let title = '';
 			if (link.hasAttribute('title')) {
 				title = trimMore(link.getAttribute('title'));
