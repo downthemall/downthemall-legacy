@@ -17,6 +17,7 @@ requireJoined(this, "constants");
 const {formatNumber, StringBundles, getTimestamp} = require("utils");
 const {modifyURL, modifyHttp} = require("support/requestmanipulation");
 const Preferences = require("preferences");
+const DomainPrefs = require("support/domainprefs");
 const {Task} = requireJSM("resource://gre/modules/Task.jsm");
 
 const {
@@ -41,6 +42,8 @@ const _ = (function(global) {
 		return bundles.getFormattedString.apply(bundles, arguments);
 	};
 })(this);
+
+const cleanRequest = Symbol.for("cleanRequest");
 
 let proxyInfo = null;
 const proxyObserver = {
@@ -75,6 +78,7 @@ function maybeTempBlacklisted(item, httpchan) {
 	try {
 		if (httpchan.getResponseHeader("Server").includes("cloudflare")) {
 			item.cleanRequest = true;
+			DomainPrefs.setTLD(httpchan.URI, cleanRequest, true);
 			return true;
 		}
 		return false;
@@ -195,7 +199,7 @@ Connection.prototype = {
 			if (chan instanceof Ci.nsIHttpChannel) {
 				let c = this.c;
 
-				if (!d.cleanRequest) {
+				if (!d.cleanRequest && !DomainPrefs.getTLD(chan.URI, cleanRequest)) {
 					log(LOG_DEBUG, `setting up ${chan.URI.spec}`);
 					// Cannot hash when compressed
 					chan.setRequestHeader("Accept-Encoding", "", false);
