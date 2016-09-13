@@ -199,7 +199,9 @@ Connection.prototype = {
 			if (chan instanceof Ci.nsIHttpChannel) {
 				let c = this.c;
 
-				if (!d.cleanRequest && !DomainPrefs.getTLD(chan.URI, cleanRequest)) {
+				if (!d.cleanRequest &&
+						!Preferences.getExt("usecleanrequests", false) &&
+						!DomainPrefs.getTLD(chan.URI, cleanRequest)) {
 					log(LOG_DEBUG, `setting up ${chan.URI.spec}`);
 					// Cannot hash when compressed
 					chan.setRequestHeader("Accept-Encoding", "", false);
