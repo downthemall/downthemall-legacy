@@ -236,3 +236,34 @@ test("require cyclic", function() {
 	strictEqual(a.a().b, b.b, 'a gets b');
 	strictEqual(b.b().a, a.a, 'b gets a');
 });
+
+test("LRUMap", function() {
+	var {LRUMap} = requireJSM("chrome://dta-modules/content/glue.jsm");
+	let map = new LRUMap(2);
+	ok(!map.has("a"));
+	map.set("a", "b");
+	ok(map.has("a"));
+	strictEqual(map.get("a"), "b");
+
+	map.set(1, 2);
+	ok(map.has(1));
+	ok(!map.has("1"));
+	strictEqual(map.get(1), 2);
+
+	map.set("b", null);
+	ok(!map.has("a"));
+	ok(map.has(1));
+	ok(map.has("b"));
+	strictEqual(map.get("b"), null);
+
+	strictEqual(JSON.stringify(map), "[[1,2],[\"b\",null]]");
+	map.set(2, undefined);
+	strictEqual(JSON.stringify(map), "[[\"b\",null],[2,null]]");
+
+	let map2 = new LRUMap(2, JSON.parse(JSON.stringify(map)));
+	throws(() => new LRUMap());
+	throws(() => new LRUMap(0));
+	throws(() => new LRUMap(-1));
+	throws(() => new LRUMap(NaN));
+	throws(() => new LRUMap(1.1));
+});

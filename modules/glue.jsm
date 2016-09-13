@@ -75,10 +75,20 @@ var log = function logStub() {
 };
 var LOG_DEBUG = 0, LOG_INFO = 0, LOG_ERROR = 0;
 
-var LRUMap = function LRUMap(limit) {
+const DEAD = Symbol();
+
+var LRUMap = function LRUMap(limit, values) {
+	if (!(limit > 1) || (limit !== (limit | 0))) {
+		throw new Error("Invalid limit");
+	}
 	this._limit = limit;
 	this.clear();
 	Object.preventExtensions(this);
+
+	for (let i = (values || DEAD).length - 1; i >= 0; --i) {
+		Cu.reportError(i);
+		this.set(values[i][0], values[i][1]);
+	}
 };
 LRUMap.prototype = Object.freeze({
 	"get": function(key) { return this._dict.get(key); },
@@ -104,6 +114,13 @@ LRUMap.prototype = Object.freeze({
 	"clear": function() {
 		this._dict = new Map();
 		this._arr = [];
+	},
+	toJSON: function() {
+		let rv = [];
+		for (let i of this._arr) {
+			rv.push([i, this._dict.get(i)]);
+		}
+		return rv;
 	}
 });
 
