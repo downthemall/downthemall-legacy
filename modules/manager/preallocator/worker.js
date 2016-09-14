@@ -25,7 +25,7 @@ onmessage = function(event) {
 	}
 
 	try {
-		log("allocating:" + data.file + " with size: " + data.size + " sparse: " + data.sparseOK);
+		log("allocating: " + JSON.stringify(data));
 		data.result = prealloc(data.file, data.size, data.perms, data.sparseOK);
 	}
 	catch (ex) {

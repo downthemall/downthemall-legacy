@@ -15,14 +15,16 @@ const SIZE_COTHREAD_MAX = (1<<24);
 
 const _impl = createOptimizedImplementation(
 	"manager/preallocator/worker",
-	function(impl) { return function (file, size, perms, sparseOK, callback) {
-		let data = Object.create(null);
-		data.file = file.path;
-		data.size = size;
-		data.perms = perms;
-		data.sparseOK = sparseOK;
-		return impl(data, callback);
-	}; },
+	function(impl) {
+		return function (file, size, perms, sparseOK, callback) {
+			let data = Object.create(null);
+			data.file = file.path;
+			data.size = size;
+			data.perms = perms;
+			data.sparseOK = sparseOK;
+			return impl(data, callback);
+		};
+	},
 	function(file, size, perms, sparseOK, callback) {
 		if (size < SIZE_COTHREAD_MAX) {
 			return _cothread(file, size, perms, sparseOK, callback);
