@@ -2720,7 +2720,7 @@ QueueItem.prototype = {
 };
 
 XPCOMUtils.defineLazyGetter(QueueItem.prototype, 'AuthPrompts', function() {
-	const {LoggedPrompter} = require("support/loggedPrompter");
+	const {LoggedPrompter} = require("support/loggedprompter");
 	return new LoggedPrompter(window);
 });
 
