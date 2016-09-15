@@ -19,50 +19,42 @@ function LoggedPrompter(window) {
 	 * Property providing nsIAuthPrompt
 	 */
 	lazy(this, "authPrompter", function() {
-		let _p = Services.ww.getNewAuthPrompter(window).QueryInterface(Ci.nsIAuthPrompt);
+		let _p = Services.ww.getNewAuthPrompter(window).
+			QueryInterface(Ci.nsIAuthPrompt).
+			QueryInterface(Ci.nsIAuthPrompt2);
 		let restricted = new Map();
-		let proxy = new Proxy(_p, {
-			has: function(name) { return name in _p; },
-			hasOwn: function(name) { returnname in _p; },
-			get: function(receiver, name) {
-				log(LOG_DEBUG, "called: " + name);
-				if (name === "QueryInterface") {
-					return function(iid) {
-						_p.QueryInterface(iid);
-						return proxy;
+		let bind = key => _p[key].bind(_p);
+		return {
+			QueryInterface: function(iid) {
+				_p.QueryInterface(iid);
+				return this;
+			},
+			prompt: bind("prompt"),
+			promptUsernameAndPassword: bind("promptUsernameAndPassword"),
+			promptPassword: bind("promptPassword"),
+			promptAuth: bind("promptAuth"),
+			asyncAuthPrompt: function(channel, callback, context, level, info) {
+				const key = uriToKey(channel.URI);
+				if (restricted.has(key)) {
+					log(LOG_DEBUG, "Restricted " + key);
+					callback.onAuthCancelled(context, true);
+					return {
+						cancel: function() {}
 					};
 				}
-				if (name === "restrictLogin") {
-					return function(uri) {
-						const key = uriToKey(uri);
-						restricted.set(key, true);
-					};
-				}
-				if (name === "allowLogin") {
-					return function(uri) {
-						const key = uriToKey(uri);
-						log(LOG_DEBUG, "Lifting restriction " + key);
-						restricted.delete(key, true);
-					};
-				}
-				if (name === "asyncPromptAuth") {
-					return function(channel, cb, ctx, level, info) {
-						const key = uriToKey(channel.URI);
-						if (restricted.has(key)) {
-							log(LOG_DEBUG, "Restricted " + key);
-							cb.onAuthCancelled(ctx, true);
-							return {
-								cancel: function() {}
-							};
-						}
-						log(LOG_DEBUG, "Not restricted " + key);
-						return _p.asyncPromptAuth(channel, cb, ctx, level, info);
-					};
-				}
-				return _p[name];
+				log(LOG_DEBUG, "Not restricted " + key);
+				return _p.asyncPromptAuth(channel, callback, context, level, info);
+			},
+			restrictLogin: function(uri) {
+				const key = uriToKey(uri);
+				restricted.set(key, true);
+			},
+			allowLogin: function(uri) {
+				const key = uriToKey(uri);
+				log(LOG_DEBUG, "Lifting restriction " + key);
+				restricted.delete(key, true);
 			}
-		});
-		return proxy;
+		};
 	});
 
 	/**
@@ -72,33 +64,27 @@ function LoggedPrompter(window) {
 		let _p = Services.ww
 			.getNewPrompter(window)
 			.QueryInterface(Ci.nsIPrompt);
+		let bind = key => _p[key].bind(_p);
 
-		// Log any alerts instead of showing a dialog.
-		// Everything else pass thru to the actual prompter.
-		let proxy = new Proxy(_p, {
-			has: function(name) { return name in _p },
-			hasOwn: function(name) { return name in _p; },
-			get: function(receiver, name) {
-				if (name === "QueryInterface") {
-					return function(iid) {
-						_p.QueryInterface(iid);
-						return proxy;
-					};
-				}
-				if (name === "alert") {
-					return function(text, title) {
-						log(LOG_INFO, "LoggedPrompter " + title + ": " + text);
-					};
-				}
-				if (name === "alertCheck") {
-					return function(text, title, cm, cs) {
-						log(LOG_INFO, "LoggedPrompter " + title + ": " + text);
-					};
-				}
-				return _p[name];
-			}
-		});
-		return proxy;
+		return {
+			QueryInterface: function(iid) {
+				_p.QueryInterface(iid);
+				return this;
+			},
+			alert: function(text, title) {
+				log(LOG_INFO, "LoggedPrompter " + title + ": " + text);
+			},
+			alertCheck: function(text, title, cm, cs) {
+				log(LOG_INFO, "LoggedPrompter " + title + ": " + text);
+			},
+			confirm: bind("confirm"),
+			confirmCheck: bind("confirmCheck"),
+			confirmEx: bind("confirmEx"),
+			prompt: bind("prompt"),
+			promptPassword: bind("promptPassword"),
+			promptUsernameAndPassword: bind("promptUsernameAndPassword"),
+			select: bind("select")
+		};
 	});
 }
 exports.LoggedPrompter = LoggedPrompter;
