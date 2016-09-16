@@ -227,6 +227,9 @@ var Dialog = {
 			return false;
 		}
 
+		// prevent multiple clicks
+		this.download = function() {};
+
 		if (hasItem) {
 			return this.downloadItem(start, hash);
 		}
