@@ -74,10 +74,12 @@ const proxyObserver = {
 Preferences.addObserver("extensions.dta.proxy", proxyObserver);
 proxyObserver.observe();
 
-function maybeTempBlacklisted(item, httpchan) {
+function maybeTempBlacklisted(conn, item, httpchan) {
 	try {
-		if (httpchan.getResponseHeader("Server").includes("cloudflare")) {
+		let server = httpchan.getResponseHeader("Server");
+		if (server.includes("cloudflare")) {
 			item.cleanRequest = true;
+			DomainPrefs.setTLD(conn.origURL, cleanRequest, true);
 			DomainPrefs.setTLD(httpchan.URI, cleanRequest, true);
 			return true;
 		}
@@ -97,6 +99,7 @@ function Connection(d, c, isInfoGetter) {
 	this.url = d.urlManager.getURL();
 
 	let url = modifyURL(this.url.url.clone());
+	this.origURL = url;
 
 	let referrer = d.referrer;
 	log(LOG_INFO, "starting: " + url.spec);
@@ -807,7 +810,7 @@ Connection.prototype = {
 				let file = d.fileName.length > 50 ? d.fileName.substring(0, 50) + "..." : d.fileName;
 				if (~[401, 402, 407, 500, 502, 503, 504].indexOf(code) ||
 					(Preferences.getExt('recoverallhttperrors', false) && code !== 404) ||
-					(code === 403 && aChannel instanceof Ci.nsIHttpChannel && maybeTempBlacklisted(d, aChannel))) {
+					(code === 403 && aChannel instanceof Ci.nsIHttpChannel && maybeTempBlacklisted(this, d, aChannel))) {
 					log(LOG_DEBUG, "we got temp failure!", code);
 					d.pauseAndRetry();
 					d.status = code >= 500 ? _('temperror') : _("error", [formatNumber(code, 3)]);
