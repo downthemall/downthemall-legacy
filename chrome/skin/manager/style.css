@@ -284,9 +284,6 @@ toolbox {
 #tooltip grid {
 	-moz-box-flex: 1;
 }
-tooltip textbox.plain {
-	color: InfoText;
-}
 #infoGrid label {
 	margin-bottom: 0;
 	font-weight: bold;
@@ -454,6 +451,7 @@ treechildren::-moz-tree-cell-text(private) {
 }
 #actions > toolbarseparator {
 	-moz-appearance: none;
+	height: 0;
 	border-top: 3px solid transparent;
 	border-bottom: 3px solid transparent;
 	border-left: 1px solid transparent;

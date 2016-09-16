@@ -5,7 +5,7 @@
 	margin-left: 2px;
 	-moz-appearance: none;
 }
-#actions:not(:-moz-window-inactive) {
+#actions:not(:-moz-window-inactive){
 	background: rgba(255,255,255,0.66);
 	border-top-left-radius: 4px;
 	border-bottom-left-radius: 4px;
