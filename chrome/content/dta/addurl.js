@@ -198,6 +198,7 @@ var Dialog = {
 				address.value = url;
 			}
 			catch (ex) {
+				log(LOG_ERROR, "Invalid URI entered:" + address.value, ex);
 				errors.push('address');
 			}
 		}
