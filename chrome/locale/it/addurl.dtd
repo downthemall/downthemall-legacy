@@ -1,0 +1,6 @@
+<!ENTITY windowtitle "Aggiungi download">
+<!ENTITY adddescription.value "Inserisci l'URL di download e (facoltativamente) la pagina referer.">
+<!ENTITY createbatchdescriptor.label "Crea descrittore batch">
+<!ENTITY createbatchdescriptor.tooltip "Crea un descrittore batch dalla selezione di testo corrente">
+<!ENTITY desc.batches.value "Puoi anche usare descrittori batch per scaricare più file alla volta.">
+<!ENTITY examples.value "Esempi:">

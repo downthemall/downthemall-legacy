@@ -1,0 +1,26 @@
+<!ENTITY start.label "Avvia!">
+<!ENTITY start.key "i">
+<!ENTITY queue.label "Accoda">
+<!ENTITY queue.key "a">
+<!ENTITY options.label "Preferenze">
+<!ENTITY url.value "Download">
+<!ENTITY url.placeholder "Inserisci l'URI di download">
+<!ENTITY override.filename.value "Nome file personalizzato">
+<!ENTITY override.filename.placeholder "Inserisci il nuovo nome file">
+<!ENTITY override.filename.tip "Inserisci il nuovo nome file o lascia vuoto per il nome predefinito">
+<!ENTITY directory.caption "Salva file in:">
+<!ENTITY directory.placeholder "Inserisci o seleziona la cartella">
+<!ENTITY mirrors.value "Mirror:">
+<!ENTITY referrer.value "Pagina referer:">
+<!ENTITY referrer.placeholder "Inserisci l'URI referer">
+<!ENTITY referrer.tip "Inserisci l'URI referer o lascia vuoto per non inviare un referer">
+<!ENTITY description.value "Descrizione:">
+<!ENTITY checksum.value "Checksum (hash):">
+<!ENTITY browse.tooltip "Sfoglia...">
+<!ENTITY mirrormanager.tip "Gestisci i mirror di download">
+<!ENTITY mask3.label "Maschera">
+<!ENTITY mask.tip "I file selezionati saranno salvati e rinominati usando la maschera">
+<!ENTITY mask.once.label "Utilizza la maschera solo per questa volta">
+<!ENTITY selectall.label "Seleziona tutto">
+<!ENTITY selectinv.label "Inverti selezione">
+<!ENTITY selectnone.label "Annulla selezione">

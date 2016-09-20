@@ -1,0 +1,123 @@
+<!ENTITY windowstyle.3 "width:48em;height:44em;">
+<!ENTITY filterspane.label "Filtri">
+<!ENTITY listhead1.label "Nome">
+<!ENTITY listhead2.label "Estensioni">
+<!ENTITY filter.label "Estensioni filtrate:">
+<!ENTITY useAs.label "Utilizza filtro come:">
+<!ENTITY filter.images.label "Filtro immagini">
+<!ENTITY filter.links.label "Filtro collegamenti">
+<!ENTITY add.label "Aggiungi nuovo filtro">
+<!ENTITY dtacontext2.label "Preferenze">
+<!ENTITY buttonlabelextra2 "Ripristina impostazioni predefinite">
+<!ENTITY dtaPreferences.title "Preferenze DownThemAll!">
+<!ENTITY manager "dTa! Manager">
+<!ENTITY mainpane.label "Generali">
+<!ENTITY mainpane.defaults.caption "Predefinite">
+<!ENTITY mainpane.defaults.desc "La cartella di download, la maschera di ridenominazione e i filtri utilizzati da OneClick! possono essere configurati nella finestra di selezione di DownThemAll!.">
+<!ENTITY mainpane.nameclash.caption "Quando esiste già un file con lo stesso nome:">
+<!ENTITY mainpane.rename.label "Rinomina">
+<!ENTITY mainpane.overwrite.label "Sovrascrivi">
+<!ENTITY mainpane.skip.label "Salta">
+<!ENTITY mainpane.ask.label "Chiedi">
+<!ENTITY mainpane.misc.caption "Varie">
+<!ENTITY mainpane.sounderror2.label "Riproduci un suono in caso di errore">
+<!ENTITY mainpane.alert.caption "Quando i download sono stati completati:">
+<!ENTITY mainpane.alert.label "Avvisami:">
+<!ENTITY mainpane.alertbox.label "Utilizzando finestre di avvertimento">
+<!ENTITY mainpane.alertnotifications2.label "Utilizzando notifiche desktop">
+<!ENTITY mainpane.alertnone.label "Non avvisarmi">
+<!ENTITY mainpane.sounddone.label "Riproduci un suono quando tutti i download sono stati completati">
+<!ENTITY mainpane.closedta.label "Chiudi DownThemAll! quando i download sono stati completati">
+<!ENTITY mainpane.settime.label "Imposta l'ora del file all'ora dell'ultima modifica (server) o all'ora in cui sono stati messi in coda">
+<!ENTITY mainpane.rememberoneclick.label "Fai ricordare a dTa OneClick! se esso agisce su tutte le schede o solo su quella attuale">
+<!ENTITY mainpane.confirmremove2.label "Conferma la rimozione dei download">
+<!ENTITY mainpane.textlinks.label "Riconosci i collegamenti testuali">
+<!ENTITY mainpane.listsniffedvideos.label "Registra ed elenca i video (Flash)">
+<!ENTITY privacypane.label "Privacy">
+<!ENTITY privacypane.closing.caption "Quando la finestra Manager viene chiusa">
+<!ENTITY privacypane.removecompleted2.label "Rimuovi i download completati">
+<!ENTITY privacypane.removecanceled2.label "Rimuovi i download annullati/non riusciti">
+<!ENTITY privacypane.removeaborted2.label "Rimuovi i download non terminati">
+<!ENTITY privacypane.deletefoldershistory.label "Svuota elenco cartelle">
+<!ENTITY privacypane.deletefiltershistory.label "Svuota i filtri aggiuntivi">
+<!ENTITY privacypane.showlog.label "Visualizza registro">
+<!ENTITY privacypane.reveallog.label "Mostra file">
+<!ENTITY privacypane.deletelog.label "Elimina registro">
+<!ENTITY privacypane.dropdowns.caption "Menù a discesa">
+<!ENTITY privacypane.dropdownresults2.label "Numero di voci da mantenere">
+<!ENTITY privacypane.logs.caption "Registro diagnostico">
+<!ENTITY privacypane.enablelogs.label "Abilita il registro diagnostico">
+<!ENTITY privacypane.notice.caption "Informativa">
+<!ENTITY privacypane.notice.desc "DownThemAll! si integra anche con il pannello Elimina dati personali (se disponibile).">
+<!ENTITY privacypane.privacynotice.label "La nostra informativa sulla privacy">
+<!ENTITY serverspane.label "Rete">
+<!ENTITY serverspane.downloads.caption "Download">
+<!ENTITY serverspane.concurrent2.label "Download concorrenti:">
+<!ENTITY serverspane.perserver2.label "Download per server:">
+<!ENTITY serverspane.url.label "Indirizzo o dominio:">
+<!ENTITY serverspane.new.label "Nuovo limite">
+<!ENTITY serverspane.limits.label "Limiti per server">
+<!ENTITY serverpane.limits.noitems "Nessun limite per server specificato">
+<!ENTITY serverspane.connections.label "Connessioni:">
+<!ENTITY serverspane.speed2.label "Limite velocità:">
+<!ENTITY serverspane.segments.label "Numero segmenti:">
+<!ENTITY serverspane.unlimited "Illimitato">
+<!ENTITY serverspane.limited "Limitato">
+<!ENTITY serverspane.autoretry2.caption "Numero nuovi tentativi automatici">
+<!ENTITY serverspane.autoretry.interval.label "Riprova ogni">
+<!ENTITY serverspane.autoretry.max.label "Numero massimo tentativi">
+<!ENTITY serverspane.cancel.label "Annulla">
+<!ENTITY serverspane.edit.label "Modifica">
+<!ENTITY serverspane.remove.label "Rimuovi">
+<!ENTITY schedpane.label "Pianificazione">
+<!ENTITY schedpane.enable.label "Abilita pianificazione">
+<!ENTITY schedpane.start.label "Avvia i download solo dalle:">
+<!ENTITY schedpane.end.label "e terminali alle:">
+<!ENTITY schedpane.open.label "Apri automaticamente il Manager">
+<!ENTITY advancedpane.label "Avanzate">
+<!ENTITY advancedpane.downloads.caption "Controllo avanzato dei download">
+<!ENTITY advancedpane.miscellaneous.caption "Varie">
+<!ENTITY advancedpane.files.caption "File">
+<!ENTITY advancedpane.chunks2.label "Numero segmenti per download:">
+<!ENTITY advancedpane.chunksdisabled "Disabilitato">
+<!ENTITY advancedpane.autosegments.label "Avvia un nuovo segmento una volta terminato uno precedente">
+<!ENTITY advancedpane.timeout2.label "Tempo scaduto download dopo">
+<!ENTITY advancedpane.seconds "secondi">
+<!ENTITY advancedpane.minute "minuto">
+<!ENTITY advancedpane.minutes "minuti">
+<!ENTITY advancedpane.hour "ora">
+<!ENTITY advancedpane.hours "ore">
+<!ENTITY advancedpane.tempfiles.caption "File temporanei">
+<!ENTITY advancedpane.usetemp.label "Salva i segmenti in una cartella temporanea">
+<!ENTITY advancedpane.tempdir.label "Utilizza questa cartella:">
+<!ENTITY advancedpane.permissions "Permessi file">
+<!ENTITY advancedpane.permissions.groupmay "I membri del gruppo possono">
+<!ENTITY advancedpane.permissions.everybodymay "Chiunque altro può">
+<!ENTITY advancedpane.permissions.read "Lettura">
+<!ENTITY advancedpane.permissions.write "Scrittura">
+<!ENTITY advancedpane.loadendfirst2.label "Carica alcuni ultimi kilobyte per primi">
+<!ENTITY advancedpane.scheduler.caption "Ordine di avvio download:">
+<!ENTITY advancedpane.scheduler.fast "Veloce - Come in coda">
+<!ENTITY advancedpane.scheduler.fair "Normale+Lento - Equamente distribuiti">
+<!ENTITY advancedpane.scheduler.legacy "Legacy - nessun limite">
+<!ENTITY advancedpane.exposeinua.label "Mostra DownThemAll! nella stringa User-Agent">
+<!ENTITY advancedpane.sparsefiles.caption "File sparse">
+<!ENTITY advancedpane.sparsefiles.label "Utilizza i file sparse se supportati">
+<!ENTITY advancedpane.sparsefiles.tooltip "I file sparse sono file che non occupano immediatamente lo spazio richiesto sul disco fisso. I file sparse possono causare una preallocazione più veloce, ma anche prestazioni in scrittura inferiori e/o una maggiore frammentazione dei file!">
+<!ENTITY uipane.label "Interfaccia">
+<!ENTITY uipane.namesonly.label "Visualizza solo i nomi dei file nella finestra Manager">
+<!ENTITY uipane.integration.caption "Integrazione">
+<!ENTITY uipane.downloadwin.label "Aggiungi DownThemAll! alla finestra 'Salva file'">
+<!ENTITY uipane.context.caption "Menù di scelta rapida">
+<!ENTITY uipane.tools.caption "Menù Strumenti">
+<!ENTITY uipane.compact.label "Usa un menù compatto">
+<!ENTITY uipane.hide.label "Nascondi questo menù">
+<!ENTITY uipane.showtooltip.label "Visualizza informazioni rapide download">
+<!ENTITY uipane.manager.caption "Finestra Manager">
+<!ENTITY uipane.startminimized.label "Avvia ridotto a icona">
+<!ENTITY uipane.minimizetotray.label "Visualizza nell'area di notifica">
+<!ENTITY uipane.getmintrayr.label "Ottieni MinTrayR">
+<!ENTITY uipane.notification.label "Quando si aggiungono download con OneClick, visualizza:">
+<!ENTITY uipane.notification.nonotification.radio "Nessuna notifica">
+<!ENTITY uipane.notification.doorhangernotification.radio "Notifiche a discesa">
+<!ENTITY uipane.notification.desktopnotification.radio "Notifica desktop">

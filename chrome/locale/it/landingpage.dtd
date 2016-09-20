@@ -1,0 +1,95 @@
+<!ENTITY lp.localedir "ltr">
+<!ENTITY language "Italiano">
+<!ENTITY transAuthor "Il team dTa, Alessandro Menti">
+<!ENTITY fulltranslation "Traduzione italiana del team dTa e di Alessandro Menti">
+<!ENTITY amo.summary2 "Il primo e unico gestore di download/acceleratore nel tuo browser!">
+<!ENTITY amo.description.intro "DownThemAll! è tutto ciò che puoi desiderare da un gestore di download: offre un avanzato acceleratore che rende i tuoi download fino a quattro volte più veloci e ti permette di interrompere e riprendere i download quando vuoi.">
+<!ENTITY amo.description.feat2 "DownThemAll è veloce, affidabile e facile da usare! Ti consente di scaricare tutti i collegamenti o le immagini contenuti in una pagina Web e molto altro: puoi raffinare i tuoi download utilizzando criteri completamente personalizzabili per scaricare solo ciò che veramente vuoi. Esercita il controllo totale sui tuoi download, sulla velocità dedicata e sul numero di connessioni parallele in qualunque momento. Utilizza metalink o aggiungi mirror manualmente per scaricare un file da server differenti contemporaneamente.">
+<!ENTITY amo.description.free2 "DownThemAll è open source e freeware. Niente adware, niente spyware, niente tracciatori, nessun costo di qualunque tipo!">
+<!ENTITY amo.description.more "Per ulteriori informazioni visita la nostra <a href='http://www.downthemall.net/howto/features/'>pagina delle caratteristiche</a>.">
+<!ENTITY lp.title "Informazioni su DownThemAll!">
+<!ENTITY lp.welcome "Benvenuto in DownThemAll!">
+<!ENTITY lp.info "Guarda i video che mostrano come usare DownThemAll! e contengono informazioni sulla privacy e sui tuoi diritti">
+<!ENTITY lp.moreinfo "Per ulteriori informazioni visita la nostra <a href='http://www.downthemall.net/howto/features/'>pagina delle caratteristiche</a>.">
+<!ENTITY lp.gettingstarted "Per iniziare">
+<!ENTITY lp.toolbar "Pulsanti della barra degli strumenti">
+<!ENTITY lp.privacy "Privacy">
+<!ENTITY lp.yourrights "I tuoi diritti">
+<!ENTITY lp.contact "Contattaci">
+<!ENTITY lp.pleasenote "Nota bene:">
+<!ENTITY lp.donate2 "Valuta l'opportunità di fare una donazione">
+<!ENTITY lp.tut.firsttitle "Il tuo primo download">
+<!ENTITY lp.tut.fd2 "Scaricare un file in dTa è abbastanza facile ma anche molto potente. Se ti viene chiesto di aprire o salvare un file puoi selezionare la voce DownThemAll!. Dopo aver scelto dove salvare il download puoi iniziare subito il download o mettere in coda il file per scaricarlo in seguito.">
+<!ENTITY lp.tut.selecttitle "Usare la finestra di selezione">
+<!ENTITY lp.tut.selintro "Il menù di scelta rapida delle pagine Web ha una nuova voce DownThemAll!. Usando tale voce comparirà la finestra di selezione di DownThemAll! che puoi usare per selezionare facilmente uno o più collegamenti da una pagina.">
+<!ENTITY lp.tut.seloptions "Nella finestra di selezione hai diversi modi per scegliere quali file scaricare:">
+<!ENTITY lp.tut.selopthand2 "Puoi controllare i collegamenti che vuoi scaricare manualmente.">
+<!ENTITY lp.tut.seloptfilters2 "Puoi usare i filtri già presenti o impostarne di personalizzati, ad es. per scaricare tutte le immagini collegate.">
+<!ENTITY lp.tut.seloptfast2 "Inoltre puoi specificare un tuo filtro nella casella Filtraggio rapido, ad esempio <code>*.pdf,*.doc</code> o usare anche espressioni regolari">
+<!ENTITY lp.tut.seltypes "La finestra di selezione contiene due schede per due diversi tipi di download:">
+<!ENTITY lp.tut.seltypelinks "La scheda Collegamenti che contiene tutti i collegamenti scaricabili trovati nella pagina">
+<!ENTITY lp.tut.seltypepics "E la scheda Immagini e file multimediali, che contiene tutte le immagini e gli altri file multimediali mostrati nella pagina">
+<!ENTITY lp.tut.selgalleries "Le immagini a dimensione piena sono spesso accessibili solo dalle pagine di una galleria, quindi le troverai nella scheda Collegamenti">
+<!ENTITY lp.tut.seldone2 "Una volta selezionati i file da scaricare clicca su Inizia! per avviare subito i tuoi download o Aggiungi in pausa per scaricarli in seguito.">
+<!ENTITY lp.tut.batchestitle "Scaricare batch">
+<!ENTITY lp.tut.batches1 "Molti utenti vogliono scaricare batch di file numerati sequenzialmente. DownThemAll! ti permette di definire i batch in modo semplice come mostrato dal video.">
+<!ENTITY lp.tut.batches2 "La sintassi base è: <code>[inizio:fine]</code> oppure <code>[inizio:fine:passo]</code> dove sia <code>inizio</code> sia <code>fine</code> possono essere un numero o un semplice carattere. <code>passo</code> indica la lunghezza del passo e, se omesso, è semplicemente pari a 1.">
+<!ENTITY lp.tut.batches3 "Per esempio, se volessi scaricare le immagini da 001 a 100, potresti cambiare l'URL a: <code>http://example.org/[001:100].jpg</code>">
+<!ENTITY lp.tut.batchesctx "Inoltre, il menù di scelta rapida del campo URL nella finestra Aggiungi download ti consente di convertire facilmente del testo selezionato in un descrittore batch.">
+<!ENTITY lp.tut.oneclicktitle "DownThemAll! OneClick">
+<!ENTITY lp.tut.oneclick1.2 "Una volta eseguito il tuo primo download sarà disponibile un'altra voce: DownThemAll! OneClick, che puoi utilizzare per scaricare direttamente file utilizzando le impostazioni stabilite in precedenza e saltando le finestre relative alle opzioni di download e/o di selezione.">
+<!ENTITY lp.tut.oneclick2 "In questo modo OneClick ti permette di accodare rapidamente molti collegamenti.">
+<!ENTITY lp.tut.oneclickn "Dopo aver usato la funzione Cancella dati privati in Firefox, la funzione OneClick non sarà disponibile fino a che non avrai nuovamente avviato un download normale con DownThemAll!.">
+<!ENTITY lp.tut.tabstitle "Scaricare elementi da tutte le schede contemporaneamente">
+<!ENTITY lp.tut.alltabs "È possibile accodare contemporaneamente elementi da tutte le schede utilizzando i menù a discesa del pulsante sulla barra degli strumenti.">
+<!ENTITY lp.tut.tabrestore "Saranno disponibili solo i collegamenti da schede completamente ripristinate.">
+<!ENTITY lp.tb.intro "DownThemAll! offre alcuni pulsanti nella barra degli strumenti per fornirti un modo pratico di accedere alle funzionalità di DownThemAll!.">
+<!ENTITY lp.tb.install "Aggiungi pulsanti alla barra degli strumenti">
+<!ENTITY lp.tb.add.title "Aggiungere e usare i pulsanti della barra degli strumenti">
+<!ENTITY lp.tb.add.p1 "DownThemAll! include quattro pulsanti della barra degli strumenti per rendere più facile trovare e accodare i download">
+<!ENTITY lp.tb.add.dta "Il pulsante DownThemAll!">
+<!ENTITY lp.tb.add.dtadesc "Apre la finestra di selezione di DownThemAll! per la scheda corrente.">
+<!ENTITY lp.tb.add.tdta "Pulsante OneClick!">
+<!ENTITY lp.tb.add.tdtadesc "Scarica gli elementi della pagina corrente in base alle preferenze e ai filtri usati per ultimi.">
+<!ENTITY lp.tb.add.manager "Pulsante DownThemAll! Manager">
+<!ENTITY lp.tb.add.managerdesc "Apre la finestra Manager.">
+<!ENTITY lp.tb.add.selector "Pulsante DownThemAll! Selector">
+<!ENTITY lp.tb.add.selectordesc "Aggiunge gli elementi quando si clicca su di essi col tasto sinistro.">
+<!ENTITY lp.tb.add.p2 "I pulsanti della barra degli strumenti possono essere aggiunti tramite <code>Visualizza → Barre degli strumenti → Personalizza...</code>.">
+<!ENTITY lp.tb.dnd.title "Trascinamento">
+<!ENTITY lp.tb.dnd.p1 "Puoi trascinare qualunque collegamento o immagine sui bottoni DownThemAll! o OneClick! per scaricarli.">
+<!ENTITY lp.tb.dnd.p2 "Puoi anche trascinare elementi da scaricare sulla finestra Manager.">
+<!ENTITY lp.tb.dnd.order "Puoi ordinare la tua coda di download con il trascinamento. Seleziona semplicemente alcuni download e rilasciali nella posizione desiderata.">
+<!ENTITY lp.tb.selector.title "Usare DownThemAll! Selector">
+<!ENTITY lp.tb.selector.queueing "DownThemAll! Selector ti consente di accodare molti download semplicemente cliccando sui collegamenti o sulle immagini.">
+<!ENTITY lp.tb.selector.how "Per abilitare Selector clicca sul pulsante della barra degli strumenti corrispondente. Per disabilitarlo una volta finito, semplicemente clicca di nuovo il pulsante.">
+<!ENTITY lp.pr.title "Informativa sulla privacy">
+<!ENTITY lp.pr.intro2 "DownThemAll rispetta la tua privacy.">
+<!ENTITY lp.pr.settings2 "Puoi far sì che DownThemAll! rimuova tutti i download completati, annullati e non terminati dall'elenco dei download una volta chiusa la finestra modificando le impostazioni nella scheda Preferenze → Privacy.">
+<!ENTITY lp.pr.diag2 "Puoi abilitare i messaggi diagnostici, che saranno registrati sia nella Console degli errori sia scritti nel file dta_log.txt, nella scheda Preferenze → Privacy. I messaggi diagnostici probabilmente conterranno informazioni sensibili come URL, percorsi di file, nomi dei file che stai scaricando o anche informazioni sui cookie. Quest'opzione è DISABILITATA per impostazione predefinita per proteggere la tua privacy. Se invii un registro diagnostico potresti voler rimuovere le informazioni sensibili. I registri diagnostici non saranno mai trasmessi e/o pubblicati automaticamente.">
+<!ENTITY lp.pr.pwpbm "DownThemAll! supporta la Modalità navigazione anonima per singola finestra di Firefox: quando aggiungi dei download da una finestra Navigazione anonima, DownThemAll! non salverà alcuna informazione relativa ai file scaricati, alle cartelle di download o alle maschere di ridenominazione utilizzate. Nota che gli altri dati - come nuovi filtri creati o, chiaramente, i download veri e propri - sono comunque scritti su disco.">
+<!ENTITY lp.pr.link "Questa nota informativa è sempre disponibile su questa pagina (about:downthemall) ed è inoltre raggiungibile dalla finestra Preferenze.">
+<!ENTITY lp.yr.usagetitle "Utilizzo e redistribuzione">
+<!ENTITY lp.yr.usage "Gli autori concedono in licenza DownThemAll! in modo che tu possa liberamente e gratuitamente:">
+<!ENTITY lp.yr.usageuse "Utilizzare DownThemAll!">
+<!ENTITY lp.yr.usagemod "Modificare DownThemAll!">
+<!ENTITY lp.yr.usagedist "Redistribuire DownThemAll!, con o senza modifiche">
+<!ENTITY lp.yr.usagemore "Vedi le licenze per maggiori informazioni.">
+<!ENTITY lp.yr.logo "I loghi utilizzano una licenza più restrittiva per consentirci di proteggere la nostra reputazione da truffatori. Ciò significa che devi utilizzare i tuoi loghi e un tuo nome nel caso in cui tu scelga di distribuire versioni modificate di DownThemAll!">
+<!ENTITY lp.languagetitle "Lingua">
+<!ENTITY lp.language.babelzilla "Se parli correntemente più lingue, valuta l'opportunità di iscriverti a <a href='http://babelzilla.org'>babelzilla.org</a> per aiutare a tradurre questo e molti altri ottimi componenti aggiuntivi.">
+<!ENTITY lp.yr.licensetitle "Copyright e licenza">
+<!ENTITY lp.yr.licensed "DownThemAll! è concesso in licenza in base ai termini e alle condizioni della <a href='http://www.gnu.org/licenses/old-licenses/gpl-2.0.html'>GPL 2.0</a>. Vedi il file GPL. Ciò si applica a tutti i file sorgente.">
+<!ENTITY lp.yr.morelicense3 "Dei singoli file potrebbero avere licenze aggiuntive e/o differenti. Vedi i corrispondenti file nel repository disponibili a <a href='http://code.downthemall.net/repos/'>http://code.downthemall.net/repos/</a>. La maggior parte dei file è concessa in licenza in base alla MPL 2.0, compatibile con la GPL/LGPL, o con tre licenze in base alle MPL 1.1/GPL 2.0/LGPL 2.1. Vedi rispettivamente i file MPL, GPL, LGPL.">
+<!ENTITY lp.yr.gplintro "Seguono le parti più importanti della GPL 2.0, l'assenza di garanzia e le dichiarazioni di non responsabilità per eventuali danni:">
+<!ENTITY lp.yr.icons "Grafica, icone e pulsanti">
+<!ENTITY lp.yr.iconsbased4 "sono basati sulle opere di Mike Matas, Mark James, del progetto Noun e del progetto Tango">
+<!ENTITY lp.yr.artwork3 "La grafica originale sono: Copyright © 2004-2013 Stefano Verna, Federico Parodi e Nils Maier">
+<!ENTITY lp.yr.artworklicense "La grafica originale è concessa in licenza in base a:">
+<!ENTITY lp.yr.logo3 "Il design del logo DownThemAll! è: Copyright © 2004-2013 Stefano Verna.">
+<!ENTITY lp.yr.logopermissions "Il nome e il logo di DownThemAll! non possono essere utilizzati senza permesso in alcun'opera derivata, fatta eccezione per i riconoscimenti e per le note legate alle licenze.">
+<!ENTITY lp.ct.bugstitle "Segnalare bug/Richiedere funzionalità">
+<!ENTITY lp.ct.bugs2 "Segnala i bug e richiedi funzionalità sul nostro <a href='https://bugs.downthemall.net/'>bug tracker</a>.">
+<!ENTITY lp.ct.contactstitle "Contatti">
+<!ENTITY lp.ct.contactsfeed2 "Ci piacerebbe sentire la tua opinione, ascoltare i tuoi suggerimenti e/o accogliere le tue offerte di aiuto.">
+<!ENTITY lp.ct.contacts "Vedi la nostra <a href='http://www.downthemall.net/main/contacts/'>pagina dei contatti</a>.">

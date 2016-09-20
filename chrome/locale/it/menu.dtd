@@ -1,0 +1,25 @@
+<!ENTITY dta-tbinstall "Aggiungi pulsanti barra degli strumenti">
+<!ENTITY dta-pref.label "Preferenze...">
+<!ENTITY dta-about2.label "Informazioni su DownThemAll!">
+<!ENTITY dta-manager-button "dTa! Manager">
+<!ENTITY dta-manager-button.desc "Apre la finestra Manager.">
+<!ENTITY dta-selector-button2.label "Selettore OneClick!">
+<!ENTITY dta-selector-button.desc "Aggiunge degli elementi cliccandovi sopra con il tasto sinistro.">
+<!ENTITY dta-tb-all.label "Tutte le schede">
+<!ENTITY dta-tb-single.label "Scheda corrente">
+<!ENTITY dta-selection2.label "Esegui DownThemAll! sulla selezione">
+<!ENTITY dta-selection-turbo2.label "Esegui OneClick sulla selezione">
+<!ENTITY dta-regular2.label "DownThemAll!">
+<!ENTITY dta-regular.desc "Apre la finestra di selezione DownThemAll! per la scheda corrente.">
+<!ENTITY dta-regular-turbo2.label "dTa! OneClick">
+<!ENTITY dta-regular-turbo.desc "Scarica tutti gli elementi dalla pagina corrente in base alle preferenze e ai filtri usati per ultimi.">
+<!ENTITY dta-img-save2.label "Salva immagine con DownThemAll!">
+<!ENTITY dta-img-save-turbo2.label "Salva immagine con dTa! OneClick">
+<!ENTITY dta-video-save2.label "Salva video con DownThemAll!">
+<!ENTITY dta-video-save-turbo2.label "Salva video con dTa! OneClick">
+<!ENTITY dta-audio-save2.label "Salva audio con DownThemAll!">
+<!ENTITY dta-audio-save-turbo2.label "Salva audio con dTa! OneClick">
+<!ENTITY dta-link-save2.label "Salva collegamento con DownThemAll!">
+<!ENTITY dta-link-save-turbo2.label "Salva collegamento con dTa! OneClick">
+<!ENTITY dta-form-save2.label "Salva destinazione modulo con DownThemAll!">
+<!ENTITY dta-form-save-turbo2.label "Salva destinazione modulo con dTa! OneClick">

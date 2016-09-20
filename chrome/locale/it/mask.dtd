@@ -1,0 +1,31 @@
+<!ENTITY mask.tags "Tag per la ridenominazione">
+<!ENTITY mask.name "Nome file">
+<!ENTITY mask.ext "Estensione">
+<!ENTITY mask.url "URL base">
+<!ENTITY mask.curl "URL completo">
+<!ENTITY mask.flatcurl "Stringa dell'intero URL">
+<!ENTITY mask.batch "Numero batch">
+<!ENTITY mask.inum "Numero di elementi">
+<!ENTITY mask.hh "Ore">
+<!ENTITY mask.mm "Minuti">
+<!ENTITY mask.ss "Secondi">
+<!ENTITY mask.d "Giorno">
+<!ENTITY mask.m "Mese">
+<!ENTITY mask.y "Anno">
+<!ENTITY mask.subdirs "Sottodirectory dell'URL">
+<!ENTITY mask.flatsubdirs "Stringa delle sottodirectory dell'URL">
+<!ENTITY mask.linktext "Testo collegamento">
+<!ENTITY mask.flatlinktext "Stringa testo collegamento">
+<!ENTITY mask.refername "Nome referer">
+<!ENTITY mask.referext "Estensione referer">
+<!ENTITY mask.refer "URL referer">
+<!ENTITY mask.crefer "Referer completo">
+<!ENTITY mask.flatcrefer "Stringa referer completo">
+<!ENTITY mask.referdirs "Sottodirectory referer">
+<!ENTITY mask.flatreferdirs "Stringa sottodirectory referer">
+<!ENTITY mask.qstring "Stringa query">
+<!ENTITY mask.referqstring "Stringa query referer">
+<!ENTITY mask.title "Titolo associato al collegamento">
+<!ENTITY mask.flattitle2 "Stringa titolo associato al collegamento">
+<!ENTITY mask.tip "Clicca o trascina sulla maschera di ridenominazione">
+<!ENTITY mask.open.tip "Legenda etichette di ridenominazione">
