@@ -2858,7 +2858,7 @@ var ConflictManager = {
 			conflicts = yield this._findUnique(newDest, basename, conflicts);
 			let options = {
 				url: Utils.cropCenter(download.urlManager.usable, 45),
-				fn: Utils.cropCenter(newDest.leafName, 45),
+				fn: Utils.cropCenter(download.destinationLocalFile.leafName, 45),
 				newDest: Utils.cropCenter(newDest.leafName, 45)
 			};
 			window.openDialog(
