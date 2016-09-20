@@ -68,46 +68,46 @@ function isOSError(ex, unix, win) {
 
 function _moveFile(destination, self) {
 	let remakeDir = false;
-	let move = function(resolve, reject, x) {
-		if (remakeDir) {
-			Utils.makeDir(destination, Prefs.dirPermissions, true);
+	let move = function*() {
+		for (let x = 0; x < 5; ++x) {
+			if (remakeDir) {
+				yield Utils.makeDir(destination, Prefs.dirPermissions, true);
+			}
+			let df = destination.clone();
+			df.append(self.destinationName);
+			try {
+				yield moveFile(self.tmpFile.path, df.path, self.shouldOverwrite);
+				return;
+			}
+			catch (ex) {
+				if (isOSError(ex, "EEXIST", "ERROR_ALREADY_EXISTS") && !self.shouldOverwrite) {
+					self.conflicts += 1;
+					continue;
+				}
+				if (isOSError(ex, "ENAMETOOLONG", "ERROR_PATH_NOT_FOUND")) {
+					try {
+						self.shortenName();
+						ConflictManager.unpin(pinned);
+						pinned = self.destinationFile;
+						ConflictManager.pin(pinned, !self.shouldOverwrite);
+					}
+					catch (iex) {
+						log(LOG_ERROR, "Failed to shorten name", ex);
+					}
+				}
+				if (ex.becauseNoSuchFile || isOSError(ex, "ENOENT", "NONE")) {
+					remakeDir = true;
+				}
+				log(LOG_ERROR, ex);
+				yield new Promise(function(resolve) {
+					setTimeoutOnlyFun(() => resolve(), x * 250);
+				});
+			}
 		}
-		let df = destination.clone();
-		df.append(self.destinationName);
-		moveFile(self.tmpFile.path, df.path, self.shouldOverwrite).then(function() {
-			resolve(true);
-		}, function(ex) {
-			if (isOSError(ex, "EEXIST", "ERROR_ALREADY_EXISTS") && !self.shouldOverwrite) {
-				self.conflicts += 1;
-				move(resolve, reject, x);
-				return;
-			}
-
-			if (isOSError(ex, "ENAMETOOLONG", "ERROR_PATH_NOT_FOUND")) {
-				try {
-					self.shortenName();
-					ConflictManager.unpin(pinned);
-					pinned = self.destinationFile;
-					ConflictManager.pin(pinned, !self.shouldOverwrite);
-				}
-				catch (iex) {
-					log(LOG_ERROR, "Failed to shorten name", ex);
-				}
-			}
-			if (ex.becauseNoSuchFile || isOSError(ex, "ENOENT", "NONE")) {
-				remakeDir = true;
-			}
-			log(LOG_ERROR, ex);
-			x = x || 1;
-			if (x > 5) {
-				log(LOG_ERROR, "shit hit the fan!");
-				reject(ex);
-				return;
-			}
-			setTimeoutOnlyFun(() => move(resolve, reject, ++x), x * 250);
-		}).catch(reject);
+		log(LOG_ERROR, "shit hit the fan!");
+		throw new Exception("Failed to move file");
 	};
-	return new Promise(move);
+	return Task.spawn(move);
 };
 
 function dieEarly() {
