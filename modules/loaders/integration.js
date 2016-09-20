@@ -393,7 +393,7 @@ exports.load = function load(window, outerEvent) {
 									bundle.getString('error.information')
 								);
 							}
-							if (typeof queued === 'number') {
+							else if (typeof queued === 'number') {
 								notifyInfo(bundle.getFormattedString('queuedn', [queued]));
 							}
 							else {
