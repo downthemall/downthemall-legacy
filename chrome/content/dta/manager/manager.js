@@ -2848,6 +2848,9 @@ var ConflictManager = {
 		else if ('_sessionSetting' in this) {
 			cr = this._sessionSetting;
 		}
+		else if ('_conflictSetting' in download) {
+			cr = download._conflictSetting;
+		}
 
 		if (cr < 0) {
 			let dialog = {};
@@ -2875,6 +2878,9 @@ var ConflictManager = {
 			}
 			else if (ctype === 2) {
 				Preferences.setExt('conflictresolution', cr);
+			}
+			else {
+				download._conflictSetting = cr;
 			}
 		}
 
