@@ -5,6 +5,10 @@
 
 /* global content, setTimeout, removeMessageListener, addMessageListener, sendAsyncMessage */
 
+if (!("setTimeout" in this)) {
+	Components.utils.import("resource://gre/modules/Timer.jsm");
+}
+
 (function() {
 
 const {classes: Cc, interfaces: Ci, utils: Cu} = Components;
