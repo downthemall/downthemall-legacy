@@ -102,8 +102,7 @@ var Advanced = {
 		return $('dtapermissions').value & perm;
 	},
 	setPerm: function(perm) {
-		var rv = $('dtapermissions').value ^ perm;
-		return $('dtapermissions').value ^ perm;
+		return 384 | ($('dtapermissions').value ^ perm);
 	},
 	changedMaxChunks: function() {
 		let v = $('maxchunks').value;

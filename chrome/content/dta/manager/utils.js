@@ -160,7 +160,12 @@ var Prefs = {
 			this[key] = Preferences.getExt(pref, def);
 		}
 
-		let perms = Prefs.permissions;
+		let perms = 384 | Prefs.permissions;
+		if (Prefs.permissions !== perms) {
+			// Sanity check
+			Prefs.permissions = perms;
+			Preferences.setExt("permissions", perms);
+		}
 		if (perms & parseInt("600", 8)) {
 			perms |= parseInt("100", 8);
 		}
