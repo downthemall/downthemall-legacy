@@ -112,6 +112,26 @@ test("exports", function() {
 		ok(!f.match("imanisofile"));
 		ok(f.match("some.iso"));
 		ok(f.match("some.ISO"));
+		ok(!f.match("some.iso?query"));
+		ok(!f.match("some.ISO?query"));
+		ok(!f.match("notsome.iso"));
+		ok(!f.match("notsome.ISO"));
+		ok(!f.match("some"));
+		ok(!f.match("some.is."));
+		ok(!f.match("some.is"));
+	});
+
+	test("fnmatch filter 3", function() {
+		var f = FilterManager.getTmpFromString("s?m*.iso");
+		var r = f._regs;
+		strictEqual(r.length, 1);
+		strictEqual(r[0].source, "^s.m.*\\.iso$");
+		ok(!f.match("iso"));
+		ok(!f.match("imanisofile"));
+		ok(f.match("some.iso"));
+		ok(f.match("some.ISO"));
+		ok(!f.match("some.iso?query"));
+		ok(!f.match("some.ISO?query"));
 		ok(!f.match("notsome.iso"));
 		ok(!f.match("notsome.ISO"));
 		ok(!f.match("some"));

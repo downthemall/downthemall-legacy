@@ -10,10 +10,10 @@ const TOPIC_FILTERSCHANGED = 'DTA:filterschanged';
 
 const FILTERS_FILE = "filters.json";
 
-const REG_ESCAPE = /[{}()\[\]\\^$.?]/g;
+const REG_ESCAPE = /[{}()\[\]\\^$.]/g;
 const REG_WILD = /\*/g;
-const REG_WILD2 = /\./g;
-const REG_FNMATCH = /[*.]/;
+const REG_WILD2 = /\?/g;
+const REG_FNMATCH = /[*?]/;
 
 const Preferences = require("preferences");
 const RegExpMerger = require("./regexpmerger");
