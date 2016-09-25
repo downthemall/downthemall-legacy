@@ -594,7 +594,7 @@ Dialog = {
 				link.checked = 'manuallySelected';
 				continue;
 			}
-			if (fast && fast.match(link.url.usable + " " + link.desc)) {
+			if (fast && (fast.match(link.url.usable) || (link.desc && fast.match(link.desc)))) {
 				link.checked = 'fastFiltered';
 				continue;
 			}
