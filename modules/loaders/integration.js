@@ -2,7 +2,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
-Cu.permitCPOWsInScope(this);
 
 /* **
  * Lazy getters
@@ -27,6 +26,7 @@ const {unique} = require("support/uniquelinks");
 
 const {unloadWindow} = require("support/overlays");
 const strfn = require("support/stringfuncs");
+const cpow = require("./cpow");
 
 const {Task} = requireJSM("resource://gre/modules/Task.jsm");
 
@@ -726,7 +726,7 @@ exports.load = function load(window, outerEvent) {
 					}
 				}
 			}
-			else if (ctx.target && ('form' in ctx.target)) {
+			else if (ctx.target && cpow.onForm(ctx.target)) {
 				if (items[0]) {
 					show.push(menu.SaveForm);
 				}
