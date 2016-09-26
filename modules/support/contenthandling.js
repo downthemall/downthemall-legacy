@@ -197,94 +197,95 @@ ContentHandlingImpl.prototype = {
 			if (!(REGEXP_MEDIA.test(spec) && !REGEXP_SWF.test(spec)) && !REGEXP_CT.test(ct)) {
 				return;
 			}
-			let uri = null;
-			let lc = null;
-			if (channel instanceof Ci.nsIInterfaceRequestor) {
-				try {
-					lc = channel.getInterface(Ci.nsILoadContext);
-				}
-				catch (ex) {
-
-				}
-			}
-			Task.spawn(function*() {
-				if (!lc) {
-					try {
-						lc = channel.notificationCallbacks.getInterface(Ci.nsILoadContext);
-					}
-					catch (ex) {
-
-					}
-				}
-				if (lc) {
-					try {
-						log(LOG_DEBUG, "got load context");
-						try {
-							let wnd = lc.topWindow;
-							uri = Services.io.newURI(wnd.location.href, wnd.document.characterSet, null);
-							log(LOG_DEBUG, "got uri from lctw " + uri.spec);
-						}
-						catch (ex) {
-							try {
-								let tfe = lc.topFrameElement;
-								let mm = tfe.messageManager;
-								let wnd = yield new Promise((resolve, reject) => {
-									let topic = `DTA::getURI:${this.getUriJob++}`;
-									mm.addMessageListener(topic, function load(m) {
-										mm.removeMessageListener(topic, load);
-										resolve(m.data);
-									});
-									mm.sendAsyncMessage("DTA:ch:getURI", {
-										topic: topic
-									});
-								});
-								uri = Services.io.newURI(wnd.location, wnd.characterSet, null);
-								log(LOG_DEBUG, "got uri from lctfe " + uri.spec);
-							}
-							catch (ex) {
-								log(LOG_DEBUG, "Cannot get from lc", ex);
-							}
-						}
-					}
-					catch (ex) {
-						// no op
-					}
-				}
-				if (!uri) {
-					try {
-						let wp;
-						if (!uri && channel.loadGroup && channel.loadGroup.groupObserver) {
-							wp = channel.loadGroup.groupObserver.QueryInterface(Ci.nsIWebProgress);
-						}
-						if (!uri && !wp) {
-							wp = channel.notificationCallbacks.getInterface(Ci.nsIWebProgress);
-						}
-						if (!wp || !wp.DOMWindow) {
-							return;
-						}
-						let wn = wp.DOMWindow.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIWebNavigation);
-						if (!wn || !wn.currentURI) {
-							return;
-						}
-						uri = wn.currentURI;
-					}
-					catch (ex) {}
-				}
-				if (!uri) {
-					log(LOG_DEBUG, "Failed to get video doc uri");
-					return;
-				}
-				log(LOG_DEBUG, channel.URI.spec + " -> " + uri.spec);
-				if (!uri.schemeIs('http') && !uri.schemeIs('https') && !uri.schemeIs('ftp') && !uri.schemeIs("data")) {
-					return;
-				}
-				this._registerVideo(uri, channel.URI, isChannelPrivate(channel));
-			}.bind(this));
+			this._observeResponseAsync(channel);
 		}
 		catch (ex) {
 			log(LOG_ERROR, "observe response", ex);
 		}
 	},
+	_observeResponseAsync: Task.async(function*(channel) {
+		let uri = null;
+		let lc = null;
+		if (channel instanceof Ci.nsIInterfaceRequestor) {
+			try {
+				lc = channel.getInterface(Ci.nsILoadContext);
+			}
+			catch (ex) {
+
+			}
+		}
+		if (!lc) {
+			try {
+				lc = channel.notificationCallbacks.getInterface(Ci.nsILoadContext);
+			}
+			catch (ex) {
+
+			}
+		}
+		if (lc) {
+			try {
+				log(LOG_DEBUG, "got load context");
+				try {
+					let wnd = lc.topWindow;
+					uri = Services.io.newURI(wnd.location.href, wnd.document.characterSet, null);
+					log(LOG_DEBUG, "got uri from lctw " + uri.spec);
+				}
+				catch (ex) {
+					try {
+						let tfe = lc.topFrameElement;
+						let mm = tfe.messageManager;
+						let wnd = yield new Promise((resolve, reject) => {
+							let topic = `DTA::getURI:${this.getUriJob++}`;
+							mm.addMessageListener(topic, function load(m) {
+								mm.removeMessageListener(topic, load);
+								resolve(m.data);
+							});
+							mm.sendAsyncMessage("DTA:ch:getURI", {
+								topic: topic
+							});
+						});
+						uri = Services.io.newURI(wnd.location, wnd.characterSet, null);
+						log(LOG_DEBUG, "got uri from lctfe " + uri.spec);
+					}
+					catch (ex) {
+						log(LOG_DEBUG, "Cannot get from lc", ex);
+					}
+				}
+			}
+			catch (ex) {
+				// no op
+			}
+		}
+		if (!uri) {
+			try {
+				let wp;
+				if (!uri && channel.loadGroup && channel.loadGroup.groupObserver) {
+					wp = channel.loadGroup.groupObserver.QueryInterface(Ci.nsIWebProgress);
+				}
+				if (!uri && !wp) {
+					wp = channel.notificationCallbacks.getInterface(Ci.nsIWebProgress);
+				}
+				if (!wp || !wp.DOMWindow) {
+					return;
+				}
+				let wn = wp.DOMWindow.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIWebNavigation);
+				if (!wn || !wn.currentURI) {
+					return;
+				}
+				uri = wn.currentURI;
+			}
+			catch (ex) {}
+		}
+		if (!uri) {
+			log(LOG_DEBUG, "Failed to get video doc uri");
+			return;
+		}
+		log(LOG_DEBUG, channel.URI.spec + " -> " + uri.spec);
+		if (!uri.schemeIs('http') && !uri.schemeIs('https') && !uri.schemeIs('ftp') && !uri.schemeIs("data")) {
+			return;
+		}
+		this._registerVideo(uri, channel.URI, isChannelPrivate(channel));
+	}),
 
 	_sniffVideos: false,
 	get sniffVideos() {

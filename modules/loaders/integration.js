@@ -290,7 +290,7 @@ exports.load = function load(window, outerEvent) {
 				}
 			}), 1750, true);
 
-			new Task.spawn(function*() {
+			Task.spawn(function*() {
 				try {
 					let promises = [];
 					let job = findLinksJob++;

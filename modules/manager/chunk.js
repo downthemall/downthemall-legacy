@@ -178,7 +178,7 @@ Chunk.prototype = {
 
 	open: function() {
 		if (this._inited) {
-			return new Promise(r => r());
+			return Promise.resolve();
 		}
 		this._inited = true;
 
@@ -200,42 +200,44 @@ Chunk.prototype = {
 		let pos = this.start + this.safeBytes;
 		log(LOG_DEBUG, "opening " + file.path + " at: " + pos);
 		this.errored = false;
-		return this._openPromise = Task.spawn(function*() {
-			try {
-				try {
-					yield makeDir(file.parent, Prefs.dirPermissions);
-				}
-				catch (ex if ex.becauseExists) {
-					// no op
-				}
-				let outStream = new Instances.FileOutputStream(
-					file,
-					0x02 | 0x08,
-					Prefs.permissions,
-					Ci.nsIFileOutputStream.DEFER_OPEN
-					);
-				if (pos) {
-					let seekable = outStream.QueryInterface(Ci.nsISeekableStream);
-					seekable.seek(0x00, pos);
-				}
-				this._pipe = new Instances.Pipe(
-					true,
-					true,
-					PIPE_SEGMENT_SIZE,
-					MAX_PIPE_SEGMENTS);
-				this._inStream = this._pipe.inputStream;
-				this._outStream = this._pipe.outputStream;
-				this._copier = asyncCopy(this._inStream, outStream, true);
-				this._copier.catch(status => {
-					this.errored = true;
-					this.download.writeFailed(status);
-				});
-			}
-			finally {
-				delete this._openPromise;
-			}
-		}.bind(this));
+		return this._openPromise = this._openAsync(file, pos);
 	},
+	_openAsync: Task.async(function*(file, pos) {
+		try {
+			try {
+				yield makeDir(file.parent, Prefs.dirPermissions);
+			}
+			catch (ex if ex.becauseExists) {
+				// no op
+			}
+			let outStream = new Instances.FileOutputStream(
+				file,
+				0x02 | 0x08,
+				Prefs.permissions,
+				Ci.nsIFileOutputStream.DEFER_OPEN
+				);
+			if (pos) {
+				let seekable = outStream.QueryInterface(Ci.nsISeekableStream);
+				seekable.seek(0x00, pos);
+			}
+			this._pipe = new Instances.Pipe(
+				true,
+				true,
+				PIPE_SEGMENT_SIZE,
+				MAX_PIPE_SEGMENTS);
+			this._inStream = this._pipe.inputStream;
+			this._outStream = this._pipe.outputStream;
+			this._copier = asyncCopy(this._inStream, outStream, true);
+			this._copier.catch(status => {
+				this.errored = true;
+				this.download.writeFailed(status);
+			});
+		}
+		finally {
+			delete this._openPromise;
+		}
+	}),
+
 	_noteBytesWritten: function(bytes) {
 		this._written += bytes;
 		this._sessionBytes += bytes;
@@ -249,92 +251,93 @@ Chunk.prototype = {
 			return this._closing;
 		}
 		if (!this._inited) {
-			return new Promise(r => r());
+			return Promise.resolve();
 		}
 		this.running = false;
-		return (this._closing = Task.spawn(function*() {
-			try {
-				if (this._openPromise) {
-					yield this._openPromise;
-				}
-				// drain the overflowPipe, if any
-				if (this._overflowPipe && !this.errored) {
-					log(LOG_DEBUG, "draining overflow");
-					try {
-						yield asyncCopy(this._overflowPipe.inputStream, this._outStream, false);
-					}
-					catch (status) {
-						this.download.writeFailed(status);
-					}
-				}
-				if (this._overflowPipe) {
-					// Still got an overflow pipe, meaning we failed a write
-					// Since we kill the pipe now, we need to adjust written sizes
-					// beforehand accordingly so saveBytes and rollback() are still
-					// correct
-					try {
-						let pending = this._overflowPipe.inputStream.available();
-						this._written -= pending;
-						this._sessionBytes -= pending;
-					}
-					catch (ex) {
-						log(LOG_DEBUG, "failed to substract overflow, which is probably OK", ex);
-					}
-					this._overflowPipe.outputStream.close();
-					this._overflowPipe.inputStream.close();
-					delete this._overflowPipe;
-				}
-				// we are done writing to the pipe
-				if (this._outStream) {
-					this._outStream.close();
-					delete this._pipe;
-					delete this._outStream;
-				}
-				// but still need to wait for the copy into the file
-				if (this._copier) {
-					try {
-						yield this._copier;
-					}
-					catch (ex) {
-						// ignore here!
-					}
-					delete this._copier;
-				}
-
-				// upate the counters one last time
-				this._noteBytesWritten(0);
-				// and close the input stream end of the pipe
-				if (this._inStream) {
-					try {
-						this._inStream.close();
-					}
-					catch (ex) {
-						// no op
-					}
-					delete this._inStream; // ... before deleting the instream
-				}
-
-				// and do some cleanup
-				if (this.buckets) {
-					this.buckets.unregister(this);
-					delete this.buckets;
-				}
-				delete this._req;
-				memoryReporter.unregisterChunk(this);
-				this._inited = false;
-
-				this._sessionBytes = 0;
-				this._written = this.safeBytes;
-			}
-			catch (ex) {
-				log(LOG_ERROR, "Damn!", ex);
-			}
-			finally {
-				delete this.download;
-				delete this._closing;
-			}
-		}.bind(this)));
+		this._closing = this._closeAsync();
 	},
+	_closeAsync: Task.async(function*() {
+		try {
+			if (this._openPromise) {
+				yield this._openPromise;
+			}
+			// drain the overflowPipe, if any
+			if (this._overflowPipe && !this.errored) {
+				log(LOG_DEBUG, "draining overflow");
+				try {
+					yield asyncCopy(this._overflowPipe.inputStream, this._outStream, false);
+				}
+				catch (status) {
+					this.download.writeFailed(status);
+				}
+			}
+			if (this._overflowPipe) {
+				// Still got an overflow pipe, meaning we failed a write
+				// Since we kill the pipe now, we need to adjust written sizes
+				// beforehand accordingly so saveBytes and rollback() are still
+				// correct
+				try {
+					let pending = this._overflowPipe.inputStream.available();
+					this._written -= pending;
+					this._sessionBytes -= pending;
+				}
+				catch (ex) {
+					log(LOG_DEBUG, "failed to substract overflow, which is probably OK", ex);
+				}
+				this._overflowPipe.outputStream.close();
+				this._overflowPipe.inputStream.close();
+				delete this._overflowPipe;
+			}
+			// we are done writing to the pipe
+			if (this._outStream) {
+				this._outStream.close();
+				delete this._pipe;
+				delete this._outStream;
+			}
+			// but still need to wait for the copy into the file
+			if (this._copier) {
+				try {
+					yield this._copier;
+				}
+				catch (ex) {
+					// ignore here!
+				}
+				delete this._copier;
+			}
+
+			// upate the counters one last time
+			this._noteBytesWritten(0);
+			// and close the input stream end of the pipe
+			if (this._inStream) {
+				try {
+					this._inStream.close();
+				}
+				catch (ex) {
+					// no op
+				}
+				delete this._inStream; // ... before deleting the instream
+			}
+
+			// and do some cleanup
+			if (this.buckets) {
+				this.buckets.unregister(this);
+				delete this.buckets;
+			}
+			delete this._req;
+			memoryReporter.unregisterChunk(this);
+			this._inited = false;
+
+			this._sessionBytes = 0;
+			this._written = this.safeBytes;
+		}
+		catch (ex) {
+			log(LOG_ERROR, "Damn!", ex);
+		}
+		finally {
+			delete this.download;
+			delete this._closing;
+		}
+	}),
 	merge: function(ch) {
 		if (!this.complete && !ch.complete) {
 			throw new Error("Cannot merge incomplete chunks this way!");

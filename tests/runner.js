@@ -27,6 +27,7 @@ var Exception = Components.Exception;
 
 Cu.import("resource://gre/modules/FileUtils.jsm");
 Cu.import("chrome://dta-modules/content/glue.jsm");
+const {Task} = requireJSM("resource://gre/modules/Task.jsm");
 
 var DTA = require("api");
 

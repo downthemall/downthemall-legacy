@@ -2039,112 +2039,107 @@ QueueItem.prototype = {
 			log(LOG_ERROR, "handleMetalink", ex);
 		}
 	},
-	verifyHash: function() {
+	verifyHash: Task.async(function*() {
 		let oldStatus = this.status;
 		this.status = TextCache_VERIFYING;
-		return Task.spawn((function*() {
-			let mismatches = yield Verificator.verify(
-				(yield OS.File.exists(this.tmpFile.path)) ? this.tmpFile.path : this.destinationFile,
-				this.hashCollection,
-				(function(progress) {
-					this.partialSize = progress;
-					this.invalidate();
-				}).bind(this));
-			if (!mismatches) {
-				log(LOG_ERROR, "hash not computed");
-				Prompts.alert(window, _('error', ["Metalink"]), _('verificationfailed', [this.destinationFile]));
-				return true;
-			}
-			else if (mismatches.length) {
-				log(LOG_ERROR, "Mismatches: " + mismatches.toSource());
-				return (yield this.verifyHashError(mismatches));
-			}
-			this.status = oldStatus;
+		let mismatches = yield Verificator.verify(
+			(yield OS.File.exists(this.tmpFile.path)) ? this.tmpFile.path : this.destinationFile,
+			this.hashCollection,
+			(function(progress) {
+				this.partialSize = progress;
+				this.invalidate();
+			}).bind(this));
+		if (!mismatches) {
+			log(LOG_ERROR, "hash not computed");
+			Prompts.alert(window, _('error', ["Metalink"]), _('verificationfailed', [this.destinationFile]));
 			return true;
-		}).bind(this));
-	},
-	verifyHashError: function(mismatches) {
+		}
+		else if (mismatches.length) {
+			log(LOG_ERROR, "Mismatches: " + mismatches.toSource());
+			return (yield this.verifyHashError(mismatches));
+		}
+		this.status = oldStatus;
+		return true;
+	}),
+	verifyHashError: Task.async(function*(mismatches) {
+		function* deleteFile(file) {
+			try {
+				yield OS.File.remove(file.path);
+			}
+			catch (ex if ex.becauseNoSuchFile) {
+				// no op
+			}
+		}
+
+		function recoverPartials(download) {
+			// merge
+			for (let i = mismatches.length - 1; i > 0; --i) {
+				if (mismatches[i].start === mismatches[i-1].end + 1) {
+					mismatches[i-1].end = mismatches[i].end;
+					mismatches.splice(i, 1);
+				}
+			}
+			let chunks = [];
+			let next = 0;
+			for (let mismatch of mismatches) {
+				if (next !== mismatch.start) {
+					chunks.push(new Chunk(download, next, mismatch.start - 1, mismatch.start - next));
+				}
+				chunks.push(new Chunk(download, mismatch.start, mismatch.end));
+				next = mismatch.end + 1;
+			}
+			if (next !== download.totalSize) {
+				log(LOG_DEBUG, "Inserting last");
+				chunks.push(new Chunk(download, next, download.totalSize - 1, download.totalSize - next));
+			}
+			download.chunks = chunks;
+			download.refreshPartialSize();
+			download.queue();
+		}
+
 		let file = this.destinationLocalFile;
+		filterInSitu(mismatches, e => e.start !== e.end);
 
-		return Task.spawn((function*() {
-			function* deleteFile() {
-				try {
-					yield OS.File.remove(file.path);
-				}
-				catch (ex if ex.becauseNoSuchFile) {
-					// no op
-				}
-			}
-
-			function recoverPartials(download) {
-				// merge
-				for (let i = mismatches.length - 1; i > 0; --i) {
-					if (mismatches[i].start === mismatches[i-1].end + 1) {
-						mismatches[i-1].end = mismatches[i].end;
-						mismatches.splice(i, 1);
-					}
-				}
-				let chunks = [];
-				let next = 0;
-				for (let mismatch of mismatches) {
-					if (next !== mismatch.start) {
-						chunks.push(new Chunk(download, next, mismatch.start - 1, mismatch.start - next));
-					}
-					chunks.push(new Chunk(download, mismatch.start, mismatch.end));
-					next = mismatch.end + 1;
-				}
-				if (next !== download.totalSize) {
-					log(LOG_DEBUG, "Inserting last");
-					chunks.push(new Chunk(download, next, download.totalSize - 1, download.totalSize - next));
-				}
-				download.chunks = chunks;
-				download.refreshPartialSize();
-				download.queue();
-			}
-
-			filterInSitu(mismatches, e => e.start !== e.end);
-
-			if (mismatches.length && (yield OS.File.exists(this.tmpFile.path))) {
-				// partials
-				let act = Prompts.confirm(
-					window,
-					_('verifyerror.title'),
-					_('verifyerror.partialstext'),
-					_('recover'),
-					_('delete'),
-					_('keep'));
-				switch (act) {
-					case 0:
-						yield deleteFile();
-						recoverPartials(this, mismatches);
-						return false;
-					case 1:
-						yield deleteFile();
-						this.cancel();
-						return false;
-				}
-				return true;
-			}
+		if (mismatches.length && (yield OS.File.exists(this.tmpFile.path))) {
+			// partials
 			let act = Prompts.confirm(
 				window,
 				_('verifyerror.title'),
-				_('verifyerror.text'),
-				_('retry'),
+				_('verifyerror.partialstext'),
+				_('recover'),
 				_('delete'),
 				_('keep'));
 			switch (act) {
 				case 0:
-					yield deleteFile();
-					this.safeRetry();
+					yield deleteFile(file);
+					recoverPartials(this, mismatches);
 					return false;
 				case 1:
-					yield deleteFile();
+					yield deleteFile(file);
 					this.cancel();
 					return false;
 			}
 			return true;
-		}).bind(this));
-	},
+		}
+		let act = Prompts.confirm(
+			window,
+			_('verifyerror.title'),
+			_('verifyerror.text'),
+			_('retry'),
+			_('delete'),
+			_('keep'));
+		switch (act) {
+			case 0:
+				yield deleteFile();
+				this.safeRetry();
+				return false;
+			case 1:
+				yield deleteFile();
+				this.cancel();
+				return false;
+		}
+		return true;
+	}),
 	customFinishEvent: function() {
 		new CustomAction(this, Prefs.finishEvent);
 	},
@@ -2206,7 +2201,7 @@ QueueItem.prototype = {
 	},
 	finishDownload: function(exception) {
 		if (this._finishDownloadTask) {
-			return;
+			return this._finishDownloadTask;
 		}
 		log(LOG_DEBUG, "finishDownload, connections: " + this.sessionConnections);
 
@@ -2219,42 +2214,43 @@ QueueItem.prototype = {
 			return;
 		}
 
-		this._finishDownloadTask = Task.spawn(function* finishDownloadTask() {
-			try {
-				this.setState(FINISHING);
-				yield this.closeChunks();
-				if (this.hashCollection && !(yield this.verifyHash())) {
-					return;
-				}
-				if ("isMetalink" in this) {
-					this.handleMetalink();
-					return;
-				}
-				if (!(yield this.moveCompleted())) {
-					log(LOG_DEBUG, "moveCompleted scheduled!");
-					return;
-				}
-				yield this.setAttributes();
-				if (Prefs.finishEvent) {
-					this.customFinishEvent();
-				}
-				this.chunks.length = 0;
-				this.speeds.clear();
-				this.activeChunks = 0;
-				this.setState(COMPLETE);
-				this.status = TextCache_COMPLETE;
-				this.visitors = new VisitorManager();
-				this.compression = null;
-			}
-			catch (ex) {
-				log(LOG_ERROR, "complete: ", ex);
-				this.fail(_("accesserror"), _("accesserror.long"), _("accesserror"));
-			}
-			finally {
-				delete this._finishDownloadTask;
-			}
-		}.bind(this));
+		return this._finishDownloadTask = this._runFinishDownloadTask();
 	},
+	_runFinishDownloadTask: Task.async(function*() {
+		try {
+			this.setState(FINISHING);
+			yield this.closeChunks();
+			if (this.hashCollection && !(yield this.verifyHash())) {
+				return;
+			}
+			if ("isMetalink" in this) {
+				this.handleMetalink();
+				return;
+			}
+			if (!(yield this.moveCompleted())) {
+				log(LOG_DEBUG, "moveCompleted scheduled!");
+				return;
+			}
+			yield this.setAttributes();
+			if (Prefs.finishEvent) {
+				this.customFinishEvent();
+			}
+			this.chunks.length = 0;
+			this.speeds.clear();
+			this.activeChunks = 0;
+			this.setState(COMPLETE);
+			this.status = TextCache_COMPLETE;
+			this.visitors = new VisitorManager();
+			this.compression = null;
+		}
+		catch (ex) {
+			log(LOG_ERROR, "complete: ", ex);
+			this.fail(_("accesserror"), _("accesserror.long"), _("accesserror"));
+		}
+		finally {
+			delete this._finishDownloadTask;
+		}
+	}),
 	get maskURL() {
 		return this.urlManager.usableURL;
 	},
@@ -2359,64 +2355,63 @@ QueueItem.prototype = {
 				this.activeChunks = 0;
 			}
 			this.setState(CANCELED);
-			return Task.spawn(function*() {
-				try {
-					yield this.closeChunks();
-					if (this._preallocTask) {
-						yield this._preallocTask;
-					}
-					log(LOG_INFO, this.fileName + ": canceled");
-
-					this.shutdown();
-					this.removeTmpFile();
-
-					// gc
-					if (this.deleting) {
-						return;
-					}
-					if (!message) {
-						message = _("canceled");
-					}
-
-					this.status = message;
-					this.visitors = new VisitorManager();
-					this.chunks.length = 0;
-					this.progress = this.totalSize = this.partialSize = 0;
-					this.conflicts = 0;
-					this.resumable = true;
-					this._maxChunks = this._activeChunks = 0;
-					this._autoRetries = 0;
-					delete this._autoRetryTime;
-					this.speeds.clear();
-					this.otherBytes = 0;
-					this.save();
-				}
-				catch (ex) {
-					log(LOG_ERROR, "cancel() Task", ex);
-				}
-			}.bind(this));
+			return this._cancelClose(message);
 		}
 		catch(ex) {
 			log(LOG_ERROR, "cancel():", ex);
 		}
 	},
-
-	cleanup: function() {
-		Task.spawn(function*() {
-			if (this.chunks) {
-				yield this.closeChunks();
+	_cancelClose: Task.async(function*(message) {
+		try {
+			yield this.closeChunks();
+			if (this._preallocTask) {
+				yield this._preallocTask;
 			}
-			delete this.visitors;
-			delete this.chunks;
-			delete this.speeds;
-			delete this.urlManager;
-			delete this.referrer;
-			delete this._referrerUrlManager;
-			delete this._destinationLocalFile;
-			delete this._tmpFile;
-			delete this.rebuildDestination_renamer;
-		}.bind(this));
-	},
+			log(LOG_INFO, this.fileName + ": canceled");
+
+			this.shutdown();
+			this.removeTmpFile();
+
+			// gc
+			if (this.deleting) {
+				return;
+			}
+			if (!message) {
+				message = _("canceled");
+			}
+
+			this.status = message;
+			this.visitors = new VisitorManager();
+			this.chunks.length = 0;
+			this.progress = this.totalSize = this.partialSize = 0;
+			this.conflicts = 0;
+			this.resumable = true;
+			this._maxChunks = this._activeChunks = 0;
+			this._autoRetries = 0;
+			delete this._autoRetryTime;
+			this.speeds.clear();
+			this.otherBytes = 0;
+			this.save();
+		}
+		catch (ex) {
+			log(LOG_ERROR, "cancel() Task", ex);
+		}
+	}),
+
+	cleanup: Task.async(function*() {
+		if (this.chunks) {
+			yield this.closeChunks();
+		}
+		delete this.visitors;
+		delete this.chunks;
+		delete this.speeds;
+		delete this.urlManager;
+		delete this.referrer;
+		delete this._referrerUrlManager;
+		delete this._destinationLocalFile;
+		delete this._tmpFile;
+		delete this.rebuildDestination_renamer;
+	}),
 	prealloc: function() {
 		let file = this.tmpFile;
 
@@ -2433,46 +2428,47 @@ QueueItem.prototype = {
 			return;
 		}
 
-		this._preallocTask = Task.spawn(function*() {
-			try {
-				try {
-					yield Utils.makeDir(file.parent, Prefs.dirPermissions);
-				}
-				catch (ex if ex.becauseExists) {
-					// no op
-				}
-				try {
-					if (this.totalSize === (yield OS.File.stat(file.path)).size) {
-						log(LOG_INFO, "pa: already allocated");
-						return;
-					}
-				}
-				catch (ex if ex.becauseNoSuchFile) {
-					// no op
-				}
-				let pa = Preallocator.prealloc(
-					file,
-					this.totalSize,
-					Prefs.permissions,
-					Prefs.sparseFiles
-					);
-				if (pa) {
-					yield pa;
-					log(LOG_INFO, "pa: done");
-				}
-				else {
-					log(LOG_INFO, "pa: not preallocating");
-				}
-			}
-			catch(ex) {
-				log(LOG_ERROR, "pa: failed", ex);
-			}
-			finally {
-				this._preallocTask = null;
-				this.maybeResumeDownload();
-			}
-		}.bind(this));
+		this._preallocTask = this._preallocInternal(file);
 	},
+	_preallocInternal: Task.async(function*(file) {
+		try {
+			try {
+				yield Utils.makeDir(file.parent, Prefs.dirPermissions);
+			}
+			catch (ex if ex.becauseExists) {
+				// no op
+			}
+			try {
+				if (this.totalSize === (yield OS.File.stat(file.path)).size) {
+					log(LOG_INFO, "pa: already allocated");
+					return;
+				}
+			}
+			catch (ex if ex.becauseNoSuchFile) {
+				// no op
+			}
+			let pa = Preallocator.prealloc(
+				file,
+				this.totalSize,
+				Prefs.permissions,
+				Prefs.sparseFiles
+				);
+			if (pa) {
+				yield pa;
+				log(LOG_INFO, "pa: done");
+			}
+			else {
+				log(LOG_INFO, "pa: not preallocating");
+			}
+		}
+		catch(ex) {
+			log(LOG_ERROR, "pa: failed", ex);
+		}
+		finally {
+			this._preallocTask = null;
+			this.maybeResumeDownload();
+		}
+	}),
 
 	shutdown: function() {
 	},
@@ -2483,16 +2479,19 @@ QueueItem.prototype = {
 		if (!tmpFile) {
 			return;
 		}
-		Task.spawn(function*() {
-			try {
-				yield OS.File.remove(tmpFile.path);
-			} catch (ex if ex.becauseNoSuchFile) {
-				// no op
-			}
-		}).then(null, function(ex) {
-			log(LOG_ERROR, "failed to remove tmpfile: " + tmpFile.path, ex);
-		});
+		this._runRemoveTmpFile(tmpfile);
 	},
+	_runRemoveTmpFile: Task.async(function*(tmpfile) {
+		try {
+			yield OS.File.remove(tmpFile.path);
+		}
+		catch (ex if ex.becauseNoSuchFile) {
+			// no op
+		}
+		catch (ex) {
+			log(LOG_ERROR, "failed to remove tmpfile: " + tmpFile.path, ex);
+		}
+	}),
 
 	sessionConnections: 0,
 	_autoRetries: 0,
@@ -2788,20 +2787,21 @@ var ConflictManager = {
 		this._items.delete(download);
 
 		this._processing = true;
-		Task.spawn(function*() {
-			try {
-				data.resolve(yield this._processOne(download, data));
-			}
-			catch (ex) {
-				log(LOG_ERROR, "ConflictManager: Failed to resolve", ex);
-				data.reject(null);
-			}
-			finally {
-				this._processing = false;
-				setTimeoutOnlyFun(this._processNext.bind(this), 0);
-			}
-		}.bind(this));
+		this._runNext(download, data);
 	},
+	_runNext: Task.async(function*(download, data) {
+		try {
+			data.resolve(yield this._processOne(download, data));
+		}
+		catch (ex) {
+			log(LOG_ERROR, "ConflictManager: Failed to resolve", ex);
+			data.reject(null);
+		}
+		finally {
+			this._processing = false;
+			setTimeoutOnlyFun(this._processNext.bind(this), 0);
+		}
+	}),
 	_findUnique: function*(newDest, basename, conflicts) {
 		for (;; ++conflicts) {
 			newDest.leafName = Utils.formatConflictName(basename, conflicts);

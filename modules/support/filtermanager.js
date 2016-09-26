@@ -344,8 +344,11 @@ FilterManagerImpl.prototype = {
 			return this._pending;
 		}
 		log(LOG_DEBUG, "reload spawning");
-		this._pending = Task.spawn((function*() {
-			log(LOG_DEBUG, "reload commencing");
+		return this._pending = this._reloadAsync();
+	},
+	_reloadAsync: Task.async(function*() {
+		log(LOG_DEBUG, "reload commencing");
+		try {
 			try {
 				let decoder = new TextDecoder();
 				if (!this.defFilters) {
@@ -374,6 +377,7 @@ FilterManagerImpl.prototype = {
 						x.send();
 					}.bind(this));
 				}
+
 				let filters = {};
 				try {
 					filters = JSON.parse(decoder.decode(yield OS.File.read(this._file.path)));
@@ -426,12 +430,11 @@ FilterManagerImpl.prototype = {
 			}
 
 			this._rebuild();
+		}
+		finally {
 			delete this._pending;
-		}).bind(this)).then(null, function(ex) {
-			log(LOG_ERROR, "Task did not finish", ex);
-		});
-		return this._pending;
-	},
+		}
+	}),
 
 	_rebuild: function() {
 		this._count = this._all.length;
@@ -603,33 +606,29 @@ FilterManagerImpl.prototype = {
 		throw new Exception('filter not defined!');
 	},
 
-	_save: function() {
-		return Task.spawn((function*() {
+	_save: Task.async(function*() {
+		try {
 			try {
-				try {
-					yield OS.File.makeDir(this._file.parent.path, {unixMode: 0o775, ignoreExisting: true});
-				}
-				catch (ex if ex.becauseExists) {
-					// no op;
-				}
-				yield this._saver.saveChanges();
+				yield OS.File.makeDir(this._file.parent.path, {unixMode: 0o775, ignoreExisting: true});
 			}
-			catch (ex) {
-				log(LOG_ERROR, "failed to save filters", ex);
+			catch (ex if ex.becauseExists) {
+				// no op;
 			}
-		}).bind(this));
-	},
-	save: function() {
-		Task.spawn((function*() {
-			try {
-				yield this._save();
-				this._reload();
-			}
-			catch (ex) {
-				log(LOG_ERROR, "failed to save filters", ex);
-			}
-		}).bind(this));
-	},
+			yield this._saver.saveChanges();
+		}
+		catch (ex) {
+			log(LOG_ERROR, "failed to save filters", ex);
+		}
+	}),
+	save: Task.async(function*() {
+		try {
+			yield this._save();
+			this._reload();
+		}
+		catch (ex) {
+			log(LOG_ERROR, "failed to save filters", ex);
+		}
+	}),
 
 	getTmpFromString: function(expression) {
 		if (!expression.length) {

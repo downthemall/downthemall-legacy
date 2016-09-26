@@ -29,10 +29,7 @@ FileDataProvider.prototype = {
 		this._timer = Timers.createOneshot(500, this.checkFile.bind(this));
 		return this._file;
 	},
-	checkFile: function() {
-		Task.spawn(this._checkFile);
-	},
-	_checkFile: function*() {
+	checkFile: Task.async(function*() {
 		delete this._timer;
 		let exists = yield OS.File.exists(this._file.path);
 		if (!exists) {
@@ -42,7 +39,7 @@ FileDataProvider.prototype = {
 		if (++this._checks < 10) {
 			this._timer = Timers.createOneshot(5000, this.checkFile.bind(this));
 		}
-	},
+	}),
 	getFlavorData: function(dataTransfer, flavor, data, dataLen) {
 		data.value = this.file;
 		dataLen.value = 1;
@@ -526,29 +523,35 @@ var Tree = {
 			log(LOG_DEBUG, "reset");
 			return; // complete logic will do this
 		}
-		Task.spawn(this._setCellText.bind(this, d, from, to)).then(null, function(ex) {
+
+		this._moveToNewLocation(d, from, to);
+	},
+	_moveToNewLocation: Task.async(function*(download, from, to) {
+		try {
+			if (!(yield OS.File.exists(from.path))) {
+				download.setUserFileName(to.leafName);
+				log(LOG_DEBUG, "gone");
+				return; // gone already
+			}
+			if ((yield OS.File.exists(to.path))) {
+				Prompts.alert(window, _("rename.title"), _("rename.alreadythere", [from.leafName, to.path]));
+				log(LOG_DEBUG, "exists");
+				return;
+			}
+
+			log(LOG_DEBUG, "move " + from.path + " to " + to.path);
+			// need to move
+			yield OS.File.move(from.path, to.path);
+			log(LOG_DEBUG, "move complete " + from.path + " to " + to.path);
+
+			download.setUserFileName(to.leafName);
+		}
+		catch (ex) {
 			log(LOG_DEBUG, "move failed " + from.path + " to " + to.path, ex);
 			Prompts.alert(window, _("rename.title"), _("rename.failedtomove", [from.path, to.path]));
-		});
-	},
-	_setCellText: function*(d, from, to) {
-		if (!(yield OS.File.exists(from.path))) {
-			d.setUserFileName(to.leafName);
-			log(LOG_DEBUG, "gone");
-			return; // gone already
 		}
-		if ((yield OS.File.exists(to.path))) {
-			Prompts.alert(window, _("rename.title"), _("rename.alreadythere", [from.leafName, to.path]));
-			log(LOG_DEBUG, "exists");
-			return;
-		}
+	}),
 
-		log(LOG_DEBUG, "move " + from.path + " to " + to.path);
-		// need to move
-		yield OS.File.move(from.path, to.path);
-		log(LOG_DEBUG, "move complete " + from.path + " to " + to.path);
-		d.setUserFileName(to.leafName);
-	},
 	isSorted: function() { return true; },
 	isContainer: function(idx) { return false; },
 	isContainerOpen: function(idx) { return false; },
@@ -984,32 +987,30 @@ var Tree = {
 			this._removeJump(filterInSitu(downloads, e => e.filteredPosition >= 0).length, last);
 		}
 	},
-	_removeByState: function(state, onlyGone) {
+	_removeByState: Task.async(function*(state, onlyGone) {
 		this.beginUpdate();
-		Task.spawn((function*() {
-			try {
-				QueueStore.beginUpdate();
-				var removing = [];
-				for (let d of this._downloads) {
-					if (d.state !== state) {
-						continue;
-					}
-					if (onlyGone && (yield OS.File.exists(d.destinationLocalFile.path))) {
-						continue;
-					}
-					removing.push(d);
+		try {
+			QueueStore.beginUpdate();
+			var removing = [];
+			for (let d of this._downloads) {
+				if (d.state !== state) {
+					continue;
 				}
-				if (removing.length) {
-					this.remove(removing);
+				if (onlyGone && (yield OS.File.exists(d.destinationLocalFile.path))) {
+					continue;
 				}
-				QueueStore.endUpdate();
+				removing.push(d);
 			}
-			finally {
-				this.invalidate();
-				this.endUpdate();
+			if (removing.length) {
+				this.remove(removing);
 			}
-		}).bind(this));
-	},
+			QueueStore.endUpdate();
+		}
+		finally {
+			this.invalidate();
+			this.endUpdate();
+		}
+	}),
 	removeCompleted: function() {
 		if (Prefs.confirmRemoveCompleted) {
 			let res = Prompts.confirm(
@@ -1435,30 +1436,31 @@ var Tree = {
 					items[ii].setAttribute("disabled", disabled);
 				}
 			}
-			Task.spawn((function*() {
-				try {
-					states.curFile = (cur && cur.state === COMPLETE &&
-														(yield OS.File.exists(cur.destinationLocalFile.path)));
-					states.curFolder = (cur && (yield OS.File.exists(
-						new Instances.LocalFile(cur.destinationPath).path)));
-					for (let i = 0, e = this._refreshTools_items_deferred.length; i < e; ++i) {
-						let items = this._refreshTools_items_deferred[i];
-						let disabled = items.f(states) ? "false" : "true";
-						items = items.items;
-						for (let ii = 0, ee = items.length; ii < ee; ++ii) {
-							items[ii].setAttribute("disabled", disabled);
-						}
-					}
-				}
-				catch (tex) {
-					log(LOG_ERROR, "rt (task)", tex);
-				}
-			}).bind(this));
+			this._refreshToolsAsync(states, cur);
 		}
 		catch (ex) {
 			log(LOG_ERROR, "rt", ex);
 		}
 	},
+	_refreshToolsAsync: Task.async(function*(states, cur) {
+		try {
+			states.curFile = (cur && cur.state === COMPLETE &&
+												(yield OS.File.exists(cur.destinationLocalFile.path)));
+			states.curFolder = (cur && (yield OS.File.exists(
+				new Instances.LocalFile(cur.destinationPath).path)));
+			for (let i = 0, e = this._refreshTools_items_deferred.length; i < e; ++i) {
+				let items = this._refreshTools_items_deferred[i];
+				let disabled = items.f(states) ? "false" : "true";
+				items = items.items;
+				for (let ii = 0, ee = items.length; ii < ee; ++ii) {
+					items[ii].setAttribute("disabled", disabled);
+				}
+			}
+		}
+		catch (tex) {
+			log(LOG_ERROR, "rt (task)", tex);
+		}
+	}),
 	savePositions: function() {
 		let saveArray = [];
 		for (let i = 0, e = this._downloads.length; i < e; ++i) {
@@ -1870,40 +1872,38 @@ var FileHandling = {
 			}
 		}
 	},
-	deleteFile: function() {
-		Task.spawn(function*() {
-			try {
-				let list = [];
-				for (let d of this._uniqueList()) {
-					list.push(d);
-				}
-				let msg = '';
-				if (list.length < 25) {
-					msg = _('deletetexts');
-					for (let d of list) {
-						msg += "\n" + d.destinationLocalFile.leafName;
-					}
-				}
-				else {
-					msg = _('deletetextl.2', [list.length], list.length);
-				}
-				if (list.length && Prompts.confirm(
-					window, _('deletecaption'), msg, _('delete'), Prompts.CANCEL, null, 1)) {
-					return;
-				}
+	deleteFile: Task.async(function*() {
+		try {
+			let list = [];
+			for (let d of this._uniqueList()) {
+				list.push(d);
+			}
+			let msg = '';
+			if (list.length < 25) {
+				msg = _('deletetexts');
 				for (let d of list) {
-					try {
-						yield OS.File.remove(d.destinationLocalFile.path);
-					}
-					catch (ex) {
-						// no-op
-					}
+					msg += "\n" + d.destinationLocalFile.leafName;
 				}
-				Tree.remove(list, true);
 			}
-			catch (ex) {
-				log(LOG_ERROR, "deleteFile", ex);
+			else {
+				msg = _('deletetextl.2', [list.length], list.length);
 			}
-		}.bind(this));
-	}
+			if (list.length && Prompts.confirm(
+				window, _('deletecaption'), msg, _('delete'), Prompts.CANCEL, null, 1)) {
+				return;
+			}
+			for (let d of list) {
+				try {
+					yield OS.File.remove(d.destinationLocalFile.path);
+				}
+				catch (ex) {
+					// no-op
+				}
+			}
+			Tree.remove(list, true);
+		}
+		catch (ex) {
+			log(LOG_ERROR, "deleteFile", ex);
+		}
+	})
 };
