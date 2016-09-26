@@ -67,6 +67,7 @@
 <!ENTITY invertmatcher.label "Invert Column Filters">
 <!ENTITY clearmatcher.label "Clear Column Filters">
 
+<!ENTITY offline.tooltip "Toggle online/offline">
 <!ENTITY speedlimit2.tooltip "Change the global speed limit. The list is dynamicly updated.">
 
 <!ENTITY perdownloadspeedlimit2.label "Speed Limit">
