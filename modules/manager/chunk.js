@@ -205,7 +205,7 @@ Chunk.prototype = {
 	_openAsync: Task.async(function*(file, pos) {
 		try {
 			try {
-				yield makeDir(file.parent, Prefs.dirPermissions);
+				yield makeDir(file.parent, Prefs.dirPermissions, true);
 			}
 			catch (ex if ex.becauseExists) {
 				// no op
