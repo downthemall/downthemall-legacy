@@ -147,6 +147,9 @@ LRUMap.prototype = Object.freeze({
 			});
 		}
 	}
+
+	/* let */ Services = exports.Services = Object.create(Services);
+
 	Services.oldio = {
 		newChannel: function(uri, charset, base, loadInfo) {
 			return Services.oldio.newChannelFromURI(
@@ -190,7 +193,6 @@ LRUMap.prototype = Object.freeze({
 	};
 
 
-	/* let */ Services = exports.Services = Object.create(Services);
 	let dlsg = XPCOMUtils.defineLazyServiceGetter.bind(XPCOMUtils, Services);
 	dlsg("catman", "@mozilla.org/categorymanager;1", "nsICategoryManager");
 	dlsg("clipbrd", "@mozilla.org/widget/clipboard;1", "nsIClipboard");
