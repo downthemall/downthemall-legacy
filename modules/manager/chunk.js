@@ -405,7 +405,7 @@ Chunk.prototype = {
 				try {
 					written = this._outStream.writeFrom(aInputStream, bytes);
 				}
-				catch (ex if ex.result == Cr.NS_BASE_STREAM_WOULD_BLOCK || ex == NS_BASE_STREAM_WOULD_BLOCK) {
+				catch (ex if ex.result == Cr.NS_BASE_STREAM_WOULD_BLOCK || ex == Cr.NS_BASE_STREAM_WOULD_BLOCK) {
 					// aka still nothing written
 				}
 				let remain = bytes - written;
@@ -455,7 +455,7 @@ Chunk.prototype = {
 				try {
 					written = this._outStream.writeFrom(instream, avail);
 				}
-				catch (ex if ex.result == Cr.NS_BASE_STREAM_WOULD_BLOCK || ex == NS_BASE_STREAM_WOULD_BLOCK) {
+				catch (ex if ex.result == Cr.NS_BASE_STREAM_WOULD_BLOCK || ex == Cr.NS_BASE_STREAM_WOULD_BLOCK) {
 					// nothing written
 				}
 				avail -= written;
