@@ -203,7 +203,7 @@ Chunk.prototype = {
 		return this._openPromise = Task.spawn(function*() {
 			try {
 				try {
-					yield makeDir(file.parent, Prefs.dirPermissions);
+					yield makeDir(file.parent, Prefs.dirPermissions, true);
 				}
 				catch (ex if ex.becauseExists) {
 					// no op
