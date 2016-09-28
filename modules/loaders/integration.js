@@ -26,7 +26,6 @@ const {unique} = require("support/uniquelinks");
 
 const {unloadWindow} = require("support/overlays");
 const strfn = require("support/stringfuncs");
-const cpow = require("./cpow");
 
 const {Task} = requireJSM("resource://gre/modules/Task.jsm");
 
@@ -656,6 +655,7 @@ exports.load = function load(window, outerEvent) {
 	function onContextShowing(evt) {
 		try {
 			let ctx = window.gContextMenu;
+			let ctxdata = window.gContextMenuContentData;
 			// get settings
 			let items = Preferences.getExt("ctxmenu", "1,1,0").split(",").map(e => parseInt(e, 10));
 			let showCompact = Preferences.getExt("ctxcompact", false);
@@ -726,7 +726,7 @@ exports.load = function load(window, outerEvent) {
 					}
 				}
 			}
-			else if (ctx.target && cpow.onForm(ctx.target)) {
+			else if (ctxdata && ctxdata.addonInfo && ctxdata.addonInfo["DTA:onform"]) {
 				if (items[0]) {
 					show.push(menu.SaveForm);
 				}
