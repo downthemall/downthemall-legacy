@@ -527,6 +527,16 @@ function registerOverlays() {
 		log(LOG_DEBUG, "running elementsStub");
 
 		maybeInsertButtons(["dta-button", "dta-turbo-button", "dta-turboselect-button", "dta-manager-button"]);
+
+		let frameToLog = m => log(m.data.level, m.data.message, m.data.exception);
+		let fs = "chrome://dta-modules/content/loaders/integration-content.js?" + (+new Date());
+		window.messageManager.addMessageListener("DTA:log", frameToLog);
+		window.messageManager.loadFrameScript(fs, true);
+		unloadWindow(window, () => {
+			window.messageManager.broadcastAsyncMessage("DTA:shutdown");
+			window.messageManager.removeMessageListener("DTA:log", frameToLog);
+			window.messageManager.removeDelayedFrameScript(fs);
+		});
 	}
 
 	const {registerOverlay, watchWindows, unloadWindow} = require("support/overlays");
