@@ -34,6 +34,6 @@ asyncTest("compare", function() {
 		equal(cv("*"), -1, "Version is smaller than Inf (omit)");
 		equal(cv(v.VERSION, "2"), 1, "Version is smaller than Inf");
 		equal(cv("2"), 1, "Version is smaller than Inf (omit)");
-		ok(cv(v.VERSION, v.BASE_VERSION) >= 0, "VERSION is gte BASE_VERSION");
+		ok(cv(v.VERSION, v.BASE_VERSION) >= 0, `${v.VERSION} is gte ${v.BASE_VERSION}`);
 	});
 })
