@@ -2479,7 +2479,7 @@ QueueItem.prototype = {
 		if (!tmpFile) {
 			return;
 		}
-		this._runRemoveTmpFile(tmpfile);
+		this._runRemoveTmpFile(tmpFile);
 	},
 	_runRemoveTmpFile: Task.async(function*(tmpfile) {
 		try {
