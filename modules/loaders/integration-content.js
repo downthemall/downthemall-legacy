@@ -39,11 +39,17 @@ const log = function(level, message, exception) {
 
 const require = function require_mini(m) {
 	let scope = {
+		Ci: Ci,
+		Cc: Cc,
+		Cu: Cu,
 		log: log,
 		LOG_DEBUG: LOG_DEBUG,
 		LOG_INFO: LOG_INFO,
 		LOG_ERROR: LOG_ERROR,
 		Services: Services,
+		unload: function() {
+			log(LOG_DEBUG, "unload stub called");
+		},
 
 		exports: {}
 	};
@@ -54,6 +60,7 @@ const require = function require_mini(m) {
 
 const TextLinks = require("support/textlinks");
 const {filterInSitu, filterMapInSitu, unique} = require("support/uniquelinks");
+const observers = require("support/observers");
 
 /* **
  * Helpers and tools
@@ -569,6 +576,21 @@ const handleSelector = m => {
 	}
 };
 
+const onContextMenuData = function(subject, topic, data) {
+	subject = subject.wrappedJSObject;
+	if (!subject || !subject.addonInfo) {
+		log(LOG_ERROR, "onContextMenuData: no addonInfo");
+		return;
+	}
+	let event = subject.event;
+	if (!event || !event.target) {
+		log(LOG_ERROR, "onContextMenuData: no event");
+		return;
+	}
+	subject.addonInfo["DTA:onform"] = "form" in event.target;
+};
+
+
 const methods = new Map([
 	["findLinks", handleFindLinks],
 	["getLocations", handleGetLocations],
@@ -585,11 +607,13 @@ const methods = new Map([
 				removeMessageListener(`DTA:${e[0]}`, e[1]);
 			}
 			removeMessageListener("DTA:shutdown", handleShutdown);
+			observers.unload();
 		};
 		for (let e of methods.entries()) {
 			addMessageListener(`DTA:${e[0]}`, e[1]);
 		}
 		addMessageListener("DTA:shutdown", handleShutdown);
+		observers.add(onContextMenuData, "content-contextmenu");
 	}
 	catch (ex) {
 		log(LOG_ERROR, "ahue", ex);

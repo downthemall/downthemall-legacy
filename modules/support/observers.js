@@ -6,7 +6,7 @@
 const TOPIC_SHUTDOWN = "profile-change-teardown";
 
 function Observer() {
-	Services.obs.addObserver(this, TOPIC_SHUTDOWN, false);
+	Services.obs.addObserver(this, TOPIC_SHUTDOWN, true);
 }
 Observer.prototype = Object.freeze({
 	observers: new Map(),
@@ -32,7 +32,7 @@ Observer.prototype = Object.freeze({
 		}
 	},
 
-	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver]),
+	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference]),
 
 	add: function(obs, topic) {
 		if (!obs || !topic) {
@@ -41,7 +41,7 @@ Observer.prototype = Object.freeze({
 		let observers = this.observers.get(topic);
 		if (!observers) {
 			if (topic !== TOPIC_SHUTDOWN) {
-				Services.obs.addObserver(this, topic, false);
+				Services.obs.addObserver(this, topic, true);
 			}
 			observers = new Set();
 			this.observers.set(topic, observers);
@@ -131,5 +131,10 @@ Object.defineProperties(exports, {
 			observer.observe(subject, topic, data);
 		},
 		enumerable: true
+	},
+	"unload": {
+		value: function unload() {
+			observer.unload();
+		}
 	}
 });
