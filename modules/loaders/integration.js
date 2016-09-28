@@ -625,18 +625,11 @@ exports.load = function load(window, outerEvent) {
 		}
 	}
 
-	let frameToLog = m => log(m.data.level, m.data.message, m.data.exception);
-	window.messageManager.addMessageListener("DTA:log", frameToLog);
 	window.messageManager.addMessageListener("DTA:selected", saveSelected);
 	window.messageManager.addMessageListener("DTA:new", newFrameScript);
-	let fs = "chrome://dta-modules/content/loaders/integration-content.js?" + (+new Date());
-	window.messageManager.loadFrameScript(fs, true);
 	unloadWindow(window, () => {
-		window.messageManager.broadcastAsyncMessage("DTA:shutdown");
-		window.messageManager.removeMessageListener("DTA:log", frameToLog);
 		window.messageManager.removeMessageListener("DTA:selected", saveSelected);
 		window.messageManager.removeMessageListener("DTA:new", newFrameScript);
-		window.messageManager.removeDelayedFrameScript(fs);
 	});
 
 	// these are only valid after the load event.
