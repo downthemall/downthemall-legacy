@@ -42,7 +42,6 @@ var weak = Cu.getWeakReference.bind(Cu);
 var reportError = Cu.reportError.bind(Cu);
 var lazy = XPCOMUtils.defineLazyGetter; // bind?
 var QI = XPCOMUtils.generateQI.bind(XPCOMUtils);
-var requireJoined;
 
 var log = function logStub(...args) {
 	Cu.reportError(Array.join(args, ", "));
@@ -378,6 +377,7 @@ LRUMap.prototype = Object.freeze({
 		};
 	})();
 
+	let requireJoined;
 	const require = function require(base, module) {
 		let path = module.split("/").filter(e => !!e);
 		if (!path || !path.length) {
