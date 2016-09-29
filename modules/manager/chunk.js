@@ -182,16 +182,6 @@ Chunk.prototype = {
 		}
 		this._inited = true;
 
-		this._sessionBytes = 0;
-		this._canceled = false;
-		this.buckets = new ByteBucketTee(
-			this.parent.bucket,
-			Limits.getServerBucket(this.parent),
-			GlobalBucket
-			);
-		this.buckets.register(this);
-		memoryReporter.registerChunk(this);
-
 		if (this._openPromise) {
 			return this._openPromise;
 		}
@@ -199,8 +189,22 @@ Chunk.prototype = {
 		const file = this.parent.tmpFile;
 		let pos = this.start + this.safeBytes;
 		log(LOG_DEBUG, "opening " + file.path + " at: " + pos);
-		this.errored = false;
 		return this._openPromise = Task.spawn(function*() {
+			if (this._closing) {
+				// still pending?
+				yield this._closing;
+			}
+
+			this.errored = false;
+			this._sessionBytes = 0;
+			this.buckets = new ByteBucketTee(
+				this.parent.bucket,
+				Limits.getServerBucket(this.parent),
+				GlobalBucket
+				);
+			this.buckets.register(this);
+			memoryReporter.registerChunk(this);
+
 			try {
 				try {
 					yield makeDir(file.parent, Prefs.dirPermissions, true);
@@ -321,7 +325,6 @@ Chunk.prototype = {
 				}
 				delete this._req;
 				memoryReporter.unregisterChunk(this);
-				this._inited = false;
 
 				this._sessionBytes = 0;
 				this._written = this.safeBytes;
@@ -332,6 +335,7 @@ Chunk.prototype = {
 			finally {
 				delete this.download;
 				delete this._closing;
+				this._inited = false;
 			}
 		}.bind(this)));
 	},
@@ -351,7 +355,6 @@ Chunk.prototype = {
 		this._sessionBytes = 0;
 	},
 	cancelChunk: function() {
-		this._canceled = true;
 		this.pauseChunk();
 	},
 	pauseChunk: function() {
