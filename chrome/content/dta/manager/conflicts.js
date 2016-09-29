@@ -24,6 +24,3 @@ function accept() {
 	}
 	return false;
 }
-opener.addEventListener("unload", function unloadOpener() {
-	opener.removeEventListener("unload", unloadOpener, false);
-}, false);
