@@ -183,7 +183,6 @@ Chunk.prototype = {
 		this._inited = true;
 
 		this._sessionBytes = 0;
-		this._canceled = false;
 		this.buckets = new ByteBucketTee(
 			this.parent.bucket,
 			Limits.getServerBucket(this.parent),
@@ -325,7 +324,6 @@ Chunk.prototype = {
 			}
 			delete this._req;
 			memoryReporter.unregisterChunk(this);
-			this._inited = false;
 
 			this._sessionBytes = 0;
 			this._written = this.safeBytes;
@@ -336,6 +334,7 @@ Chunk.prototype = {
 		finally {
 			delete this.download;
 			delete this._closing;
+			this._inited = false;
 		}
 	}),
 	merge: function(ch) {
@@ -354,10 +353,6 @@ Chunk.prototype = {
 		this._sessionBytes = 0;
 	},
 	cancelChunk: function() {
-		this._canceled = true;
-		this.pauseChunk();
-	},
-	pauseChunk: function() {
 		this.running = false;
 		this.close();
 		if (this.download) {

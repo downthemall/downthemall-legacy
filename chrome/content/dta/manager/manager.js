@@ -1986,7 +1986,7 @@ QueueItem.prototype = {
 		if (this.chunks) {
 			for (let c of this.chunks) {
 				if (c.running) {
-					c.pauseChunk();
+					c.cancelChunk();
 				}
 			}
 		}
