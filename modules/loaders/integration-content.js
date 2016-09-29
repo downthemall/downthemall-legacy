@@ -17,7 +17,12 @@ let {Services} = Cu.import("resource://gre/modules/Services.jsm", {});
 let isWindowPrivate = () => false;
 try {
 	let {PrivateBrowsingUtils} = Cu.import("resource://gre/modules/PrivateBrowsingUtils.jsm", {});
-	isWindowPrivate = w => PrivateBrowsingUtils.isWindowPrivate(w);
+	isWindowPrivate = w => {
+		if (PrivateBrowsingUtils.isContentWindowPrivate) {
+			return PrivateBrowsingUtils.isContentWindowPrivate(w);
+		}
+		return PrivateBrowsingUtils.isWindowPrivate(w);
+	};
 }
 catch (ex) {
 	// no op
