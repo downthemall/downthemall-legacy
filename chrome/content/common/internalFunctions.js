@@ -5,7 +5,7 @@
 /* dTa-only code! - DO NOT include in overlays or such! */
 "use strict";
 /* jshint strict:true, globalstrict:true, browser:true */
-/* global _ */
+/* global _, Cc:true, Ci:true, Cr:true, Cu:true, ctor:true, Exception:true */
 var Cc = Components.classes;
 var Ci = Components.interfaces;
 var Cr = Components.results;

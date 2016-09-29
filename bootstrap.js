@@ -3,6 +3,8 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
+/* global Services:true, APP_SHUTDOWN, ADDON_UPGRADE */
+
 const {Services} = Components.utils.import("resource://gre/modules/Services.jsm", {});
 const {AddonManager} = Components.utils.import("resource://gre/modules/AddonManager.jsm", {});
 
@@ -47,6 +49,6 @@ function shutdown(data, reason) {
 	}
 	let _g = {};
 	Components.utils.import("chrome://dta-modules/content/glue.jsm", _g);
-	_g.unload("shutdown", reason == ADDON_UPGRADE);
+	_g.unload("shutdown", reason === ADDON_UPGRADE);
 	Components.utils.unload("chrome://dta-modules/content/glue.jsm");
 }

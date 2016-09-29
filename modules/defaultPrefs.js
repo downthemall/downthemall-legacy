@@ -1,3 +1,5 @@
+"use strict";
+
 /* global pref */
 pref("extensions.dta.ctxmenu", "1,1,0");
 pref("extensions.dta.ctxcompact", false);

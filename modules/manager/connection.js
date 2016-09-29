@@ -1128,7 +1128,9 @@ Connection.prototype = {
 
 		log(LOG_DEBUG, "closing");
 		Task.spawn(function*() {
-			d && d.critical();
+			if (d) {
+				d.critical();
+			}
 			try {
 				yield c.close();
 				log(LOG_DEBUG, "closed");
@@ -1252,7 +1254,9 @@ Connection.prototype = {
 			finally {
 				delete this.c;
 				delete this._chan;
-				d && d.uncritical();
+				if (d) {
+					d.uncritical();
+				}
 			}
 		}.bind(this));
 	},

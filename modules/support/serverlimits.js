@@ -86,7 +86,7 @@ Limit.prototype = Object.freeze({
 		return this._host +
 			" conn: " + this._connections +
 			" speed: " + this._speed +
-			" segments:" + this._segments
+			" segments:" + this._segments;
 	}
 });
 

@@ -2,6 +2,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
+/* jshint strict:false */
+/* jshint globalstrict:true */
+/* jshint -W079, -W003, -W083, -W116 */
+/* global Services:true */
 
 var EXPORTED_SYMBOLS = [
 	"require",
@@ -92,13 +96,13 @@ var LRUMap = function LRUMap(limit, values) {
 };
 LRUMap.prototype = Object.freeze({
 	"get": function(key) { return this._dict.get(key); },
-	"has": function(key) { return this._dict.has(key) },
+	"has": function(key) { return this._dict.has(key); },
 	"set": function(key, val) {
 		if (this.has(key)) {
 			this._dict.set(key, val);
 			return;
 		}
-		if (this._arr.length == this._limit) {
+		if (this._arr.length === this._limit) {
 			this._dict.delete(this._arr.shift());
 		}
 		this._dict.set(key, val);
@@ -328,7 +332,7 @@ LRUMap.prototype = Object.freeze({
 		// Unload ourself
 		Cu.unload(SELF_PATH);
 		return;
-	}
+	};
 	exports.unload = function unload(fn, ...args) {
 		if (fn == "shutdown") {
 			return shutdown(args.unshift());
@@ -360,14 +364,14 @@ LRUMap.prototype = Object.freeze({
 				return Services.scriptloader.loadSubScriptWithOptions(module, {charset: "utf-8", target: scope});
 			};
 		}
-		return (mdoule, scope) => {
+		return (module, scope) => {
 			try {
 				return Services.scriptloader.loadSubScript(module, scope, "utf-8");
 			}
 			catch (ex) {
 				return Services.scriptLoader.loadSubScript(module, scope);
 			}
-		}
+		};
 	})();
 
 	const require = function require(base, module) {

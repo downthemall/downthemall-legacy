@@ -48,6 +48,12 @@ const _thread = (function() {
 	});
 	return AsyncCopierThread;
 })();
+unload(() => {
+	try {
+		_thread.shutdown();
+	}
+	catch (ex) {}
+});
 
 exports.hintChunkBufferSize = function(bs) {
 };
@@ -405,12 +411,14 @@ Chunk.prototype = {
 			}
 			else {
 				let written = 0;
+				/* jshint -W116 */
 				try {
 					written = this._outStream.writeFrom(aInputStream, bytes);
 				}
 				catch (ex if ex.result == Cr.NS_BASE_STREAM_WOULD_BLOCK || ex == Cr.NS_BASE_STREAM_WOULD_BLOCK) {
 					// aka still nothing written
 				}
+				/* jshint +W116 */
 				let remain = bytes - written;
 				if (remain > 0) {
 					if (!this._overflowPipe) {
@@ -455,12 +463,14 @@ Chunk.prototype = {
 				// to schedule
 				requested = Math.max(requested - avail, 0);
 				let written = 0;
+				/* jshint -W116 */
 				try {
 					written = this._outStream.writeFrom(instream, avail);
 				}
 				catch (ex if ex.result == Cr.NS_BASE_STREAM_WOULD_BLOCK || ex == Cr.NS_BASE_STREAM_WOULD_BLOCK) {
 					// nothing written
 				}
+				/* jshint +W116 */
 				avail -= written;
 				log(LOG_DEBUG, `overflow written: ${written} ${avail}`);
 				if (!avail) {

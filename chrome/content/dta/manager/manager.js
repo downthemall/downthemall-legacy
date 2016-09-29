@@ -7,7 +7,8 @@
 /* global toURI, toURL, showPreferences, openUrl, getLargeIcon */
 /* global Tree, Prefs */
 /* global QUEUED, PAUSED, CANCELED, FINISHING, COMPLETE, RUNNING, SPEED_COUNT, REFRESH_FREQ, MIN_CHUNK_SIZE */
-/* jshint strict:true, globalstrict:true, browser:true, latedef:false */
+/* jshint strict:false, globalstrict:true, browser:true, latedef:false */
+/* jshint -W083, -W030 */
 
 var {CoThreadListWalker} = require("support/cothreads");
 var Prompts = require("prompts");
@@ -58,10 +59,10 @@ addEventListener("load", function load_textCache() {
 
 function isOSError(ex, unix, win) {
 	if (ex.unixErrno) {
-		return OS.Constants.libc[unix] == ex.unixErrno;
+		return OS.Constants.libc[unix] === ex.unixErrno;
 	}
 	if (ex.winLastError) {
-		return OS.Constants.Win[win] == ex.winLastError;
+		return OS.Constants.Win[win] === ex.winLastError;
 	}
 	return false;
 }
@@ -86,6 +87,7 @@ function _moveFile(destination, self) {
 				}
 				if (isOSError(ex, "ENAMETOOLONG", "ERROR_PATH_NOT_FOUND")) {
 					try {
+						let pinned = self.destinationFile;
 						self.shortenName();
 						ConflictManager.unpin(pinned);
 						pinned = self.destinationFile;
@@ -2215,7 +2217,7 @@ QueueItem.prototype = {
 		Dialog._sum += this.speeds.add(this.partialSize + this.otherBytes, Utils.getTimestamp());
 		if (!this.partialSize) {
 			log(LOG_ERROR, "INVALID SIZE!!!!!");
-			d.fail(_("accesserror"), _("accesserror.long"), _("accesserror"));
+			this.fail(_("accesserror"), _("accesserror.long"), _("accesserror"));
 			return;
 		}
 

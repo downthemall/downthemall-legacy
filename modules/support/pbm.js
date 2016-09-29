@@ -14,7 +14,7 @@ let isWindowPrivate = function() { return false; };
 /**
  * Determines if a channel is private
  */
-let isChannelPrivate = function() { return false };
+let isChannelPrivate = function() { return false; };
 
 try {
 	let {PrivateBrowsingUtils} = requireJSM("resource://gre/modules/PrivateBrowsingUtils.jsm");

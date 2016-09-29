@@ -8,6 +8,7 @@
 /* global asyncMoveFile, showPreferences, Tooltip, CoThreadListWalker */
 /* global COMPLETE, CANCELED, RUNNING, PAUSED, QUEUED, FINISHING */
 /* global TextCache_PAUSED */
+/* global FileExts */
 /* jshint strict:true, globalstrict:true, browser:true, latedef:false */
 
 XPCOMUtils.defineLazyGetter(window, "ImportExport", () => require("manager/imex"));
@@ -777,7 +778,7 @@ var Tree = {
 		if (download.state === COMPLETE) {
 			++Dialog.completed;
 		}
-		download.iconProp; // set up initial icon to avoid display problems
+		let dummy = download.iconProp; // set up initial icon to avoid display problems
 		return this._downloads.push(download) - 1;
 	},
 	add: function(download) {

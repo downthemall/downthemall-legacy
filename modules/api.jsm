@@ -3,6 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
+/*globals Cu:true */
 const Cu = Components.utils;
 const EXPORTED_SYMBOLS = [];
 
@@ -11,6 +12,7 @@ let api = require("api");
 
 for (let [k,v] in Iterator(api)) {
 	let [_k,_v] = [k,v];
+	/* jshint -W083 */
 	Object.defineProperty(this, _k, {
 		get: function() {
 			Cu.reportError("deprecated DownThemAll! API access; see glue.jsm/require(). Symbol was " + _k);

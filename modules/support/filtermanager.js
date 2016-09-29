@@ -2,6 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
+/*globals TextDecoder */
 
 const PREF_FILTERS_BASE = 'extensions.dta.filters.';
 const LINK_FILTER = (1<<0);
