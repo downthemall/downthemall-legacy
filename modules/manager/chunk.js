@@ -182,15 +182,6 @@ Chunk.prototype = {
 		}
 		this._inited = true;
 
-		this._sessionBytes = 0;
-		this.buckets = new ByteBucketTee(
-			this.parent.bucket,
-			Limits.getServerBucket(this.parent),
-			GlobalBucket
-			);
-		this.buckets.register(this);
-		memoryReporter.registerChunk(this);
-
 		if (this._openPromise) {
 			return this._openPromise;
 		}
@@ -198,11 +189,24 @@ Chunk.prototype = {
 		const file = this.parent.tmpFile;
 		let pos = this.start + this.safeBytes;
 		log(LOG_DEBUG, "opening " + file.path + " at: " + pos);
-		this.errored = false;
 		return this._openPromise = this._openAsync(file, pos);
 	},
 	_openAsync: Task.async(function*(file, pos) {
 		try {
+			if (this._closing) {
+				yield this._closing
+			}
+
+			this.errored = false;
+			this._sessionBytes = 0;
+			this.buckets = new ByteBucketTee(
+				this.parent.bucket,
+				Limits.getServerBucket(this.parent),
+				GlobalBucket
+				);
+			this.buckets.register(this);
+			memoryReporter.registerChunk(this);
+
 			try {
 				yield makeDir(file.parent, Prefs.dirPermissions, true);
 			}
