@@ -80,6 +80,7 @@ function _multiVerify(file, hashCollection, progressCallback) {
 	let start = 0;
 
 	return new Promise(function(resolve, reject) {
+		const { inputStream: pi, outputStream: po } = new Instances.Pipe(false, true, SEGSIZE, SEGNUM, null);
 		const listenerMain = {
 			QueryInterface: QI([Ci.nsIStreamListener, Ci.nsIRequestObserver]),
 			onStartRequest: function(r,c) {
@@ -168,10 +169,6 @@ function _multiVerify(file, hashCollection, progressCallback) {
 				}
 			}
 		};
-		const {
-			inputStream: pi,
-			outputStream: po
-			} = new Instances.Pipe(false, true, SEGSIZE, SEGNUM, null);
 		let tee = new Instances.StreamListenerTee(listenerMain, po);
 		new Instances.InputStreamPump(stream, 0, -1, SEGSIZE, SEGNUM, false).asyncRead(tee, null);
 		new Instances.InputStreamPump(pi, 0, -1, SEGSIZE, SEGNUM, true).asyncRead(listenerPartials, null);

@@ -58,7 +58,7 @@ FakeLink.prototype = Object.freeze({
 		return (attr in this);
 	},
 	getAttribute: function(attr) {
-		return (attr in this) ? this[attr] : null
+		return (attr in this) ? this[attr] : null;
 	},
 	toString: function() {
 		return this.href;

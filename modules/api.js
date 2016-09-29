@@ -447,6 +447,8 @@ exports.turboSaveLinkArray = function turboSaveLinkArray(window, urls, images, c
 
 var isManagerPending = false;
 var managerRequests = [];
+
+// jshint -W003
 function openManagerCallback(event) {
 	log(LOG_DEBUG, "manager ready; pushing queued items");
 	event.target.removeEventListener("DTA:dieEarly", openManagerDiedCallback, true);
@@ -457,6 +459,7 @@ function openManagerCallback(event) {
 	managerRequests.length = 0;
 	isManagerPending = false;
 }
+
 function openManagerDiedCallback(event) {
 	event.target.removeEventListener("DTA:dieEarly", openManagerDiedCallback, true);
 	event.target.removeEventListener("DTA:ready", openManagerCallback, true);
@@ -467,6 +470,7 @@ function openManagerDiedCallback(event) {
 		exports.openManager();
 	}
 }
+// jshint +W003
 
 exports.openManager = function openManager(window, quiet, cb) {
 	try {

@@ -129,10 +129,6 @@ MemoryReporter.prototype = {
 	unload: function() {
 		pressure.remove(this);
 		try {
-			_thread.shutdown();
-		}
-		catch (ex) {}
-		try {
 			if ("unregisterStrongReporter" in Services.memrm) {
 				Services.memrm.unregisterStrongReporter(this);
 			}

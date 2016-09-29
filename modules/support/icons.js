@@ -9,6 +9,58 @@ const {getExtension, toURL} = require("./stringfuncs");
 
 const favCache = new LRUMap(200);
 
+/**
+ * Get the icon URI corresponding to an URI (special mac handling)
+ *
+ * @author Nils
+ * @author Stefano
+ * @param link
+ *          Some sort of DTA.URL, nsIURI or string to get the icon for
+ * @param metalink
+ *          Is it a metalink?
+ * @param size
+ *          The desired iconsize;
+ * @return String containing the icon URI
+ */
+const getIcon = exports.getIcon = function(link, metalink, size) {
+	if (metalink) {
+		if (size >= 96) {
+			return "chrome://dta/skin/common/metalink96.png";
+		}
+		if (size >= 64) {
+			return "chrome://dta/skin/common/metalink64.png";
+		}
+		if (size >= 48) {
+			return "chrome://dta/skin/common/metalink48.png";
+		}
+		if (size >= 32) {
+			return "chrome://dta/skin/common/metalink32.png";
+		}
+		return "chrome://dta/skin/common/metalink16.png";
+	}
+	if (typeof(size) !== 'number') {
+		size = 16;
+	}
+	try {
+		let url = link;
+		if (link instanceof URL) {
+			url = link.url.spec;
+		}
+		else if (link instanceof Ci.nsIURI) {
+			url = link.spec;
+		}
+		else if (link && link.url) {
+			url = link.url.spec;
+		}
+		let ext = getExtension(url);
+		return "moz-icon://file" + (ext ? '.' + ext.toLowerCase() : '') + "?size=" + size;
+	}
+	catch (ex) {
+		log(LOG_ERROR, "updateIcon: failed to grab icon", ex);
+	}
+	return "moz-icon://foo.html?size=" + size;
+};
+
 if ("mozIAsyncFavicons" in Ci && Services.favicons instanceof Ci.mozIAsyncFavicons) {
 	let fis = Services.favicons;
 	exports.getFavIcon = function getFavIcon(uri, callback, tp) {
@@ -86,58 +138,6 @@ else {
 		callback.call(tp, getIcon(uri), false);
 	};
 }
-
-/**
- * Get the icon URI corresponding to an URI (special mac handling)
- *
- * @author Nils
- * @author Stefano
- * @param link
- *          Some sort of DTA.URL, nsIURI or string to get the icon for
- * @param metalink
- *          Is it a metalink?
- * @param size
- *          The desired iconsize;
- * @return String containing the icon URI
- */
-const getIcon = exports.getIcon = function(link, metalink, size) {
-	if (metalink) {
-		if (size >= 96) {
-			return "chrome://dta/skin/common/metalink96.png";
-		}
-		if (size >= 64) {
-			return "chrome://dta/skin/common/metalink64.png";
-		}
-		if (size >= 48) {
-			return "chrome://dta/skin/common/metalink48.png";
-		}
-		if (size >= 32) {
-			return "chrome://dta/skin/common/metalink32.png";
-		}
-		return "chrome://dta/skin/common/metalink16.png";
-	}
-	if (typeof(size) !== 'number') {
-		size = 16;
-	}
-	try {
-		let url = link;
-		if (link instanceof URL) {
-			url = link.url.spec;
-		}
-		else if (link instanceof Ci.nsIURI) {
-			url = link.spec;
-		}
-		else if (link && link.url) {
-			url = link.url.spec;
-		}
-		let ext = getExtension(url);
-		return "moz-icon://file" + (ext ? '.' + ext.toLowerCase() : '') + "?size=" + size;
-	}
-	catch (ex) {
-		log(LOG_ERROR, "updateIcon: failed to grab icon", ex);
-	}
-	return "moz-icon://foo.html?size=" + size;
-};
 
 // The Windows icon loader does not support icons > 32px at the moment
 exports.getLargeIcon = (function() {

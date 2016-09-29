@@ -42,7 +42,8 @@ function prepareStack(stack) {
 		message = [];
 		for (let i = 0; stack && i < 60; ++i, stack = stack.caller) {
 			if (stack.lineNumber) {
-				message.push(`\t${stack.name || "[anonymous]"}() @ ${(stack.filename || "unknown").replace(GLUE, "")}:${stack.lineNumber}`);
+				let loc = (stack.filename || "unknown").replace(GLUE, "");
+				message.push(`\t${stack.name || "[anonymous]"}() @ ${loc}:${stack.lineNumber}`);
 			}
 			else {
 				message.push(`\t[native @ ${stack.languageName || "???"}]`);

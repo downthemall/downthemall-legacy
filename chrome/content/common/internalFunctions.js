@@ -4,8 +4,8 @@
 
 /* dTa-only code! - DO NOT include in overlays or such! */
 "use strict";
-/* jshint strict:true, globalstrict:true, browser:true */
-/* global _ */
+/* jshint browser:true */
+/* global _, Cc:true, Ci:true, Cu:true, Cr:true, ctor:true, Exception:true */
 var Cc = Components.classes;
 var Ci = Components.interfaces;
 var Cr = Components.results;

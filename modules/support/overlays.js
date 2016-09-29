@@ -137,6 +137,7 @@ exports.registerOverlay = function registerOverlay(src, location, callback) {
 				try {
 					let uri = Services.io.newURI(data, null, null);
 					winUtils.loadSheet(uri, Ci.nsIDOMWindowUtils.AUTHOR_SHEET);
+          // jshint -W083
 					unloaders.push(function() {
 						winUtils.removeSheet(uri, Ci.nsIDOMWindowUtils.AUTHOR_SHEET);
 					});

@@ -2,6 +2,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
+/* globals Services:true, Instances: true, Cr:true, Cc:true, Ci:true, Cu:true, Cm:true, ctor:true, Exception:true */
+/* globals requireJoined:true, weak:true, lazy:true, reportError:true, QI:true, lazyProto:true, LRUMap:true */
+/* globals log:true, LOG_DEBUG:true, LOG_INFO:true, LOG_ERROR:true */
 
 var EXPORTED_SYMBOLS = [
 	"require",
@@ -39,6 +42,16 @@ var weak = Cu.getWeakReference.bind(Cu);
 var reportError = Cu.reportError.bind(Cu);
 var lazy = XPCOMUtils.defineLazyGetter; // bind?
 var QI = XPCOMUtils.generateQI.bind(XPCOMUtils);
+var requireJoined;
+
+var log = function logStub(...args) {
+	Cu.reportError(Array.join(args, ", "));
+};
+
+var LOG_DEBUG = 0, LOG_INFO = 0, LOG_ERROR = 0;
+var Instances;
+
+const DEAD = Symbol();
 
 function canUnload() {
 		let cancel = new Instances.SupportsBool();
@@ -70,13 +83,6 @@ var lazyProto = (function() {
 	};
 })();
 
-var log = function logStub() {
-	Cu.reportError(Array.join(arguments, ", "));
-};
-var LOG_DEBUG = 0, LOG_INFO = 0, LOG_ERROR = 0;
-
-const DEAD = Symbol();
-
 var LRUMap = function LRUMap(limit, values) {
 	if (!(limit > 1) || (limit !== (limit | 0))) {
 		throw new Error("Invalid limit");
@@ -92,13 +98,13 @@ var LRUMap = function LRUMap(limit, values) {
 };
 LRUMap.prototype = Object.freeze({
 	"get": function(key) { return this._dict.get(key); },
-	"has": function(key) { return this._dict.has(key) },
+	"has": function(key) { return this._dict.has(key); },
 	"set": function(key, val) {
 		if (this.has(key)) {
 			this._dict.set(key, val);
 			return;
 		}
-		if (this._arr.length == this._limit) {
+		if (this._arr.length === this._limit) {
 			this._dict.delete(this._arr.shift());
 		}
 		this._dict.set(key, val);
@@ -210,7 +216,7 @@ LRUMap.prototype = Object.freeze({
 	dlsg("pps", "@mozilla.org/network/protocol-proxy-service;1", "nsIProtocolProxyService");
 	dlsg("sysprincipal", "@mozilla.org/systemprincipal;1", "nsIPrincipal");
 
-	const Instances = exports.Instances = {};
+	Instances = exports.Instances = {};
 
 	// non-init
 	itor("XHR", "@mozilla.org/xmlextras/xmlhttprequest;1", "nsIXMLHttpRequest");
@@ -295,25 +301,27 @@ LRUMap.prototype = Object.freeze({
 			_runUnloader(_unloaders[i]);
 		}
 		_unloaders.length = 0;
+		let re = Cu.reportError.bind(Cu);
+		let ns = Cu.nukeSandbox.bind(Cu);
+		let nukeDelayed = (p, scope) => {
+			p.then(function() {
+				ns(scope);
+			}, function(ex) {
+				re(ex);
+				ns(scope);
+			});
+		};
 		for (let r of _registry.keys()) {
 			try {
 				let scope = _registry.get(r);
 				if (scope.asyncShutdown) {
 					let p = scope.asyncShutdown();
 					if (p && p.then) {
-						let re = Cu.reportError.bind(Cu);
-						let ns = Cu.nukeSandbox.bind(Cu);
-						p.then(function() {
-							ns(scope);
-						}, function(ex) {
-							re(ex);
-							ns(scope);
-						});
+						nukeDelayed(p, scope);
 						continue;
 					}
 				}
-
-				Cu.nukeSandbox(scope);
+				ns(scope);
 			}
 			catch (ex) {}
 		}
@@ -328,24 +336,24 @@ LRUMap.prototype = Object.freeze({
 		// Unload ourself
 		Cu.unload(SELF_PATH);
 		return;
-	}
+	};
 	exports.unload = function unload(fn, ...args) {
-		if (fn == "shutdown") {
+		if (fn === "shutdown") {
 			return shutdown(args.unshift());
 		}
-		if (fn == "eventual-shutdown") {
+		if (fn === "eventual-shutdown") {
 			_upgrade = args.shift();
 			return;
 		}
 
 		// add an unloader
-		if (typeof(fn) != "function") {
+		if (typeof(fn) !== "function") {
 			throw new Error("unloader is not a function");
 		}
 		_unloaders.push(fn);
 		return function() {
 			_runUnloader(fn, arguments);
-			_unloaders = _unloaders.filter(c => c != fn);
+			_unloaders = _unloaders.filter(c => c !== fn);
 		};
 	};
 
@@ -360,14 +368,14 @@ LRUMap.prototype = Object.freeze({
 				return Services.scriptloader.loadSubScriptWithOptions(module, {charset: "utf-8", target: scope});
 			};
 		}
-		return (mdoule, scope) => {
+		return (module, scope) => {
 			try {
 				return Services.scriptloader.loadSubScript(module, scope, "utf-8");
 			}
 			catch (ex) {
 				return Services.scriptLoader.loadSubScript(module, scope);
 			}
-		}
+		};
 	})();
 
 	const require = function require(base, module) {
@@ -375,24 +383,24 @@ LRUMap.prototype = Object.freeze({
 		if (!path || !path.length) {
 			throw new Error("Invalid module path");
 		}
-		if (path[0] == "." || path[0] == "..") {
+		if (path[0] === "." || path[0] === "..") {
 			path = base.split("/").filter(e => !!e).concat(path);
 		}
 		for (let i = path.length - 2; i >= 0; --i) {
-			if (path[i] == ".") {
+			if (path[i] === ".") {
 				path.splice(i, 1);
 				continue;
 			}
-			if (path[i] != "..") {
+			if (path[i] !== "..") {
 				continue;
 			}
-			if (i == 0) {
+			if (i === 0) {
 				throw new Error("Invalid traversal");
 			}
 			path.splice(i - 1, 2);
 		}
 		let file = path.pop();
-		if (file == ".." || file == ".") {
+		if (file === ".." || file === ".") {
 			throw new Error("Invalid traversal");
 		}
 		base = path.join("/");
@@ -479,7 +487,7 @@ LRUMap.prototype = Object.freeze({
 		return (scope.module && scope.module.exports) || scope.exports;
 	};
 
-	const requireJoined = function requireJoined(base, where, module) {
+	requireJoined = function requireJoined(base, where, module) {
 		module = require(base, module);
 		for (let k of Object.getOwnPropertyNames(module)) {
 			Object.defineProperty(where, k, Object.getOwnPropertyDescriptor(module, k));
@@ -513,7 +521,7 @@ LRUMap.prototype = Object.freeze({
 	exports.require("version").getInfo(function setupVersion(v) {
 		log(
 			LOG_INFO,
-			v.NAME + "/" + v.VERSION + " on " + v.APP_NAME + "/" + v.APP_VERSION + " (" + v.LOCALE + " / " + v.OS + ") ready"
+			`${v.NAME}/${v.VERSION} on ${v.APP_NAME}/${v.APP_VERSION} (${v.LOCALE}/${v.OS}) ready`
 			);
 	});
 	try {

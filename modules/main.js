@@ -11,6 +11,8 @@ const DTA = require("api");
 const Utils = require("utils");
 const obs = require("support/observers");
 
+const {registerOverlay, watchWindows, unloadWindow} = require("support/overlays");
+
 // Tests will only be available in dev mode. See make.py
 exports.hasTests = "dta-tests";
 if (!("hasTests" in exports)) {
@@ -539,7 +541,6 @@ function registerOverlays() {
 		});
 	}
 
-	const {registerOverlay, watchWindows, unloadWindow} = require("support/overlays");
 	registerOverlay(
 		"chrome://dta/content/integration/elements.xul",
 		"chrome://browser/content/browser.xul",

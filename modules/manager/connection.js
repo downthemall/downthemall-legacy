@@ -814,7 +814,9 @@ Connection.prototype = {
 				let file = d.fileName.length > 50 ? d.fileName.substring(0, 50) + "..." : d.fileName;
 				if (~[401, 402, 407, 500, 502, 503, 504].indexOf(code) ||
 					(Preferences.getExt('recoverallhttperrors', false) && code !== 404) ||
-					(code === 403 && aChannel instanceof Ci.nsIHttpChannel && maybeTempBlacklisted(this, d, aChannel))) {
+					(code === 403 &&
+					 aChannel instanceof Ci.nsIHttpChannel &&
+					 maybeTempBlacklisted(this, d, aChannel))) {
 					log(LOG_DEBUG, "we got temp failure!", code);
 					d.pauseAndRetry();
 					d.status = code >= 500 ? _('temperror') : _("error", [formatNumber(code, 3)]);
@@ -1059,7 +1061,13 @@ Connection.prototype = {
 			return;
 		}
 		if (!~d.chunks.indexOf(c)) {
-			log(LOG_DEBUG, "invalid connection state (chunk index): " + d.chunks.indexOf(c) + " / " + JSON.stringify(c) + " / " + JSON.stringify(d.chunks));
+			log(LOG_DEBUG,
+				"invalid connection state (chunk index): " +
+				d.chunks.indexOf(c) +
+				" / " +
+				JSON.stringify(c) +
+				" / " +
+				JSON.stringify(d.chunks));
 			return;
 		}
 
@@ -1126,7 +1134,9 @@ Connection.prototype = {
 		let c = this.c;
 		let d = this.d;
 
-		d && d.critical();
+		if (d) {
+			d.critical();
+		}
 		try {
 			yield c.close();
 			log(LOG_DEBUG, "closed");
@@ -1250,7 +1260,9 @@ Connection.prototype = {
 		finally {
 			delete this.c;
 			delete this._chan;
-			d && d.uncritical();
+			if (d) {
+				d.uncritical();
+			}
 		}
 	}),
 

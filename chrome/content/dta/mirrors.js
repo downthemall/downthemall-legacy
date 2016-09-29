@@ -1,10 +1,10 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+/* jshint browser:true */
 "use strict";
 /* global _, DTA, $, $$, Utils, Preferences, getDefaultDownloadsDirectory, unloadWindow */
 /* global toURI, toURL, setTimeoutOnlyFun */
-/* jshint strict:true, globalstrict:true, browser:true */
 var Prompts = require("prompts");
 
 var {LoggedPrompter} = require("support/loggedprompter");
@@ -163,25 +163,44 @@ function checkMirrors() {
 		}
 	};
 
-	function makeRequest(m) {
-		let req = new XMLHttpRequest();
-		req.mirror = m;
-		req.addEventListener("load", function() {
-			finishRequest(req);
-		}, false);
-		req.addEventListener("error", function() {
-			finishRequest(req);
-		}, false);
-		requests.add(req);
-		try {
-			req.open('HEAD', m.mirror);
-			req._callbacks = new Callbacks(req);
-			req.send(null);
+	/* jshint -W003 */
+	function finish() {
+		if (numGoodLengths > 1) {
+			let max;
+			let maxCL;
+			for (let cl in good) {
+				if (!max || good[cl].length > max) {
+					max = good[cl].length;
+					maxCL = cl;
+				}
+			}
+			for (let cl in good) {
+				if (cl === maxCL) {
+					continue;
+				}
+				for (let m of good[cl]) {
+					log(LOG_INFO, m.mirror + " has a cl of " + cl + " but the majority of mirrors uses " + maxCL);
+					m.setAttribute('state', 'bad');
+					m.setAttribute('error', _('sizecheckerror'));
+					bad.push(m);
+				}
+			}
 		}
-		catch (ex) {
-			finishRequest(req);
+		if (bad.length && (mirrors.itemCount - bad.length) > 0 &&
+				Prompts.confirm(
+					window,
+					_('removebadmirrors.caption'),
+					_('removebadmirrors.message', [bad.length]),
+					_('removebadmirrors.keep'), // XXX swap
+					_('removebadmirrors.remove')
+			)) {
+			for (let b of bad) {
+				b.parentNode.removeChild(b);
+			}
 		}
+		button.disabled = false;
 	}
+
 
 	function finishRequest(req, error) {
 		let m = req.mirror;
@@ -224,42 +243,28 @@ function checkMirrors() {
 			makeRequest(pending.shift());
 		}
 	}
-	function finish() {
-		if (numGoodLengths > 1) {
-			let max;
-			let maxCL;
-			for (let cl in good) {
-				if (!max || good[cl].length > max) {
-					max = good[cl].length;
-					maxCL = cl;
-				}
-			}
-			for (let cl in good) {
-				if (cl === maxCL) {
-					continue;
-				}
-				for (let m of good[cl]) {
-					log(LOG_INFO, m.mirror + " has a cl of " + cl + " but the majority of mirrors uses " + maxCL);
-					m.setAttribute('state', 'bad');
-					m.setAttribute('error', _('sizecheckerror'));
-					bad.push(m);
-				}
-			}
+
+	function makeRequest(m) {
+		let req = new XMLHttpRequest();
+		req.mirror = m;
+		req.addEventListener("load", function() {
+			finishRequest(req);
+		}, false);
+		req.addEventListener("error", function() {
+			finishRequest(req);
+		}, false);
+		requests.add(req);
+		try {
+			req.open('HEAD', m.mirror);
+			req._callbacks = new Callbacks(req);
+			req.send(null);
 		}
-		if (bad.length && (mirrors.itemCount - bad.length) > 0 &&
-				Prompts.confirm(
-					window,
-					_('removebadmirrors.caption'),
-					_('removebadmirrors.message', [bad.length]),
-					_('removebadmirrors.keep'), // XXX swap
-					_('removebadmirrors.remove')
-			)) {
-			for (let b of bad) {
-				b.parentNode.removeChild(b);
-			}
+		catch (ex) {
+			finishRequest(req);
 		}
-		button.disabled = false;
 	}
+	/* jshint +W003 */
+
 	function timeout() {
 		for (let req of requests) {
 			log(LOG_INFO, req.mirror.mirror + " is a timeout");

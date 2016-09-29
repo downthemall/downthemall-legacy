@@ -87,6 +87,8 @@ function load(window, document) {
 
 			log(LOG_DEBUG, "save-as reverted!");
 		};
+		let url, referrer, mask, isPrivate;
+
 		let download = turbo => {
 			if (turbo) {
 				ddDirectory.save();
@@ -118,7 +120,6 @@ function load(window, document) {
 			download = function() {};
 		};
 
-		let url, referrer, mask, isPrivate;
 
 		// Need to get behind the default load event
 		const doOverlay = Preferences.getExt("downloadWin", true);

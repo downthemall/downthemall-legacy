@@ -58,12 +58,18 @@ addEventListener("load", function load_textCache() {
 
 function isOSError(ex, unix, win) {
 	if (ex.unixErrno) {
-		return OS.Constants.libc[unix] == ex.unixErrno;
+		return OS.Constants.libc[unix] === ex.unixErrno;
 	}
 	if (ex.winLastError) {
-		return OS.Constants.Win[win] == ex.winLastError;
+		return OS.Constants.Win[win] === ex.winLastError;
 	}
 	return false;
+}
+
+function timeout(secs) {
+	return new Promise(function(resolve) {
+		setTimeoutOnlyFun(() => resolve(), secs);
+	});
 }
 
 function _moveFile(destination, self) {
@@ -86,6 +92,7 @@ function _moveFile(destination, self) {
 				}
 				if (isOSError(ex, "ENAMETOOLONG", "ERROR_PATH_NOT_FOUND")) {
 					try {
+						let pinned = self.destinationFile;
 						self.shortenName();
 						ConflictManager.unpin(pinned);
 						pinned = self.destinationFile;
@@ -99,9 +106,7 @@ function _moveFile(destination, self) {
 					remakeDir = true;
 				}
 				log(LOG_ERROR, ex);
-				yield new Promise(function(resolve) {
-					setTimeoutOnlyFun(() => resolve(), x * 250);
-				});
+				yield timeout(x * 250);
 			}
 		}
 		log(LOG_ERROR, "shit hit the fan!");
@@ -1084,7 +1089,8 @@ var Dialog = {
 					if (download.totalSize) {
 						download.partialSize = download.totalSize;
 					}
-					log(LOG_INFO, "Download seems to be complete; likely a left-over from a crash, finish it:" + download);
+					log(LOG_INFO,
+						"Download seems to be complete; likely a left-over from a crash, finish it:" + download);
 					download.finishDownload();
 					return true;
 				}
@@ -1550,7 +1556,7 @@ QueueItem.prototype = {
 			this.save();
 		}
 		finally {
-			this.iconProp; // set up initial icon to avoid display problems
+			let dummy = this.iconProp; // set up initial icon to avoid display problems
 			Tree.invalidate();
 			Tree.endUpdate();
 		}
@@ -2210,7 +2216,7 @@ QueueItem.prototype = {
 		Dialog._sum += this.speeds.add(this.partialSize + this.otherBytes, Utils.getTimestamp());
 		if (!this.partialSize) {
 			log(LOG_ERROR, "INVALID SIZE!!!!!");
-			d.fail(_("accesserror"), _("accesserror.long"), _("accesserror"));
+			this.fail(_("accesserror"), _("accesserror.long"), _("accesserror"));
 			return;
 		}
 
@@ -2310,7 +2316,7 @@ QueueItem.prototype = {
 		}
 		finally {
 			this._icon = null;
-			this.iconProp; // set up initial icon to avoid display problems
+			let dummy = this.iconProp; // set up initial icon to avoid display problems
 			FileExts.add();
 		}
 	},
@@ -2483,13 +2489,13 @@ QueueItem.prototype = {
 	},
 	_runRemoveTmpFile: Task.async(function*(tmpfile) {
 		try {
-			yield OS.File.remove(tmpFile.path);
+			yield OS.File.remove(tmpfile.path);
 		}
 		catch (ex if ex.becauseNoSuchFile) {
 			// no op
 		}
 		catch (ex) {
-			log(LOG_ERROR, "failed to remove tmpfile: " + tmpFile.path, ex);
+			log(LOG_ERROR, "failed to remove tmpfile: " + tmpfile.path, ex);
 		}
 	}),
 

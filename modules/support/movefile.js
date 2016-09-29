@@ -2,6 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/ */
 "use strict";
+/* global ChromeWorker */
 
 const {AsyncShutdown} = requireJSM("resource://gre/modules/AsyncShutdown.jsm");
 const obs = require("support/observers");
@@ -13,6 +14,8 @@ let _kill;
 let _killWorker = new Promise((resolve, reject) => {
 	_kill = resolve;
 });
+
+let _worker = new ChromeWorker(BASE_PATH + "support/movefile_worker.js");
 
 function onmessage({data}) {
 	if (data.log) {
@@ -42,12 +45,11 @@ function onmessage({data}) {
 }
 
 function onerror(e) {
-	log(LOG_ERROR, "moveFile worker died " + e.message + " " + e.filename + " " + e.linenumber + " " + Object.keys(e), e);
+	log(LOG_ERROR, `moveFile worker died ${e.message} ${e.filename}:${e.linenumber} ${Object.keys(e)}`, e);
 	_worker = null;
 	_kill();
 }
 
-let _worker = new ChromeWorker(BASE_PATH + "support/movefile_worker.js");
 _worker.onmessage = onmessage;
 _worker.onerror = onerror;
 
@@ -68,7 +70,8 @@ const asyncShutdown = function() {
 		return;
 	}
 	_worker.postMessage(null);
-}
+};
+
 obs.addExit(asyncShutdown);
 unload(asyncShutdown);
 AsyncShutdown.webWorkersShutdown.addBlocker("DownThemAll! moveFile workers", asyncShutdown);
