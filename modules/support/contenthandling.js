@@ -25,24 +25,34 @@ const obs = require("./observers");
 const {modifyURL} = require("./requestmanipulation");
 
 
-function ContextLRUMap(num) {
-	this._normal = new LRUMap(num);
-	this._private = new LRUMap(num);
-}
-ContextLRUMap.prototype = {
-	_m: function(isPrivate) { return isPrivate ? this._private : this._normal; },
-	get: function(key, isPrivate) { return this._m(isPrivate).get(key); },
-	has: function(key, isPrivate) { return this._m(isPrivate).has(key); },
-	set: function(key, val, isPrivate) { return this._m(isPrivate).set(key, val); },
-	"delete": function(key, isPrivate) { return this._m(isPrivate).delete(key); },
-	clear: function() {
+class ContextLRUMap {
+	constructor (num) {
+		this._normal = new LRUMap(num);
+		this._private = new LRUMap(num);
+	}
+	_m(isPrivate) {
+		return isPrivate ? this._private : this._normal;
+	}
+	"get"(key, isPrivate) {
+		return this._m(isPrivate).get(key);
+	}
+	"set"(key, val, isPrivate) {
+		return this._m(isPrivate).set(key, val);
+	}
+	has(key, isPrivate) {
+		return this._m(isPrivate).has(key);
+	}
+	"delete"(key, isPrivate) {
+		return this._m(isPrivate).delete(key);
+	}
+	clear() {
 		this._normal.clear();
 		this._private.clear();
-	},
-	clearPrivate: function() {
+	}
+	clearPrivate() {
 		this._private.clear();
 	}
-};
+}
 
 /**
  * ContentHandling

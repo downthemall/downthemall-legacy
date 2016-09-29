@@ -82,23 +82,25 @@ var lazyProto = (function() {
 	};
 })();
 
-var LRUMap = function LRUMap(limit, values) {
-	if (!(limit > 1) || (limit !== (limit | 0))) {
-		throw new Error("Invalid limit");
-	}
-	this._limit = limit;
-	this.clear();
-	Object.preventExtensions(this);
+class LRUMap {
+	constructor(limit, values) {
+		if (!(limit > 1) || (limit !== (limit | 0))) {
+			throw new Error("Invalid limit");
+		}
+		this._limit = limit;
+		this.clear();
+		Object.preventExtensions(this);
 
-	for (let i = (values || DEAD).length - 1; i >= 0; --i) {
-		Cu.reportError(i);
-		this.set(values[i][0], values[i][1]);
+		for (let i = (values || DEAD).length - 1; i >= 0; --i) {
+			Cu.reportError(i);
+			this.set(values[i][0], values[i][1]);
+		}
 	}
-};
-LRUMap.prototype = Object.freeze({
-	"get": function(key) { return this._dict.get(key); },
-	"has": function(key) { return this._dict.has(key); },
-	"set": function(key, val) {
+
+	"get"(key) {
+		return this._dict.get(key);
+	}
+	"set"(key, val) {
 		if (this.has(key)) {
 			this._dict.set(key, val);
 			return;
@@ -108,26 +110,31 @@ LRUMap.prototype = Object.freeze({
 		}
 		this._dict.set(key, val);
 		this._arr.push(key);
-	},
-	"delete": function(key) {
+	}
+	has(key) {
+		return this._dict.has(key);
+	}
+	delete(key) {
 		if (!this._dict.has(key)) {
 			return;
 		}
 		this._dict.delete(key);
 		this._arr.splice(this._arr.indexOf(key), 1);
-	},
-	"clear": function() {
+	}
+	clear() {
 		this._dict = new Map();
 		this._arr = [];
-	},
-	toJSON: function() {
+	}
+
+	toJSON() {
 		let rv = [];
 		for (let i of this._arr) {
 			rv.push([i, this._dict.get(i)]);
 		}
 		return rv;
 	}
-});
+};
+this.LRUMap = LRUMap;
 
 //hide our internals
 //Since require() uses .scriptloader, the loaded require scopes will have

@@ -46,24 +46,24 @@ function mapper(e) {
  * @param title (string) Optional. Title/description
  * @see DOMElement
  */
-function FakeLink(url, title) {
-	this.src = this.href = url;
-	if (!!title) {
-		this.title = title;
+class FakeLink {
+	constructor (url, title) {
+		this.src = this.href = url;
+		if (!!title) {
+			this.title = title;
+		}
 	}
-}
-FakeLink.prototype = Object.freeze({
-	childNodes: Object.freeze([]),
-	hasAttribute: function(attr) {
+	hasAttribute(attr) {
 		return (attr in this);
-	},
-	getAttribute: function(attr) {
+	}
+	getAttribute(attr) {
 		return (attr in this) ? this[attr] : null;
-	},
-	toString: function() {
+	}
+	toString() {
 		return this.href;
 	}
-});
+}
+FakeLink.prototype.childNodes = Object.freeze([]);
 
 /**
  * Parses a text looking for any URLs with supported protocols

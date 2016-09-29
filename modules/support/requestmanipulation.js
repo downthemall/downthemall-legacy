@@ -3,23 +3,24 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/ */
 "use strict";
 
-function Manipulator() {
-	this._m = {};
-}
-Manipulator.prototype = {
-	register: function(id, matcher) {
-		this._m[id] = {
+class Manipulator {
+	constructor() {
+		this._m = new Map();
+	}
+
+	register(id, matcher) {
+		this._m.set(id, {
 				matcher: matcher,
 				funcs: Array.slice(arguments, 2)
-		};
-	},
-	unregister: function(id) {
-		if (id in this._m) {
-			delete this._m[id];
-		}
-	},
-	modify: function(context, spec) {
-		for (let [,m] in new Iterator(this._m)) {
+		});
+	}
+
+	unregister(id) {
+		this._m.delete(id);
+	}
+
+	modify(context, spec) {
+		for (let [id, m] of this._m.entries()) {
 			if (m.matcher.test(spec)) {
 				try {
 					for (let func of m.funcs) {
@@ -27,13 +28,13 @@ Manipulator.prototype = {
 					}
 				}
 				catch (ex) {
-					Cu.reportError(ex);
+					log(LOG_ERROR, `Failed to apply request manipulator id ${id}`, ex);
 				}
 			}
 		}
 		return context;
 	}
-};
+}
 
 function defineManipulator(m, sp) {
 	const _m = new Manipulator();

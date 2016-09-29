@@ -10,19 +10,21 @@ const pressure = require("support/memorypressure");
 
 const Timers = new TimerManager();
 
-function MemoryReporter() {
-	this.chunks = new Set();
-	this.session = {
-		chunks: 0,
-		written: 0
-	};
-	this._calc();
-	this.memoryPressure = 0;
-	return Object.seal(this);
-}
-MemoryReporter.prototype = {
-	process: "",
-	_calc: function(force) {
+class MemoryReporter {
+	constructor() {
+		this.explicitNonHeap = 0;
+		this.process = "";
+		this.chunks = new Set();
+		this.session = {
+			chunks: 0,
+			written: 0
+		};
+		this._calc();
+		this.memoryPressure = 0;
+		return Object.seal(this);
+	}
+
+	_calc(force) {
 		if (!this._generation) {
 			this._generation = 10;
 		}
@@ -46,16 +48,16 @@ MemoryReporter.prototype = {
 				++this._chunksActive;
 			}
 		}
-	},
+	}
 	get pendingBytes() {
 		this._calc();
 		return this._pendingBytes;
-	},
+	}
 	get cachedBytes() {
 		this._calc();
 		return this._cachedBytes;
-	},
-	collectReports: function(callback, closure) {
+	}
+	collectReports(callback, closure) {
 		this._calc(true);
 
 		// As per :njn, add-ons should not use anything other than
@@ -114,19 +116,18 @@ MemoryReporter.prototype = {
 			"Total bytes received during this session.",
 			closure
 			);
-	},
-	explicitNonHeap: 0,
-	noteBytesWritten: function(bytes) {
+	}
+	noteBytesWritten(bytes) {
 		this.session.written += bytes;
-	},
-	registerChunk: function(chunk) {
+	}
+	registerChunk(chunk) {
 		this.chunks.add(chunk);
 		++this.session.chunks;
-	},
-	unregisterChunk: function(chunk) {
+	}
+	unregisterChunk(chunk) {
 		this.chunks.delete(chunk);
-	},
-	unload: function() {
+	}
+	unload() {
 		pressure.remove(this);
 		try {
 			if ("unregisterStrongReporter" in Services.memrm) {
@@ -137,8 +138,8 @@ MemoryReporter.prototype = {
 			}
 		} catch (ex) {}
 		Timers.killAllTimers();
-	},
-	observe: function(s, topic, data) {
+	}
+	observe(s, topic, data) {
 		if (topic === "memory-pressure") {
 			if (data === "low-memory") {
 				this.memoryPressure += 25;
@@ -149,8 +150,8 @@ MemoryReporter.prototype = {
 			this.schedulePressureDecrement();
 			return;
 		}
-	},
-	decrementPressure: function() {
+	}
+	decrementPressure() {
 		--this.memoryPressure;
 		if (this.memoryPressure <= 0) {
 			this.memoryPressure = 0;
@@ -158,8 +159,8 @@ MemoryReporter.prototype = {
 			return;
 		}
 		this.schedulePressureDecrement();
-	},
-	schedulePressureDecrement: function() {
+	}
+	schedulePressureDecrement() {
 		Timers.createOneshot(100, this.decrementPressure, this);
 	}
 };

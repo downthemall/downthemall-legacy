@@ -29,66 +29,77 @@ const LIMIT_PROTO = {
 };
 Object.freeze(LIMIT_PROTO);
 
-function Limit(host, isNew) {
-	this._host = host;
-	this._isNew = isNew;
-	let o = LIMIT_PROTO;
-	try {
-		o = JSON.parse(Prefs.get(LIMITS_PREF + this._host, ""));
-		for (let p in LIMIT_PROTO) {
-			if (!o.hasOwnProperty(p)) {
-				o[p] = LIMIT_PROTO[p];
+class Limit {
+	constructor(host, isNew) {
+		this._host = host;
+		this._isNew = isNew;
+		let o = LIMIT_PROTO;
+		try {
+			o = JSON.parse(Prefs.get(LIMITS_PREF + this._host, ""));
+			for (let p in LIMIT_PROTO) {
+				if (!o.hasOwnProperty(p)) {
+					o[p] = LIMIT_PROTO[p];
+				}
 			}
 		}
+		catch (ex) {
+			// no op;
+		}
+		this.connections = o.c;
+		this.speed = o.s;
+		this.segments = o.seg;
 	}
-	catch (ex) {
-		// no op;
+
+	get host() {
+		return this._host;
 	}
-	this.connections = o.c;
-	this.speed = o.s;
-	this.segments = o.seg;
-}
-Limit.prototype = Object.freeze({
-	get host() { return this._host; },
-	get isNew() { return this._isNew; },
-	get connections() { return this._connections; },
+	get isNew() {
+		return this._isNew;
+	}
+	get connections() {
+		return this._connections;
+	}
 	set connections(value) {
 		if (!isFinite(value)) {
-			throw new Exception("Invalid Limit");
+			throw new Error("Invalid Limit");
 		}
 		this._connections = value;
-	},
-	get speed() { return this._speed; },
+	}
+	get speed() {
+		return this._speed;
+	}
 	set speed(value) {
 		if (!isFinite(value)) {
-			throw new Exception("Invalid Limit");
+			throw new Error("Invalid Limit");
 		}
 		this._speed = value;
-	},
-	get segments() { return this._segments; },
+	}
+	get segments() {
+		return this._segments;
+	}
 	set segments(value) {
 		if (!isFinite(value)) {
-			throw new Exception("Invalid Limit");
+			throw new Error("Invalid Limit");
 		}
 		this._segments = value;
-	},
-	save: function() {
+	}
+
+	save() {
 		Prefs.set(
 			LIMITS_PREF + this._host,
 			JSON.stringify({c: this._connections, s: this._speed, seg: this._segments})
 			);
 		this._isNew = false;
-	},
-	remove: function() {
-		Prefs.reset(LIMITS_PREF + this._host);
-	},
-	toString: function() {
-		return this._host +
-			" conn: " + this._connections +
-			" speed: " + this._speed +
-			" segments:" + this._segments;
 	}
-});
+
+	remove() {
+		Prefs.reset(LIMITS_PREF + this._host);
+	}
+
+	toString() {
+		return `[Limit(conn: ${this._connections}, spd: ${this._speed}, seg: ${this._segments})]`;
+	}
+}
 
 function loadLimits() {
 	limits = Object.create(null);
@@ -140,10 +151,11 @@ function getLimitFor(d) {
 
 let globalConnections = -1;
 
-function BaseScheduler() {}
-BaseScheduler.prototype = Object.freeze({
-	_queuedFilter: function(e) { return e.state === QUEUED; },
-	next: function() {
+class BaseScheduler {
+	static _queuedFilter(e) {
+		return e.state === QUEUED;
+	}
+	next() {
 		for (let d; this._schedule.length;) {
 			d = this._schedule.shift();
 			if (d.state !== QUEUED) {
@@ -152,37 +164,38 @@ BaseScheduler.prototype = Object.freeze({
 			return d;
 		}
 		return null;
-	},
-	destroy: function() {
+	}
+
+	destroy() {
 		this._schedule.length = 0;
 		delete this._schedule;
 	}
-});
-Object.freeze(BaseScheduler);
+}
 
 // Legacy scheduler. Does not respect limits
 // Basically Olegacy(1)
-function LegacyScheduler(downloads) {
-	this._schedule = downloads.filter(this._queuedFilter);
+class LegacyScheduler extends BaseScheduler {
+	constructor(downloads) {
+		super();
+		this._schedule = downloads.filter(BaseScheduler._queuedFilter);
+	}
 }
-LegacyScheduler.prototype = BaseScheduler.prototype;
-Object.freeze(LegacyScheduler);
 
 // Fast generator: Start downloads as in queue
-function FastScheduler(downloads, running) {
-	this._downloads = [];
-	for (let i = 0, e = downloads.length; i < e; ++i) {
-		let d = downloads[i];
-		if (d.state === QUEUED) {
-			this._downloads.push(d);
+class FastScheduler extends BaseScheduler {
+	constructor(downloads, running) {
+		super();
+		this._downloads = [];
+		for (let i = 0, e = downloads.length; i < e; ++i) {
+			let d = downloads[i];
+			if (d.state === QUEUED) {
+				this._downloads.push(d);
+			}
 		}
+		this._runCount = 0;
 	}
-	this._runCount = 0;
-	//this._downloads = downloads.filter(this._queuedFilter);
-}
-FastScheduler.prototype = Object.freeze({
-	__proto__: BaseScheduler.prototype,
-	next: function(running) {
+
+	next(running) {
 		if (!this._downloads.length) {
 			return null;
 		}
@@ -191,7 +204,7 @@ FastScheduler.prototype = Object.freeze({
 		let i, e, d, host;
 
 		if (this._runCount > 50) {
-			filterInSitu(this._downloads, this._queuedFilter);
+			filterInSitu(this._downloads, BaseScheduler._queuedFilter);
 			this._runCount = 0;
 		}
 
@@ -242,36 +255,36 @@ FastScheduler.prototype = Object.freeze({
 			}
 		}
 		return null;
-	},
-	destroy: function() {
+	}
+
+	destroy() {
 		this._downloads.length = 0;
 		delete this._downloads;
 	}
-});
-Object.freeze(FastScheduler);
+}
 
 // Fair Scheduler: evenly distribute slots
 // Performs worse than FastScheduler but is more precise.
-function FairScheduler(downloads) {
-	this._downloadSet = Object.create(null);
+class FairScheduler extends BaseScheduler {
+	constructor(downloads) {
+		super();
+		this._downloadSet = Object.create(null);
 
-	// set up our internal state
-	for (let i = 0, e = downloads.length, d, host; i < e; ++i) {
-		d = downloads[i];
-		if (d.state !== QUEUED) {
-			continue;
+		// set up our internal state
+		for (let i = 0, e = downloads.length, d, host; i < e; ++i) {
+			d = downloads[i];
+			if (d.state !== QUEUED) {
+				continue;
+			}
+			host = d.urlManager.domain;
+			if (!(host in this._downloadSet)) {
+				this._downloadSet[host] = new FairScheduler.SchedItem(host);
+			}
+			this._downloadSet[host].push(d);
 		}
-		host = d.urlManager.domain;
-		if (!(host in this._downloadSet)) {
-			this._downloadSet[host] = new FairScheduler.SchedItem(host);
-		}
-		this._downloadSet[host].push(d);
 	}
-}
-FairScheduler.prototype = Object.freeze({
-	__proto__: BaseScheduler.prototype,
 
-	next: function(running) {
+	next(running) {
 		let i, e, d, host;
 
 		// reset all counters
@@ -318,70 +331,89 @@ FairScheduler.prototype = Object.freeze({
 			return d;
 		}
 		return null;
-	},
-	destroy: function() {
+	}
+
+	destroy() {
 		for (let k in this._downloadSet) {
 			this._downloadSet[k].destroy();
 			delete this._downloadSet[k];
 		}
 		this._downloadSet = null;
 	}
-});
-FairScheduler.SchedItem = function(host) {
-	this.host = host;
-	this.limit = 0;
-	if (host in limits) {
-		this.limit = limits[host].connections;
+}
+FairScheduler.SchedItem = class {
+	constructor(host) {
+		this.host = host;
+		this.limit = 0;
+		if (host in limits) {
+			this.limit = limits[host].connections;
+		}
+		else {
+			this.limit = globalConnections;
+		}
+		this.downloads = [];
+		this.resetCounter();
 	}
-	else {
-		this.limit = globalConnections;
+
+	get available() {
+		return this.limit <= 0 || this.n < this.limit;
 	}
-	this.downloads = [];
-	this.resetCounter();
-};
-FairScheduler.SchedItem.prototype = Object.freeze({
-	get available() { return this.limit <= 0 || this.n < this.limit; },
-	inc: function() { this.n++; },
-	resetCounter: function() { return this.n = 0; },
-	toString: function() { return this.host; },
-	get length() { return this.downloads.length; },
-	shift: function() {
+
+	inc() {
+		this.n++;
+	}
+	resetCounter() {
+		return this.n = 0;
+	}
+
+	toString() {
+		return this.host;
+	}
+
+	get length() {
+		return this.downloads.length;
+	}
+
+	shift() {
 		++this.n;
 		return this.downloads.shift();
-	},
-	pop: function() {
+	}
+
+	pop() {
 		++this.n;
 		return this.downloads.pop();
-	},
-	push: function(d) { return this.downloads.push(d); },
-	destroy: function() {
+	}
+
+	push(d) {
+		return this.downloads.push(d);
+	}
+	destroy() {
 		this.downloads.length = 0;
 		delete this.downloads;
 	}
-});
-Object.freeze(FairScheduler);
+};
 
 // Fair Dir Scheduler: evenly distribute slots
-function DirScheduler(downloads) {
-	this._downloadSet = Object.create(null);
+class DirScheduler extends BaseScheduler {
+	constructor(downloads) {
+		super();
+		this._downloadSet = Object.create(null);
 
-	// set up our internal state
-	for (let i = 0, e = downloads.length, d, dir; i < e; ++i) {
-		d = downloads[i];
-		if (d.state !== QUEUED) {
-			continue;
+		// set up our internal state
+		for (let i = 0, e = downloads.length, d, dir; i < e; ++i) {
+			d = downloads[i];
+			if (d.state !== QUEUED) {
+				continue;
+			}
+			dir = d.destinationPath;
+			if (!(dir in this._downloadSet)) {
+				this._downloadSet[dir] = new FairScheduler.SchedItem(dir);
+			}
+			this._downloadSet[dir].push(d);
 		}
-		dir = d.destinationPath;
-		if (!(dir in this._downloadSet)) {
-			this._downloadSet[dir] = new FairScheduler.SchedItem(dir);
-		}
-		this._downloadSet[dir].push(d);
 	}
-}
-DirScheduler.prototype = Object.freeze({
-	__proto__: BaseScheduler.prototype,
 
-	next: function(running) {
+	next(running) {
 		let i, e, d, dir;
 
 		// reset all counters
@@ -425,20 +457,24 @@ DirScheduler.prototype = Object.freeze({
 			return d;
 		}
 		return null;
-	},
-	destroy: FairScheduler.prototype.destroy,
-});
-Object.freeze(DirScheduler);
+	}
+	destroy() {
+		for (let k in this._downloadSet) {
+			this._downloadSet[k].destroy();
+			delete this._downloadSet[k];
+		}
+		this._downloadSet = null;
+	}
+}
 
 //Random scheduler. Does not respect limits
-function RndScheduler(downloads, running) {
-	this._schedule = downloads.filter(this._queuedFilter);
-	this.shuffle(this._schedule);
-}
-// Fisher-Yates based shuffle
-RndScheduler.prototype = Object.freeze({
-	__proto__: BaseScheduler.prototype,
-	shuffle: function shuffle(a) {
+class RndScheduler extends BaseScheduler {
+	constructor(downloads, running) {
+		super();
+		this._schedule = downloads.filter(BaseScheduler._queuedFilter);
+		this.shuffle(this._schedule);
+	}
+	static shuffle(a) {
 		let c, e = a.length;
 		if (e < 4) {
 			// no need to shuffle for such small sets
@@ -450,8 +486,7 @@ RndScheduler.prototype = Object.freeze({
 			[a[e], a[c]] = [a[c], a[e]];
 		}
 	}
-});
-Object.freeze(RndScheduler);
+}
 
 let Scheduler;
 function loadScheduler() {

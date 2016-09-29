@@ -18,8 +18,8 @@ const validators = {
 	}
 };
 
-const BaseHistory = {
-	init: function(key) {
+class BaseHistory {
+	constructor(key) {
 		this._key = key;
 		if (key in validators) {
 			this._validator = validators[key];
@@ -27,14 +27,14 @@ const BaseHistory = {
 		else {
 			this._validator = function() { return true; };
 		}
-	},
+	}
 	get key() {
 		return this._key;
-	},
+	}
 	get values() {
 		return this._values.filter(this._validator);
-	},
-	push: function(value, once) {
+	}
+	push(value, once) {
 		try {
 			value = value.toString();
 			let values = this._values;
@@ -64,18 +64,14 @@ const BaseHistory = {
 		catch (ex) {
 			log(LOG_ERROR, "Histories: Push failed!", ex);
 		}
-	},
-	reset: function(value) {
+	}
+	reset(value) {
 		log(LOG_INFO, "Histories: Reset called");
 		this._setValues([]);
 	}
-};
-
-function PrefHistory(key) {
-	this.init(key);
 }
-PrefHistory.prototype = {
-	__proto__: BaseHistory,
+
+class PrefHistory extends BaseHistory {
 	get _values() {
 		let json = prefs.getExt(this._key, '[]');
 		let rv;
@@ -97,8 +93,8 @@ PrefHistory.prototype = {
 			rv = [];
 		}
 		return rv;
-	},
-	_setValues: function(values) {
+	}
+	_setValues(values) {
 		log(LOG_DEBUG, "PrefHistory save of " + values);
 		try {
 			prefs.setExt(this._key, JSON.stringify(values));
@@ -108,19 +104,18 @@ PrefHistory.prototype = {
 			throw ex;
 		}
 	}
-};
-
-function MemHistory(key) {
-	this.init(key);
-	this._setValues((new PrefHistory(this.key)).values);
 }
-MemHistory.prototype = {
-	__proto__: BaseHistory,
-	_setValues: function(values) {
+
+class MemHistory extends BaseHistory {
+	constructor(key) {
+		super(key);
+		this._setValues((new PrefHistory(this.key)).values);
+	}
+	_setValues(values) {
 		log(LOG_DEBUG, "MemHistory save of " + values);
 		this._values = values;
 	}
-};
+}
 
 const _normalHistories = {};
 var _privateHistories = {};

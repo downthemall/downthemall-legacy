@@ -57,29 +57,33 @@ exports.loadWindow = (function() {
 	}
 
 	// Directory Provider we use to check the system :p
-	function CheatDirProvider() {
-		this.hasMore = false;
-	}
-	CheatDirProvider.prototype = Object.freeze({
-		QueryInterface: QI([Ci.nsIDirectoryServiceProvider, Ci.nsIDirectoryServiceProvider2, Ci.nsISimpleEnumerator]),
-		getFile: function(prop, persist) {
+	class CheatDirProvider {
+		construxtor() {
+			this.hasMore = false;
+		}
+		getFile(prop, persist) {
 			throw Cr.NS_ERROR_FAILURE;
-		},
-		getFiles: function(prop, persist) {
+		}
+		getFiles(prop, persist) {
 			if (prop === "AChromDL") {
 				this.hasMore = true;
 				return this;
 			}
 			throw Cr.NS_ERROR_FAILURE;
-		},
-		hasMoreElements: function() { return this.hasMore; },
-		getNext: function() {
+		}
+		hasMoreElements() {
+			return this.hasMore;
+		}
+		getNext() {
 			if (!this.hasMore) {
 				throw Cr.NS_ERROR_FAILURE;
 			}
 			this.hasMore = false;
 			return profileDir.clone();
 		}
+	}
+	Object.assign(CheatDirProvider.prototype, {
+		QueryInterface: QI([Ci.nsIDirectoryServiceProvider, Ci.nsIDirectoryServiceProvider2, Ci.nsISimpleEnumerator]),
 	});
 
 	// Create icons if not there yet, or if we got a major version update

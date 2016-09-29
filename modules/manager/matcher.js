@@ -263,15 +263,17 @@ const DomainMatch = {
 	}
 };
 
-function MatcherTee(a, b) {
-	this.a = a;
-	this.b = b;
-}
-MatcherTee.prototype = {
+class MatcherTee {
+	constructor(a, b) {
+		this.a = a;
+		this.b = b;
+	}
+
 	get name() {
 		return this.a + ";" + this.b;
-	},
-	getItems: function*(downloads) {
+	}
+
+	*getItems(downloads) {
 		for (let a of this.a.getItems(downloads)) {
 			a.param = "a:" + a.param;
 			yield a;
@@ -281,8 +283,9 @@ MatcherTee.prototype = {
 			b.param = "b:" + b.param;
 			yield b;
 		}
-	},
-	getMatcher: function(params) {
+	}
+
+	getMatcher(params) {
 		let a = [], b = [];
 		params.forEach(function(p) {
 			return this[p[0]].push(p.substr(2));
@@ -300,27 +303,21 @@ MatcherTee.prototype = {
 		b = this.b.getMatcher(b);
 		return function(d) { return a(d) && b(d); };
 	}
-};
-
-function Matcher() {
-	this._matchers = [];
-	this._matchersLength = 0;
 }
-Matcher.prototype = {
-	_available: {
-		'textmatch': TextMatch,
-		'downloadmatch': new MatcherTee(FilterMatch, DomainMatch),
-		'pathmatch': PathMatch,
-		'statusmatch': new MatcherTee(StatusMatch, RemainderMatch),
-		'sizematch': SizeMatch,
-		'domainmatch': DomainMatch
-	},
-	getItems: function*(name, downloads) {
+
+class Matcher {
+	constructor() {
+		this._matchers = [];
+		this._matchersLength = 0;
+	}
+
+	*getItems(name, downloads) {
 		for (let i of this._available[name].getItems(downloads)) {
 			yield i;
 		}
-	},
-	addMatcher: function(name, params) {
+	}
+
+	addMatcher(name, params) {
 		if (!(name in this._available)) {
 			log(LOG_ERROR, "trying to add a matcher that does not exist");
 			return;
@@ -332,14 +329,17 @@ Matcher.prototype = {
 			this._matchers.push({name: name, isMatch: m});
 			this._matchersLength = this._matchers.length;
 		}
-	},
-	removeMatcher: function(name) {
+	}
+
+	removeMatcher(name) {
 		this._matchersLength = filterInSitu(this._matchers, m => m.name !== name).length;
-	},
+	}
+
 	get filtering() {
 		return !!this._matchersLength;
-	},
-	filter: function(array) {
+	}
+
+	filter(array) {
 		// jshint strict:true, globalstrict:true, loopfunc:true
 		let rv;
 		for (let i = 0, e = this._matchers.length; i < e; ++i) {
@@ -358,8 +358,9 @@ Matcher.prototype = {
 			}
 		}
 		return rv;
-	},
-	shouldDisplay: function(d) {
+	}
+
+	shouldDisplay(d) {
 		for (let i = 0, e = this._matchers.length; i < e; ++i) {
 			if (!this._matchers[i].isMatch(d)) {
 				return false;
@@ -367,6 +368,17 @@ Matcher.prototype = {
 		}
 		return true;
 	}
-};
+}
+
+Object.assign(Matcher.prototype, {
+	_available: {
+		'textmatch': TextMatch,
+		'downloadmatch': new MatcherTee(FilterMatch, DomainMatch),
+		'pathmatch': PathMatch,
+		'statusmatch': new MatcherTee(StatusMatch, RemainderMatch),
+		'sizematch': SizeMatch,
+		'domainmatch': DomainMatch
+	},
+});
 
 exports.Matcher = Matcher;

@@ -405,16 +405,17 @@ exports.Properties = Object.freeze(Properties);
 /**
  * Mime quality param constructor
  */
-function MimeQuality() {
-	this._q = {};
-}
-MimeQuality.prototype = Object.freeze({
+class MimeQuality {
+	constructor() {
+		this._q = {};
+	}
+
 	/**
 	 * Add new item
 	 * @param v (string) Parameter value
 	 * @param q (number) Quality number
 	 */
-	add: function(v, q) {
+	add(v, q) {
 		if (typeof q !== "number" || q > 1 || q < 0) {
 			throw new Error("Invalid q");
 		}
@@ -424,12 +425,12 @@ MimeQuality.prototype = Object.freeze({
 		}
 		this._q[q].push(v);
 		return this;
-	},
+	}
 	/**
 	 * String representation to be used as Mime parameter literal
 	 * @return Representation
 	 */
-	toString: function() {
+	toString() {
 		function qval(x, i) {
 			return i + (x >= 1 ? "" : ";q=" + x);
 		}
@@ -448,7 +449,7 @@ MimeQuality.prototype = Object.freeze({
 		});
 		return exports.mapInSitu(rv, e => e.v).join(",");
 	}
-});
+}
 exports.MimeQuality = Object.freeze(MimeQuality);
 
 let _bundles = Object.create(null);
@@ -508,31 +509,27 @@ function _loadBundles(urls) {
  * @see _
  */
 var StringBundles_params;
-function StringBundles(documentOrStrings) {
-	if (!('getElementsByTagNameNS' in documentOrStrings)) {
-		this._strings = _loadBundles(documentOrStrings);
-	}
-	else {
-		this._strings = _loadBundles(Array.map(
-			documentOrStrings.getElementsByTagNameNS(NS_DTA, 'stringbundle'),
-			e => e.getAttribute('src')
-		).concat(
-			Array.map(
-				documentOrStrings.getElementsByTagNameNS(NS_XUL, 'stringbundle'),
+class StringBundles {
+	constructor(documentOrStrings) {
+		if (!('getElementsByTagNameNS' in documentOrStrings)) {
+			this._strings = _loadBundles(documentOrStrings);
+		}
+		else {
+			this._strings = _loadBundles(Array.map(
+				documentOrStrings.getElementsByTagNameNS(NS_DTA, 'stringbundle'),
 				e => e.getAttribute('src')
-			)
-		));
+			).concat(
+				Array.map(
+					documentOrStrings.getElementsByTagNameNS(NS_XUL, 'stringbundle'),
+					e => e.getAttribute('src')
+				)
+			));
+		}
 	}
-}
-StringBundles._br = /%S/gi;
-StringBundles._repl = function() {
-	return StringBundles_params.shift();
-};
-StringBundles.prototype = Object.freeze({
-	getString: function(id) {
+	getString(id) {
 		return this._strings[id];
-	},
-	getFormattedString: function(id, params, num) {
+	}
+	getFormattedString(id, params, num) {
 		let fmt = this.getString(id);
 		if (isFinite(num)) {
 			fmt = PluralForm.get(num, fmt);
@@ -546,7 +543,11 @@ StringBundles.prototype = Object.freeze({
 		}
 		return fmt;
 	}
-});
+}
+StringBundles._br = /%S/gi;
+StringBundles._repl = function() {
+	return StringBundles_params.shift();
+};
 const StringBundles_Observer = {
 	observe: function() {
 		_bundles = Object.create(null);

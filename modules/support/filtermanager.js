@@ -88,37 +88,34 @@ function consolidateRegs(regs) {
  * FilterManager
  */
 // no not create DTA_Filter yourself, managed by FilterManager
-function Filter(name) {
-	this._id = name;
-	this._expr = null;
-}
-Filter.prototype = {
-	// exported
+class Filter {
+	constructor(name) {
+		this._id = name;
+		this._expr = null;
+	}
+
 	get id() {
 		return this._id;
-	},
+	}
 
-	// exported
 	get defFilter() {
 		return this._defFilter;
-	},
+	}
 
-	// exported
 	get label() {
 		return this._label;
-	},
+	}
 	set label(value) {
 		if (this._label === value) {
 			return;
 		}
 		this._label = value;
 		this._modified = true;
-	},
+	}
 
-	// exported
 	get expression() {
 		return this._expr;
-	},
+	}
 	set expression(value) {
 		if (this._expr === value) {
 			return;
@@ -140,8 +137,8 @@ Filter.prototype = {
 			delete this.match;
 		}
 		this._modified = true;
-	},
-	_makeRegs: function(str) {
+	}
+	_makeRegs(str) {
 		str = str.trim();
 		// first of all: check if we are are a regexp.
 		if (str.length > 2 && str[0] === '/') {
@@ -180,48 +177,46 @@ Filter.prototype = {
 		if (str.length) {
 			this._regs.push(new RegExp(str, 'i'));
 		}
-	},
+	}
 
-	// exported
 	get active() {
 		return this._active;
-	},
+	}
 	set active(value) {
 		if (this.active === !!value) {
 			return;
 		}
 		this._active = !!value;
 		this._modified = true;
-	},
+	}
 
-	// exported
 	get type() {
 		return this._type;
-	},
+	}
 	set type(t) {
 		if (this._type === t) {
 			return;
 		}
 		this._type = t;
 		this._modified = true;
-	},
+	}
 
-	pref: function(str) {
+	pref(str) {
 		return this._id + "." + str;
-	},
+	}
 
-	match: function(str) {
+	match(str) {
 		if (!str) {
 			return false;
 		}
 		str = str.toString();
 		return this._regs.some(r => r.test(str));
-	},
+	}
 
 	/**
 	 * @throws Exception in case loading failed
 	 */
-	load: function(obj) {
+	load(obj) {
 		this._label = obj.label;
 		if (!this._label || !this._label.length) {
 			throw new Exception("Empty filter!");
@@ -235,46 +230,43 @@ Filter.prototype = {
 		this.expression = obj.expr;
 
 		this._modified = false;
-	},
+	}
 
-	// exported
-	save: function() {
+	save() {
 		if (!this._modified) {
 			return;
 		}
 		exports.FilterManager.save();
 		this._modified = false;
-	},
+	}
 
-	_reset: function() {
+	_reset() {
 		exports.FilterManager.remove(this._id);
-	},
+	}
 
-	// exported
-	restore: function() {
+	restore() {
 		if (!this._defFilter) {
 			throw new Exception("only default filters can be restored!");
 		}
 		this._reset();
-	},
+	}
 
-	// exported
-	remove: function() {
+	remove() {
 		if (this._defFilter) {
 			throw new Exception("default filters cannot be deleted!");
 		}
 		this._reset();
-	},
+	}
 
-	toString: function() {
+	toString() {
 		return this._label + " (" + this._id + ")";
-	},
+	}
 
-	toSource: function() {
+	toSource() {
 		return this.toString() + ": " + this._regs.toSource();
-	},
+	}
 
-	toJSON: function() {
+	toJSON() {
 		return {
 			id: this.id,
 			label: this._label,
@@ -283,38 +275,33 @@ Filter.prototype = {
 			active: this._active,
 		};
 	}
-};
-
-function FilterEnumerator(filters) {
-	this._filters = filters;
-	this._idx = 0;
 }
-FilterEnumerator.prototype = {
-	QueryInterface: QI([Ci.nsISimpleEnumerator]),
-	hasMoreElements: function() {
+
+class FilterEnumerator {
+  constructor(filters) {
+		this._filters = filters;
+		this._idx = 0;
+	}
+	hasMoreElements() {
 		return this._idx < this._filters.length;
-	},
-	getNext: function() {
+	}
+	getNext() {
 		if (!this.hasMoreElements()) {
 			throw Cr.NS_ERROR_FAILURE;
 		}
 		return this._filters[this._idx++];
 	}
-};
-FilterEnumerator.prototype[Symbol.iterator] = function*() {
-	for (let f of this._filters) {
-		yield f;
+
+	*[Symbol.iterator]() {
+		for (let f of this._filters) {
+			yield f;
+		}
 	}
-};
+}
 
-function FilterManagerImpl() {
-	this.init();
-};
-FilterManagerImpl.prototype = {
-	LINK_FILTER: LINK_FILTER,
-	IMAGE_FILTER: IMAGE_FILTER,
 
-	init: function() {
+class FilterManagerImpl {
+	constructor() {
 		log(LOG_DEBUG, "initializing filter manager");
 		// load those localized labels for default filters.
 		this._localizedLabels = {};
@@ -330,23 +317,246 @@ FilterManagerImpl.prototype = {
 			this._file.path,
 			JSON.stringify.bind(JSON, this, null, 2),
 			100);
-		this._reload();
-	},
+		this.reload();
+	}
 
 	get count() {
 		return this._count;
-	},
-	reload: function() {
-		this._reload();
-	},
-	_reload: function() {
+	}
+
+	reload() {
 		if (this._pending) {
 			log(LOG_DEBUG, "reload pending");
 			return this._pending;
 		}
 		log(LOG_DEBUG, "reload spawning");
 		return this._pending = this._reloadAsync();
-	},
+	}
+
+	rebuild() {
+		this._count = this._all.length;
+		this._all.sort(function(a,b) {
+			if (a.defFilter && !b.defFilter) {
+				return -1;
+			}
+			else if (!a.defFilter && b.defFilter) {
+				return 1;
+			}
+			else if (a.defFilter) {
+				if (a.id < b.id) {
+					return -1;
+				}
+				return 1;
+			}
+			var i = a.label.toLowerCase(), ii = b.label.toLowerCase();
+			return i < ii ? -1 : (i > ii ? 1 : 0);
+		});
+		this._active = {};
+		this._active[LINK_FILTER]  = this._all.filter(f => (f.type & LINK_FILTER) && f.active);
+		this._active[IMAGE_FILTER] = this._all.filter(f => (f.type & IMAGE_FILTER) && f.active);
+		this._activeRegs = {};
+		this._activeRegs[LINK_FILTER]  = this.getMatcherFor(this._active[LINK_FILTER]);
+		this._activeRegs[IMAGE_FILTER] = this.getMatcherFor(this._active[IMAGE_FILTER]);
+
+		// notify all observers
+		require("./observers").notify(this, TOPIC_FILTERSCHANGED, null);
+	}
+
+	_migrateFromPrefs(pending) {
+		log(LOG_DEBUG, "migrating from prefs");
+
+		let rv = {};
+		let kill = new Set();
+		let checks = [".label", ".test", ".type", ".active"];
+		let checkfn = (name, c) => Preferences.hasUserValue(name + c);
+		for (let pref of Preferences.getChildren(PREF_FILTERS_BASE)) {
+			// we test for label (as we get all the other props as well)
+			let name = pref.replace(/\.[^.]+?$/, "");
+			if (name in kill) {
+				continue;
+			}
+			kill.add(name);
+			if (pending && (name in this.defFilters) && !checks.some(checkfn.bind(null, name))) {
+				log(LOG_DEBUG, "skipping (not modified) " + name + " pref: " + pref);
+				continue;
+			}
+			try {
+				let filter = {
+					"label": Preferences.get(name + ".label", ""),
+					"expr": Preferences.get(name + ".test", ""),
+					"type": Preferences.get(name + ".type", LINK_FILTER),
+					"active": Preferences.get(name + ".active", true)
+				};
+				if (!filter.label || !filter.expr || !filter.type) {
+					throw new Error("filter empty");
+				}
+				rv[name.slice(PREF_FILTERS_BASE.length)] = filter;
+				log(LOG_DEBUG, "migrated " + name);
+			}
+			catch (ex) {
+				log(LOG_DEBUG, "Failed to migrate " + name, ex);
+			}
+		}
+		if (pending && kill.size) {
+			Task.spawn((function*() {
+				try {
+					yield this._save();
+					for (let i of kill) {
+						log(LOG_DEBUG, "killing " + i);
+						Preferences.resetBranch(i);
+					}
+				}
+				catch (ex) {
+					log(LOG_ERROR, "failed to reset prefs", ex);
+				}
+			}).bind(this));
+		}
+		this._save();
+		return rv;
+	}
+
+	enumAll() {
+		return new FilterEnumerator(this._all);
+	}
+
+	getFilter(id) {
+		if (id in this._filters) {
+			return this._filters[id];
+		}
+		if (id.startsWith("deffilter-")) {
+			// compat: Other add-ons, in particular anticontainer, may have
+			// added filters, which weren't completely present at the time
+			// filters.json was first generated, but are accessed just now.
+			// Try to migrate the filter now.
+			let filters = this._migrateFromPrefs(null);
+			if (id in filters) {
+				try {
+					let f = new Filter(id);
+					f.load(filters[id]);
+					this._filters[f.id] = f;
+					this._all.push(f);
+					this.rebuild();
+					this._save();
+					return f;
+				}
+				catch (ex) {
+					log(LOG_DEBUG, "failed to re-migrate filter: " + id, ex);
+					delete this._filters[id];
+				}
+			}
+		}
+		throw new Exception("invalid filter specified: " + id);
+	}
+
+	getMatcherFor(filters) {
+		let regs = consolidateRegs(flatten(
+			filters.map(f => f._regs)
+		));
+		if (regs.length === 1) {
+			regs = regs[0];
+			return function(test) {
+				test = test.toString();
+				if (!test) {
+					return false;
+				}
+				return regs.test(test);
+			};
+		}
+		return function(test) {
+			test = test.toString();
+			if (!test) {
+				return false;
+			}
+			return regs.some(r => r.test(test));
+		};
+	}
+
+	matchActive(test, type) {
+		return this._activeRegs[type](test);
+	}
+
+	create(label, expression, active, type) {
+
+		// we will use unique ids for user-supplied filters.
+		// no need to keep track of the actual number of filters or an index.
+		let filter = new Filter(Services.uuid.generateUUID().toString());
+		// I'm a friend, hence I'm allowed to access private members :p
+		filter._label = label;
+		filter._active = active;
+		filter._type = type;
+		filter._modified = true;
+
+		// this might throw!
+		filter.expression = expression;
+
+		// will call our observer so we re-init... no need to do more work here :p
+		this._filters[filter.id] = filter;
+		this._all.push(filter);
+		this.rebuild();
+		this._save();
+		return filter.id;
+	}
+
+	remove(id) {
+		if (!(id in this._filters)) {
+			throw new Exception('filter not defined!');
+		}
+		delete this._filters[id];
+		this.save();
+		this._saver.flush();
+	}
+
+	getTmpFromString(expression) {
+		if (!expression.length) {
+			throw Cr.NS_ERROR_INVALID_ARG;
+		}
+		var filter = new Filter("temp", null);
+		filter._active = true;
+		filter._type = LINK_FILTER | IMAGE_FILTER;
+		filter._modified = false;
+		filter.expression = expression;
+		return filter;
+	}
+
+	ready(callback) {
+		if (this._pending) {
+			log(LOG_DEBUG, "waiting for ready");
+			this._pending.then(callback);
+			return;
+		}
+		callback();
+	}
+
+	toJSON() {
+		return this._filters;
+	}
+};
+Object.assign(FilterManagerImpl.prototype, {
+	LINK_FILTER: LINK_FILTER,
+	IMAGE_FILTER: IMAGE_FILTER,
+	_save: Task.async(function*() {
+		try {
+			try {
+				yield OS.File.makeDir(this._file.parent.path, {unixMode: 0o775, ignoreExisting: true});
+			}
+			catch (ex if ex.becauseExists) {
+				// no op;
+			}
+			yield this._saver.saveChanges();
+		}
+		catch (ex) {
+			log(LOG_ERROR, "failed to save filters", ex);
+		}
+	}),
+	save: Task.async(function*() {
+		try {
+			yield this._save();
+			this.reload();
+		}
+		catch (ex) {
+			log(LOG_ERROR, "failed to save filters", ex);
+		}
+	}),
 	_reloadAsync: Task.async(function*() {
 		log(LOG_DEBUG, "reload commencing");
 		try {
@@ -430,230 +640,12 @@ FilterManagerImpl.prototype = {
 				log(LOG_ERROR, "failed to load filters", ex);
 			}
 
-			this._rebuild();
+			this.rebuild();
 		}
 		finally {
 			delete this._pending;
 		}
 	}),
+});
 
-	_rebuild: function() {
-		this._count = this._all.length;
-		this._all.sort(function(a,b) {
-			if (a.defFilter && !b.defFilter) {
-				return -1;
-			}
-			else if (!a.defFilter && b.defFilter) {
-				return 1;
-			}
-			else if (a.defFilter) {
-				if (a.id < b.id) {
-					return -1;
-				}
-				return 1;
-			}
-			var i = a.label.toLowerCase(), ii = b.label.toLowerCase();
-			return i < ii ? -1 : (i > ii ? 1 : 0);
-		});
-		this._active = {};
-		this._active[LINK_FILTER]  = this._all.filter(f => (f.type & LINK_FILTER) && f.active);
-		this._active[IMAGE_FILTER] = this._all.filter(f => (f.type & IMAGE_FILTER) && f.active);
-		this._activeRegs = {};
-		this._activeRegs[LINK_FILTER]  = this.getMatcherFor(this._active[LINK_FILTER]);
-		this._activeRegs[IMAGE_FILTER] = this.getMatcherFor(this._active[IMAGE_FILTER]);
-
-		// notify all observers
-		require("./observers").notify(this, TOPIC_FILTERSCHANGED, null);
-	},
-
-	_migrateFromPrefs: function(pending) {
-		log(LOG_DEBUG, "migrating from prefs");
-
-		let rv = {};
-		let kill = new Set();
-		let checks = [".label", ".test", ".type", ".active"];
-		let checkfn = (name, c) => Preferences.hasUserValue(name + c);
-		for (let pref of Preferences.getChildren(PREF_FILTERS_BASE)) {
-			// we test for label (as we get all the other props as well)
-			let name = pref.replace(/\.[^.]+?$/, "");
-			if (name in kill) {
-				continue;
-			}
-			kill.add(name);
-			if (pending && (name in this.defFilters) && !checks.some(checkfn.bind(null, name))) {
-				log(LOG_DEBUG, "skipping (not modified) " + name + " pref: " + pref);
-				continue;
-			}
-			try {
-				let filter = {
-					"label": Preferences.get(name + ".label", ""),
-					"expr": Preferences.get(name + ".test", ""),
-					"type": Preferences.get(name + ".type", LINK_FILTER),
-					"active": Preferences.get(name + ".active", true)
-				};
-				if (!filter.label || !filter.expr || !filter.type) {
-					throw new Error("filter empty");
-				}
-				rv[name.slice(PREF_FILTERS_BASE.length)] = filter;
-				log(LOG_DEBUG, "migrated " + name);
-			}
-			catch (ex) {
-				log(LOG_DEBUG, "Failed to migrate " + name, ex);
-			}
-		}
-		if (pending && kill.size) {
-			Task.spawn((function*() {
-				try {
-					yield this._save();
-					for (let i of kill) {
-						log(LOG_DEBUG, "killing " + i);
-						Preferences.resetBranch(i);
-					}
-				}
-				catch (ex) {
-					log(LOG_ERROR, "failed to reset prefs", ex);
-				}
-			}).bind(this));
-		}
-		this._save();
-		return rv;
-	},
-
-	enumAll: function() {
-		return new FilterEnumerator(this._all);
-	},
-
-	getFilter: function(id) {
-		if (id in this._filters) {
-			return this._filters[id];
-		}
-		if (id.startsWith("deffilter-")) {
-			// compat: Other add-ons, in particular anticontainer, may have
-			// added filters, which weren't completely present at the time
-			// filters.json was first generated, but are accessed just now.
-			// Try to migrate the filter now.
-			let filters = this._migrateFromPrefs(null);
-			if (id in filters) {
-				try {
-					let f = new Filter(id);
-					f.load(filters[id]);
-					this._filters[f.id] = f;
-					this._all.push(f);
-					this._rebuild();
-					this._save();
-					return f;
-				}
-				catch (ex) {
-					log(LOG_DEBUG, "failed to re-migrate filter: " + id, ex);
-					delete this._filters[id];
-				}
-			}
-		}
-		throw new Exception("invalid filter specified: " + id);
-	},
-	getMatcherFor: function(filters) {
-		let regs = consolidateRegs(flatten(
-			filters.map(f => f._regs)
-		));
-		if (regs.length === 1) {
-			regs = regs[0];
-			return function(test) {
-				test = test.toString();
-				if (!test) {
-					return false;
-				}
-				return regs.test(test);
-			};
-		}
-		return function(test) {
-			test = test.toString();
-			if (!test) {
-				return false;
-			}
-			return regs.some(r => r.test(test));
-		};
-	},
-	matchActive: function(test, type) { return this._activeRegs[type](test); },
-
-	create: function(label, expression, active, type) {
-
-		// we will use unique ids for user-supplied filters.
-		// no need to keep track of the actual number of filters or an index.
-		let filter = new Filter(Services.uuid.generateUUID().toString());
-		// I'm a friend, hence I'm allowed to access private members :p
-		filter._label = label;
-		filter._active = active;
-		filter._type = type;
-		filter._modified = true;
-
-		// this might throw!
-		filter.expression = expression;
-
-		// will call our observer so we re-init... no need to do more work here :p
-		this._filters[filter.id] = filter;
-		this._all.push(filter);
-		this._rebuild();
-		this._save();
-		return filter.id;
-	},
-
-	remove: function(id) {
-		if (id in this._filters) {
-			delete this._filters[id];
-			this.save();
-			this._saver.flush();
-			return;
-		}
-		throw new Exception('filter not defined!');
-	},
-
-	_save: Task.async(function*() {
-		try {
-			try {
-				yield OS.File.makeDir(this._file.parent.path, {unixMode: 0o775, ignoreExisting: true});
-			}
-			catch (ex if ex.becauseExists) {
-				// no op;
-			}
-			yield this._saver.saveChanges();
-		}
-		catch (ex) {
-			log(LOG_ERROR, "failed to save filters", ex);
-		}
-	}),
-	save: Task.async(function*() {
-		try {
-			yield this._save();
-			this._reload();
-		}
-		catch (ex) {
-			log(LOG_ERROR, "failed to save filters", ex);
-		}
-	}),
-
-	getTmpFromString: function(expression) {
-		if (!expression.length) {
-			throw Cr.NS_ERROR_INVALID_ARG;
-		}
-		var filter = new Filter("temp", null);
-		filter._active = true;
-		filter._type = LINK_FILTER | IMAGE_FILTER;
-		filter._modified = false;
-		filter.expression = expression;
-		return filter;
-	},
-
-	ready: function(callback) {
-		if (this._pending) {
-			log(LOG_DEBUG, "waiting for ready");
-			this._pending.then(callback);
-			return;
-		}
-		callback();
-	},
-
-	toJSON: function() {
-		return this._filters;
-	}
-};
 exports.FilterManager = new FilterManagerImpl();

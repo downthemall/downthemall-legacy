@@ -24,32 +24,20 @@ const XPathResult = Ci.nsIDOMXPathResult;
  * Parsed Metalink representation
  * (Do not construct yourself unless you know what you're doing)
  */
-function Metalink(downloads, info, parser) {
-	this.downloads = downloads;
-	this.info = info;
-	this.parser = parser;
+class Metalink {
+	constructor(downloads, info, parser) {
+		this.downloads = downloads;
+		this.info = info;
+		this.parser = parser;
+	}
 }
-Metalink.prototype = {
-	/**
-	 * Array of downloads
-	 */
-	downloads: [],
-	/**
-	 * Dict of general information
-	 */
-	info: {},
-	/**
-	 * Parser identifaction
-	 */
-	parser: ""
-};
 
-function Base(doc, NS) {
-	this._doc = doc;
-	this._NS = NS;
-}
-Base.prototype = {
-	lookupNamespaceURI: function Base_lookupNamespaceURI(prefix) {
+class Base {
+	constructor(doc, NS) {
+		this._doc = doc;
+		this._NS = NS;
+	}
+	lookupNamespaceURI(prefix) {
 		switch (prefix) {
 		case 'html':
 			return NS_HTML;
@@ -57,8 +45,8 @@ Base.prototype = {
 			return NS_DTA;
 		}
 		return this._NS;
-	},
-	getNodes: function (elem, query) {
+	}
+	getNodes(elem, query) {
 		let rv = [];
 		let iterator = this._doc.evaluate(
 			query,
@@ -71,19 +59,19 @@ Base.prototype = {
 			rv.push(n);
 		}
 		return rv;
-	},
-	getNode: function Base_getNode(elem, query) {
+	}
+	getNode(elem, query) {
 		let r = this.getNodes(elem, query);
 		if (r.length) {
 			return r.shift();
 		}
 		return null;
-	},
-	getSingle: function BasegetSingle(elem, query) {
+	}
+	getSingle(elem, query) {
 		let rv = this.getNode(elem, 'ml:' + query);
 		return rv ? rv.textContent.trim() : '';
-	},
-	getLinkRes: function BasegetLinkRes(elem, query) {
+	}
+	getLinkRes(elem, query) {
 		let rv = this.getNode(elem, 'ml:' + query);
 		if (rv) {
 			let n = this.getSingle(rv, 'name'), l = this.checkURL(this.getSingle(rv, 'url'));
@@ -92,8 +80,8 @@ Base.prototype = {
 			}
 		}
 		return null;
-	},
-	checkURL: function Base_checkURL(url, allowed) {
+	}
+	checkURL(url, allowed) {
 		if (!url) {
 			return null;
 		}
@@ -119,23 +107,23 @@ Base.prototype = {
 		}
 		return null;
 	}
-};
+}
 
 /**
  * Metalink3 Parser
  * @param doc document to parse
  * @return Metalink
  */
-function Metalinker3(doc) {
-	let root = doc.documentElement;
-	if (root.nodeName !== 'metalink' || root.getAttribute('version') !== '3.0') {
-		throw new Exception('mlinvalid');
+class Metalinker3 extends Base {
+	constructor(doc) {
+		let root = doc.documentElement;
+		if (root.nodeName !== 'metalink' || root.getAttribute('version') !== '3.0') {
+			throw new Error('mlinvalid');
+		}
+		super(doc, NS_METALINKER3);
 	}
-	Base.call(this, doc, NS_METALINKER3);
-}
-Metalinker3.prototype = {
-	__proto__: Base.prototype,
-	parse: function ML3_parse(aReferrer) {
+
+	parse(aReferrer) {
 		if (aReferrer && 'spec' in aReferrer) {
 			aReferrer = aReferrer.spec;
 		}
@@ -341,19 +329,18 @@ Metalinker3.prototype = {
  * @param doc document to parse
  * @return Metalink
  */
-function MetalinkerRFC5854(doc) {
-	let root = doc.documentElement;
-	if (root.nodeName !== 'metalink' || root.namespaceURI !== NS_METALINK_RFC5854 ) {
-		if (log.enabled) {
-			log(LOG_DEBUG, root.nodeName + "\nns:" + root.namespaceURI);
+class MetalinkerRFC5854 extends Base {
+	constructor(doc) {
+		let root = doc.documentElement;
+		if (root.nodeName !== 'metalink' || root.namespaceURI !== NS_METALINK_RFC5854 ) {
+			if (log.enabled) {
+				log(LOG_DEBUG, root.nodeName + "\nns:" + root.namespaceURI);
+			}
+			throw new Error('mlinvalid');
 		}
-		throw new Exception('mlinvalid');
+		super(doc, NS_METALINK_RFC5854);
 	}
-	Base.call(this, doc, NS_METALINK_RFC5854);
-}
-MetalinkerRFC5854.prototype = {
-	__proto__: Base.prototype,
-	parse: function ML4_parse(aReferrer) {
+	parse(aReferrer) {
 		if (aReferrer && 'spec' in aReferrer) {
 			aReferrer = aReferrer.spec;
 		}
@@ -460,6 +447,7 @@ MetalinkerRFC5854.prototype = {
 				}
 			}
 			if (hash) {
+				Cu.reportError(hash);
 				hash = new DTA.HashCollection(hash);
 				let pieces = this.getNodes(file, 'ml:pieces');
 				if (pieces.length) {
@@ -536,7 +524,7 @@ MetalinkerRFC5854.prototype = {
 		};
 		return new Metalink(downloads, info, "Metalinker Version 4.0 (RFC5854/IETF)");
 	}
-};
+}
 
 const __parsers__ = [
 	Metalinker3,
