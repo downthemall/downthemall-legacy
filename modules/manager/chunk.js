@@ -380,7 +380,7 @@ Chunk.prototype = {
 	write: function(aRequest, aInputStream, aCount) {
 		try {
 			// not running: do not write anything
-			if (!this.running || !this._inStream) {
+			if (!this.running || !this._inStream || !this._outStream) {
 				log(LOG_ERROR, "trying to write on a closed chunk");
 				return -1;
 			}
