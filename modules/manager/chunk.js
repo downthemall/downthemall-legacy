@@ -197,6 +197,20 @@ Chunk.prototype = {
 		log(LOG_DEBUG, "opening " + file.path + " at: " + pos);
 		return this._openPromise = this._openAsync(file, pos);
 	},
+
+	get buckets() {
+		if (this._buckets) {
+			return this._buckets;
+		}
+		this._buckets = new ByteBucketTee(
+			this.parent.bucket,
+			Limits.getServerBucket(this.parent),
+			GlobalBucket
+			);
+		this._buckets.register(this);
+		return this._buckets;
+	},
+
 	_openAsync: Task.async(function*(file, pos) {
 		try {
 			if (this._closing) {
@@ -205,12 +219,6 @@ Chunk.prototype = {
 
 			this.errored = false;
 			this._sessionBytes = 0;
-			this.buckets = new ByteBucketTee(
-				this.parent.bucket,
-				Limits.getServerBucket(this.parent),
-				GlobalBucket
-				);
-			this.buckets.register(this);
 			memoryReporter.registerChunk(this);
 
 			try {
@@ -328,9 +336,9 @@ Chunk.prototype = {
 			}
 
 			// and do some cleanup
-			if (this.buckets) {
-				this.buckets.unregister(this);
-				delete this.buckets;
+			if (this._buckets) {
+				this._buckets.unregister(this);
+				delete this._buckets;
 			}
 			delete this._req;
 			memoryReporter.unregisterChunk(this);
