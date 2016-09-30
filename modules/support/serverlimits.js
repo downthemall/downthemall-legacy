@@ -479,7 +479,7 @@ function getConnectionScheduler(downloads) {
 }
 
 var buckets = Object.create(null);
-var unlimitedBucket = new ByteBucket(-1);
+var unlimitedBucket = new ByteBucket(-1, 1.0, "unlimited");
 function loadServerBuckets() {
 	for (let b in buckets) {
 		if (b in limits) {
@@ -491,9 +491,6 @@ function loadServerBuckets() {
 	}
 }
 function killServerBuckets() {
-	for (let [,bucket] in new Iterator(buckets)) {
-		bucket.kill();
-	}
 	buckets = Object.create(null);
 }
 function getServerBucket(d) {
@@ -502,7 +499,7 @@ function getServerBucket(d) {
 		return buckets[host];
 	}
 	if (host in limits) {
-		return (buckets[host] = new ByteBucket(limits[host].speed * 1024, 1.2));
+		return (buckets[host] = new ByteBucket(limits[host].speed * 1024, 1.2, host));
 	}
 	return unlimitedBucket;
 }
@@ -511,7 +508,6 @@ function getServerBucket(d) {
 const Observer = {
 	unload: function() {
 		killServerBuckets();
-		unlimitedBucket.kill();
 		unlimitedBucket = null;
 	},
 	observe: function(topic, subject, data) {

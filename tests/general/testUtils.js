@@ -19,6 +19,7 @@ test("exports", function() {
 		"makeDir",
 		"mapFilterInSitu",
 		"mapInSitu",
+		"randint",
 		"naturalSort",
 		"newUUIDString",
 		"normalizeMetaPrefs",

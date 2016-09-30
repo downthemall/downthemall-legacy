@@ -10,7 +10,7 @@ const {ByteBucketTee} = require("support/bytebucket");
 const {GlobalBucket} = require("./globalbucket");
 const {TimerManager} = require("support/timers");
 const Limits = require("support/serverlimits");
-const {getTimestamp, formatNumber, makeDir} = require("utils");
+const {getTimestamp, formatNumber, makeDir, randint} = require("utils");
 const {Task} = requireJSM("resource://gre/modules/Task.jsm");
 const {memoryReporter} = require("./memoryreporter");
 
@@ -113,9 +113,7 @@ function Chunk(download, start, end, written) {
 }
 
 Chunk.prototype = {
-	_inited: false,
 	_written: 0,
-	_wnd: 2048,
 
 	running: false,
 	safeBytes: 0,
@@ -191,16 +189,10 @@ Chunk.prototype = {
 			Limits.getServerBucket(this.parent),
 			GlobalBucket
 			);
-		this._buckets.register(this);
 		return this._buckets;
 	},
 
 	open: function() {
-		if (this._inited) {
-			return new Promise(r => r());
-		}
-		this._inited = true;
-
 		if (this._openPromise) {
 			return this._openPromise;
 		}
@@ -264,9 +256,6 @@ Chunk.prototype = {
 	close: function() {
 		if (this._closing) {
 			return this._closing;
-		}
-		if (!this._inited) {
-			return new Promise(r => r());
 		}
 		this.running = false;
 		return (this._closing = Task.spawn(function*() {
@@ -333,7 +322,6 @@ Chunk.prototype = {
 
 				// and do some cleanup
 				if (this._buckets) {
-					this._buckets.unregister(this);
 					delete this._buckets;
 				}
 				delete this._req;
@@ -348,7 +336,6 @@ Chunk.prototype = {
 			finally {
 				delete this.download;
 				delete this._closing;
-				this._inited = false;
 			}
 		}.bind(this)));
 	},
@@ -377,6 +364,17 @@ Chunk.prototype = {
 			this.download.cancel();
 		}
 	},
+	suspend: function(aRequest, pending) {
+		if (this._req) {
+			this._reqPending += pending;
+		}
+		else {
+			this._req = aRequest;
+			this._req.suspend();
+			this._reqPending = pending;
+		}
+		this.schedule();
+	},
 	write: function(aRequest, aInputStream, aCount) {
 		try {
 			// not running: do not write anything
@@ -394,14 +392,7 @@ Chunk.prototype = {
 			let got = this.requestBytes(bytes);
 			// didn't get enough
 			if (got < bytes) {
-				if (this._req) {
-					this._reqPending += bytes - got;
-				}
-				else {
-					this._req = aRequest;
-					this._req.suspend();
-					this._reqPending = bytes - got;
-				}
+				this.suspend(aRequest, bytes - got);
 			}
 			if (bytes < 0) {
 				throw new Error("bytes negative: " + bytes + " " + this.remainder + " " + aCount);
@@ -443,7 +434,7 @@ Chunk.prototype = {
 					this._overflowPipe.outputStream.writeFrom(aInputStream, remain);
 				}
 			}
-			this._noteBytesWritten(bytes);
+			this._noteBytesWritten(got);
 			return bytes;
 		}
 		catch (ex) {
@@ -486,8 +477,6 @@ Chunk.prototype = {
 					this._overflowPipe.inputStream.close();
 					delete this._overflowPipe;
 				}
-				// .. which we do here
-				this.schedule();
 			}
 		}
 
@@ -496,7 +485,6 @@ Chunk.prototype = {
 				" : " + memoryReporter.memoryPressure + " : " + requested);
 			requested = Math.max(Math.min(requested, 256), Math.floor(requested / memoryReporter.memoryPressure));
 			log(LOG_INFO, "Using instead: " + requested);
-			this.schedule();
 		}
 		return this.buckets.requestBytes(requested);
 	},
@@ -504,7 +492,7 @@ Chunk.prototype = {
 		if (this._schedTimer) {
 			return;
 		}
-		this._schedTimer = Timers.createOneshot(250, function() {
+		this._schedTimer = Timers.createOneshot(randint(10, 150), function() {
 			delete this._schedTimer;
 			this.run();
 		}, this);
@@ -515,30 +503,28 @@ Chunk.prototype = {
 		}
 		if (this._reqPending > 0) {
 			// Still have pending bytes?
-			let requested = Math.min(this._wnd, this._reqPending);
+			let requested = this._reqPending;
 			let got = this.requestBytes(requested);
 			if (!got) {
+				this.schedule();
 				return;
-			}
-			if (got < requested) {
-				this._wnd = Math.round(Math.min(this._wnd / 2, 1024));
-			}
-			else if (requested === this._wnd) {
-				this._wnd += 256;
 			}
 			this._reqPending -= got;
 			this.parent.timeLastProgress = getTimestamp();
-
+			this._noteBytesWritten(got);
 			this.schedule();
 			return;
 		}
 
 		// Ready to resume the download
-		let req = this._req;
-		delete this._req;
-		delete this._reqPending;
-		req.resume();
-		this.parent.timeLastProgress = getTimestamp();
+		if (this._req) {
+			let req = this._req;
+			delete this._req;
+			delete this._reqPending;
+			req.resume();
+			this.parent.timeLastProgress = getTimestamp();
+			this.schedule();
+		}
 	},
 	toString: function() {
 		let len = this.parent.totalSize ? String(this.parent.totalSize).length  : 10;

@@ -1471,7 +1471,7 @@ QueueItem.prototype = {
 		this._setStateInternal(nv);
 		if (this.state === RUNNING) {
 			// set up the bucket
-			this._bucket = new ByteBucket(this.speedLimit, 1.7);
+			this._bucket = new ByteBucket(this.speedLimit, 1.7, "download");
 		}
 		else if (this.state === FINISHING) {
 			++Dialog.finishing;
@@ -1499,7 +1499,6 @@ QueueItem.prototype = {
 			throw new Exception("Bucket is only nullable");
 		}
 		if (this._bucket) {
-			this._bucket.kill();
 			this._bucket = null;
 		}
 	},

@@ -151,6 +151,12 @@ exports.mapInSitu = fmi.mapInSitu;
 exports.filterMapInSitu = fmi.filterMapInSitu;
 exports.mapFilterInSitu = fmi.mapFilterInSitu;
 
+exports.randint = function(min, max) {
+	min = Math.ceil(min);
+	max = Math.floor(max);
+	return Math.floor(Math.random() * (max - min)) + min;
+};
+
 
 /**
  * Sorts an array with natural sort order.
