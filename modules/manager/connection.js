@@ -162,12 +162,7 @@ function Connection(d, c, isInfoGetter) {
 	this.prepareChannel(this._chan);
 
 	c.running = true;
-	c.open().then(() => {
-		this._chan.asyncOpen(this, null);
-		log(LOG_INFO, `chunk ${c} ${isInfoGetter ? "InfoGetter" : "Regular"} is now open!`);
-	}).catch(ex => {
-		this.writeFailed(ex);
-	});
+	this.open();
 }
 
 Connection.prototype = {
@@ -185,6 +180,17 @@ Connection.prototype = {
 	],
 
 	cantCount: false,
+
+	open: Task.async(function*() {
+		try {
+			yield this.c.open();
+			this._chan.asyncOpen(this, null);
+			log(LOG_INFO, `chunk ${this.c} ${this.isInfoGetter ? "InfoGetter" : "Regular"} is now open!`);
+		}
+		catch (ex) {
+			this.writeoFailed(ex);
+		}
+	}),
 
 	prepareChannel: function(chan) {
 		let d = this.d;
