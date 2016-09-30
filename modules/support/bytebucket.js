@@ -73,7 +73,6 @@ class ByteBucket {
 		this._obs = new Observers(this._name);
 		this.byteRate = byteRate;
 		this.burstFactor = burstFactor;
-		this._available = byteRate;
 		this._timer = null;
 	}
 	get name() {
