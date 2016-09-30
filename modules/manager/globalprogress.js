@@ -49,8 +49,6 @@ try {
 		constructor() {
 			super();
 			this._state = NO_PROGRESS;
-		}
-		init(window) {
 			let docShell = window.QueryInterface(Ci.nsIInterfaceRequestor).
 					getInterface(Ci.nsIWebNavigation).
 					QueryInterface(Ci.nsIDocShellTreeItem).treeOwner.
