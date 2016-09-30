@@ -49,10 +49,10 @@ const _thread = (function() {
 	return AsyncCopierThread;
 })();
 unload(() => {
-		try {
-			_thread.shutdown();
-		}
-		catch (ex) {}
+	try {
+		_thread.shutdown();
+	}
+	catch (ex) {}
 });
 
 exports.hintChunkBufferSize = function(bs) {
@@ -99,46 +99,42 @@ function asyncCopy(instream, outstream, close) {
 	});
 }
 
-function Chunk(download, start, end, written) {
-	// safeguard against null or strings and such
-	this._parent = download;
-	this._start = start;
-	this._written = written > 0 ? written : 0;
-	this._sessionBytes = 0;
+class Chunk {
+	constructor(download, start, end, written) {
+		// safeguard against null or strings and such
+		this._parent = download;
+		this._start = start;
+		this._written = written > 0 ? written : 0;
+		this._sessionBytes = 0;
+		this._inited = false;
+		this._written = 0;
+		this.running = false;
 
-	this.end = end;
-	this.safeBytes = this._written;
+		this.end = end;
+		this.safeBytes = this._written;
 
-	log(LOG_INFO, "chunk created: " + this);
-}
-
-Chunk.prototype = {
-	_inited: false,
-	_written: 0,
-	_wnd: 2048,
-
-	running: false,
-	safeBytes: 0,
+		log(LOG_INFO, "chunk created: " + this);
+	}
 
 	get starter() {
 		return this.end <= 0;
-	},
+	}
 	get start() {
 		return this._start;
-	},
+	}
 	get end() {
 		return this._end;
-	},
+	}
 	set end(nv) {
 		this._end = nv;
 		this._total = this.end && (this._end - this._start + 1);
-	},
+	}
 	get total() {
 		return this._total;
-	},
+	}
 	get written() {
 		return this._written;
-	},
+	}
 	get buffered() {
 		let rv = 0;
 		try {
@@ -162,27 +158,39 @@ Chunk.prototype = {
 			rv += PIPE_SEGMENT_SIZE;
 		}
 		return rv;
-	},
+	}
 	get currentPosition() {
 		return this.start + this.written;
-	},
+	}
 	get remainder() {
 		return this._total - this._written;
-	},
+	}
 	get complete() {
 		if (this._end <= 0) {
 			return this.written !== 0;
 		}
 		return this._total === this.written;
-	},
+	}
 	get parent() {
 		return this._parent;
-	},
+	}
 	get sessionBytes() {
 		return this._sessionBytes;
-	},
+	}
+	get buckets() {
+		if (this._buckets) {
+			return this._buckets;
+		}
+		this._buckets = new ByteBucketTee(
+			this.parent.bucket,
+			Limits.getServerBucket(this.parent),
+			GlobalBucket
+			);
+		this._buckets.register(this);
+		return this._buckets;
+	}
 
-	open: function() {
+	open() {
 		if (this._inited) {
 			return Promise.resolve();
 		}
@@ -196,21 +204,248 @@ Chunk.prototype = {
 		let pos = this.start + this.safeBytes;
 		log(LOG_DEBUG, "opening " + file.path + " at: " + pos);
 		return this._openPromise = this._openAsync(file, pos);
-	},
+	}
 
-	get buckets() {
-		if (this._buckets) {
-			return this._buckets;
+	_noteBytesWritten(bytes) {
+		this._written += bytes;
+		this._sessionBytes += bytes;
+		this.safeBytes =  Math.max(this.safeBytes, this._written - this.buffered);
+		memoryReporter.noteBytesWritten(bytes);
+
+		this.parent.timeLastProgress = getTimestamp();
+	}
+
+	close() {
+		if (this._closing) {
+			return this._closing;
 		}
-		this._buckets = new ByteBucketTee(
-			this.parent.bucket,
-			Limits.getServerBucket(this.parent),
-			GlobalBucket
-			);
-		this._buckets.register(this);
-		return this._buckets;
-	},
+		if (!this._inited) {
+			return Promise.resolve();
+		}
+		this.running = false;
+		this._closing = this._closeAsync();
+	}
 
+	merge(ch) {
+		if (!this.complete && !ch.complete) {
+			throw new Error("Cannot merge incomplete chunks this way!");
+		}
+		this.end = ch.end;
+		this._written += ch._written;
+		this.safeBytes += ch.safeBytes;
+	}
+
+	rollback() {
+		if (!this._sessionBytes || this._sessionBytes > this._written) {
+			return;
+		}
+		this._written -= this._sessionBytes;
+		this._sessionBytes = 0;
+	}
+
+	cancelChunk() {
+		this.running = false;
+		this.close();
+		if (this.download) {
+			this.download.cancel();
+		}
+	}
+
+	suspend(aRequest, pending) {
+		if (this._req) {
+			this._reqPending += pending;
+		}
+		else {
+			this._req = aRequest;
+			this._req.suspend();
+			this._reqPending = pending;
+		}
+		this.schedule();
+	}
+
+	write(aRequest, aInputStream, aCount) {
+		try {
+			// not running: do not write anything
+			if (!this.running || !this._inStream || !this._outStream) {
+				log(LOG_ERROR, "trying to write on a closed chunk");
+				return -1;
+			}
+			let bytes = this.remainder;
+			if (!this.total || aCount < bytes) {
+				bytes = aCount;
+			}
+			if (!bytes) {
+				// we got what we wanted
+				return -1;
+			}
+			if (bytes < 0) {
+				throw new Error(`bytes negative: ${bytes} ${this.remainder} ${aCount}`);
+			}
+			let got = this.requestBytes(bytes);
+
+			// didn't get enough
+			if (got < bytes) {
+				this.suspend(aRequest, bytes - got);
+			}
+
+			// per e10n contract we must consume all bytes
+			// or in our case all remainder bytes
+			// reqPending from above makes sure that we won't re-schedule
+			// the download too early
+			if (this._overflowPipe) {
+				// We still got overflow
+				log(LOG_DEBUG, "writing to overflow");
+				this._overflowPipe.outputStream.writeFrom(aInputStream, bytes);
+			}
+			else {
+				let written = 0;
+				// jshint -W116
+				try {
+					written = this._outStream.writeFrom(aInputStream, bytes);
+				}
+				catch (ex if ex.result == Cr.NS_BASE_STREAM_WOULD_BLOCK || ex == Cr.NS_BASE_STREAM_WOULD_BLOCK) {
+					// aka still nothing written
+				}
+				// jshint +W116
+				let remain = bytes - written;
+				if (remain > 0) {
+					if (!this._overflowPipe) {
+						// If everything goes according to plan, we won't need much!
+						// Having an overflow pipe will eventually suspend the request
+						// until it clears up!
+						log(LOG_DEBUG, "creating overflow pipe");
+						this._overflowPipe = new Instances.Pipe(
+							false,
+							true,
+							PIPE_SEGMENT_SIZE,
+							MAX_PIPE_SEGMENTS * 10);
+					}
+					log(LOG_DEBUG, "writing to remainder to overflow");
+					this._overflowPipe.outputStream.writeFrom(aInputStream, remain);
+				}
+			}
+			this._noteBytesWritten(got);
+			return bytes;
+		}
+		catch (ex) {
+			log(LOG_ERROR, 'write: ' + this.parent.tmpFile.path, ex);
+			throw ex;
+		}
+		return 0;
+	}
+
+	observe() {
+		this.run();
+	}
+
+	_substractOverflow(requested) {
+		let instream = this._overflowPipe.inputStream;
+		let avail = instream.available();
+		if (!avail) {
+			this._overflowPipe.outputStream.close();
+			this._overflowPipe.inputStream.close();
+			delete this._overflowPipe;
+			return requested;
+		}
+
+		log(LOG_DEBUG, `still overflow: ${avail}`);
+		// decreasing requested will put the stream into suspended mode, need
+		// to schedule
+		requested = Math.max(requested - avail, 0);
+		let written = 0;
+		// jshint -W116
+		try {
+			written = this._outStream.writeFrom(instream, avail);
+		}
+		catch (ex if ex.result == Cr.NS_BASE_STREAM_WOULD_BLOCK || ex == Cr.NS_BASE_STREAM_WOULD_BLOCK) {
+			// nothing written
+		}
+		// jshint +W116
+		avail -= written;
+		log(LOG_DEBUG, `overflow written: ${written} ${avail}`);
+		if (!avail) {
+			log(LOG_DEBUG, "overflow cleared");
+			this._overflowPipe.outputStream.close();
+			this._overflowPipe.inputStream.close();
+			delete this._overflowPipe;
+		}
+		return requested;
+	}
+
+	requestBytes(requested) {
+		let origRequested = requested;
+		if (this._overflowPipe) {
+			requested = this._subtractOverflow(requested);
+		}
+
+		if (memoryReporter.memoryPressure > 0) {
+			log(LOG_INFO, "Under some pressure: " + memoryReporter.pendingBytes +
+				" : " + memoryReporter.memoryPressure + " : " + requested);
+			requested = Math.max(Math.min(requested, 256), Math.floor(requested / memoryReporter.memoryPressure));
+			log(LOG_INFO, "Using instead: " + requested);
+		}
+		return this.buckets.requestBytes(requested);
+	}
+
+	schedule() {
+		if (this._schedTimer) {
+			return;
+		}
+		this._schedTimer = Timers.createOneshot(250, function() {
+			delete this._schedTimer;
+			this.run();
+		}, this);
+	}
+
+	run() {
+		if (!this._req) {
+			return;
+		}
+		if (this._reqPending > 0) {
+			// Still have pending bytes?
+			let got = this.requestBytes(this._reqPending);
+			if (!got) {
+				this.schedule();
+				return;
+			}
+			this._reqPending -= got;
+			this.parent.timeLastProgress = getTimestamp();
+			this._noteBytesWritten(got);
+			if (this._reqPending) {
+				this.schedule();
+			}
+			return;
+		}
+
+		// Ready to resume the download
+		let req = this._req;
+		delete this._req;
+		delete this._reqPending;
+		req.resume();
+		this.parent.timeLastProgress = getTimestamp();
+	}
+
+	toString() {
+		let len = this.parent.totalSize ? String(this.parent.totalSize).length  : 10;
+		return formatNumber(this.start, len) +
+			"/" + formatNumber(this.end, len) +
+			"/" + formatNumber(this.total, len) +
+			" running:" + this.running +
+			" written/remain/sb:" + formatNumber(this.written, len) +
+			"/" + formatNumber(this.remainder, len) +
+			"/" + formatNumber(this._sessionBytes, len);
+	}
+
+	toJSON() {
+		return {
+			start: this.start,
+			end: this.end,
+			written: this.safeBytes
+			};
+	}
+}
+
+Object.assign(Chunk.prototype, {
 	_openAsync: Task.async(function*(file, pos) {
 		try {
 			if (this._closing) {
@@ -254,25 +489,6 @@ Chunk.prototype = {
 			delete this._openPromise;
 		}
 	}),
-
-	_noteBytesWritten: function(bytes) {
-		this._written += bytes;
-		this._sessionBytes += bytes;
-		this.safeBytes =  Math.max(this.safeBytes, this._written - this.buffered);
-		memoryReporter.noteBytesWritten(bytes);
-
-		this.parent.timeLastProgress = getTimestamp();
-	},
-	close: function() {
-		if (this._closing) {
-			return this._closing;
-		}
-		if (!this._inited) {
-			return Promise.resolve();
-		}
-		this.running = false;
-		this._closing = this._closeAsync();
-	},
 	_closeAsync: Task.async(function*() {
 		try {
 			if (this._openPromise) {
@@ -355,209 +571,6 @@ Chunk.prototype = {
 			this._inited = false;
 		}
 	}),
-	merge: function(ch) {
-		if (!this.complete && !ch.complete) {
-			throw new Error("Cannot merge incomplete chunks this way!");
-		}
-		this.end = ch.end;
-		this._written += ch._written;
-		this.safeBytes += ch.safeBytes;
-	},
-	rollback: function() {
-		if (!this._sessionBytes || this._sessionBytes > this._written) {
-			return;
-		}
-		this._written -= this._sessionBytes;
-		this._sessionBytes = 0;
-	},
-	cancelChunk: function() {
-		this.running = false;
-		this.close();
-		if (this.download) {
-			this.download.cancel();
-		}
-	},
-	write: function(aRequest, aInputStream, aCount) {
-		try {
-			// not running: do not write anything
-			if (!this.running || !this._inStream || !this._outStream) {
-				log(LOG_ERROR, "trying to write on a closed chunk");
-				return -1;
-			}
-			let bytes = this.remainder;
-			if (!this.total || aCount < bytes) {
-				bytes = aCount;
-			}
-			if (!bytes) {
-				// we got what we wanted
-				return -1;
-			}
-			let got = this.requestBytes(bytes);
-			// didn't get enough
-			if (got < bytes) {
-				if (this._req) {
-					this._reqPending += bytes - got;
-				}
-				else {
-					this._req = aRequest;
-					this._req.suspend();
-					this._reqPending = bytes - got;
-				}
-			}
-			if (bytes < 0) {
-				throw new Error("bytes negative: " + bytes + " " + this.remainder + " " + aCount);
-			}
-
-			// per e10n contract we must consume all bytes
-			// or in our case all remainder bytes
-			// reqPending from above makes sure that we won't re-schedule
-			// the download too early
-			if (this._overflowPipe) {
-				// We still got overflow
-				log(LOG_DEBUG, "writing to overflow");
-				this._overflowPipe.outputStream.writeFrom(aInputStream, bytes);
-			}
-			else {
-				let written = 0;
-				// jshint -W116
-				try {
-					written = this._outStream.writeFrom(aInputStream, bytes);
-				}
-				catch (ex if ex.result == Cr.NS_BASE_STREAM_WOULD_BLOCK || ex == Cr.NS_BASE_STREAM_WOULD_BLOCK) {
-					// aka still nothing written
-				}
-				// jshint +W116
-				let remain = bytes - written;
-				if (remain > 0) {
-					if (!this._overflowPipe) {
-						// If everything goes according to plan, we won't need much!
-						// Having an overflow pipe will eventually suspend the request
-						// until it clears up!
-						log(LOG_DEBUG, "creating overflow pipe");
-						this._overflowPipe = new Instances.Pipe(
-							false,
-							true,
-							PIPE_SEGMENT_SIZE,
-							MAX_PIPE_SEGMENTS * 10);
-					}
-					log(LOG_DEBUG, "writing to remainder to overflow");
-					this._overflowPipe.outputStream.writeFrom(aInputStream, remain);
-				}
-			}
-			this._noteBytesWritten(bytes);
-			return bytes;
-		}
-		catch (ex) {
-			log(LOG_ERROR, 'write: ' + this.parent.tmpFile.path, ex);
-			throw ex;
-		}
-		return 0;
-	},
-	observe: function() {
-		this.run();
-	},
-	requestBytes: function(requested) {
-		if (this._overflowPipe) {
-			let instream = this._overflowPipe.inputStream;
-			let avail = instream.available();
-			if (!avail) {
-				this._overflowPipe.outputStream.close();
-				this._overflowPipe.inputStream.close();
-				delete this._overflowPipe;
-			}
-			else {
-				log(LOG_DEBUG, `still overflow: ${avail}`);
-				// decreasing requested will put the stream into suspended mode, need
-				// to schedule
-				requested = Math.max(requested - avail, 0);
-				let written = 0;
-				// jshint -W116
-				try {
-					written = this._outStream.writeFrom(instream, avail);
-				}
-				catch (ex if ex.result == Cr.NS_BASE_STREAM_WOULD_BLOCK || ex == Cr.NS_BASE_STREAM_WOULD_BLOCK) {
-					// nothing written
-				}
-				// jshint +W116
-				avail -= written;
-				log(LOG_DEBUG, `overflow written: ${written} ${avail}`);
-				if (!avail) {
-					log(LOG_DEBUG, "overflow cleared");
-					this._overflowPipe.outputStream.close();
-					this._overflowPipe.inputStream.close();
-					delete this._overflowPipe;
-				}
-				// .. which we do here
-				this.schedule();
-			}
-		}
-
-		if (memoryReporter.memoryPressure > 0) {
-			log(LOG_INFO, "Under some pressure: " + memoryReporter.pendingBytes +
-				" : " + memoryReporter.memoryPressure + " : " + requested);
-			requested = Math.max(Math.min(requested, 256), Math.floor(requested / memoryReporter.memoryPressure));
-			log(LOG_INFO, "Using instead: " + requested);
-			this.schedule();
-		}
-		return this.buckets.requestBytes(requested);
-	},
-	schedule: function() {
-		if (this._schedTimer) {
-			return;
-		}
-		this._schedTimer = Timers.createOneshot(250, function() {
-			delete this._schedTimer;
-			this.run();
-		}, this);
-	},
-	run: function() {
-		if (!this._req) {
-			return;
-		}
-		if (this._reqPending > 0) {
-			// Still have pending bytes?
-			let requested = Math.min(this._wnd, this._reqPending);
-			let got = this.requestBytes(requested);
-			if (!got) {
-				return;
-			}
-			if (got < requested) {
-				this._wnd = Math.round(Math.min(this._wnd / 2, 1024));
-			}
-			else if (requested === this._wnd) {
-				this._wnd += 256;
-			}
-			this._reqPending -= got;
-			this.parent.timeLastProgress = getTimestamp();
-
-			this.schedule();
-			return;
-		}
-
-		// Ready to resume the download
-		let req = this._req;
-		delete this._req;
-		delete this._reqPending;
-		req.resume();
-		this.parent.timeLastProgress = getTimestamp();
-	},
-	toString: function() {
-		let len = this.parent.totalSize ? String(this.parent.totalSize).length  : 10;
-		return formatNumber(this.start, len) +
-			"/" + formatNumber(this.end, len) +
-			"/" + formatNumber(this.total, len) +
-			" running:" + this.running +
-			" written/remain/sb:" + formatNumber(this.written, len) +
-			"/" + formatNumber(this.remainder, len) +
-			"/" + formatNumber(this._sessionBytes, len);
-	},
-	toJSON: function() {
-		return {
-			start: this.start,
-			end: this.end,
-			written: this.safeBytes
-			};
-	}
-};
+});
 
 exports.Chunk = Chunk;
