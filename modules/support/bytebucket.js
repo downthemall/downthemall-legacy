@@ -87,7 +87,7 @@ class ByteBucket {
 			throw new Error(`${this}: Invalid byte rate`);
 		}
 		nv = Math.round(nv);
-		if (nv === 0) {
+		if (nv <= 0) {
 			nv = -1;
 		}
 		this._available = this._byteRate = nv;
