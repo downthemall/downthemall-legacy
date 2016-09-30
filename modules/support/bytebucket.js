@@ -84,7 +84,7 @@ class ByteBucket {
 	}
 	set byteRate(nv) {
 		if (!isFinite(nv)) {
-			throw new Error("Invalid byte rate");
+			throw new Error(`${this}: Invalid byte rate`);
 		}
 		nv = Math.round(nv);
 		if (nv === 0) {
@@ -111,7 +111,7 @@ class ByteBucket {
 	}
 	set burstFactor(nv) {
 		if (!isFinite(nv) || nv < 1) {
-			throw new Error("Invalid burst factor");
+			throw new Error(`${this}: Invalid burst factor`);
 		}
 		return this._burstFactor = nv;
 	}
@@ -120,7 +120,7 @@ class ByteBucket {
 			return bytes;
 		}
 		if (this._available < 0) {
-			throw new Error("invalid avail");
+			throw new Error(`${this}: Invalid available: ${this._available}`);
 		}
 		let rv = Math.max(0, Math.min(bytes, this._available));
 		return rv;
@@ -139,16 +139,16 @@ class ByteBucket {
 			// Do not notify, as there is no limit imposed
 			return;
 		}
-		this._available = Math.round(
-			Math.min(
-				this._available + (this._byteRate / 10),
-				this._byteRate * this._burstFactor
-				)
-			);
+		this._available = Math.max(-1, Math.round(
+			Math.min(this._available + (this._byteRate / 10), this._byteRate * this._burstFactor)
+			));
 	}
 	kill() {
 		Timers.killTimer(this._timer);
 		this._obs.kill();
+	}
+	toString() {
+		return `${this._name} (${this.byteRate}/${this.burstFactor}/${this._available})`;
 	}
 }
 
