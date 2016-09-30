@@ -46,7 +46,7 @@ try {
 		}
 	}
 	class GlobalProgress extends GlobalProgressStub {
-		constructor() {
+		constructor(window) {
 			super();
 			this._state = NO_PROGRESS;
 			let docShell = window.QueryInterface(Ci.nsIInterfaceRequestor).
