@@ -504,8 +504,12 @@ Connection.prototype = {
 	},
 
 	writeFailed: function(ex) {
-		log(LOG_DEBUG, "write failed invoked!", ex);
 		let d = this.d;
+		if (!d || !d.chunks || d.chunks.indexOf(this.c) < 0) {
+			log(LOG_DEBUG, "write failed invoked, but ignored (not registered chunk)!", ex);
+			return;
+		}
+		log(LOG_DEBUG, "write failed invoked!", ex);
 		if ((ex.result || ex) === Cr.NS_ERROR_FILE_NO_DEVICE_SPACE) {
 			d.pauseAndRetry();
 			d.status = _("freespace");
