@@ -8,7 +8,8 @@ const {TimerManager} = require("./timers");
 const Timers = new TimerManager();
 
 class ObserversBase {
-	constructor() {
+	constructor(name) {
+		this._name = name || "unnamed";
 		this._obs = new Set();
 	}
 	register(observer) {
@@ -21,6 +22,9 @@ class ObserversBase {
 		for (let o of this._obs) {
 			o.observe.call(o);
 		}
+	}
+	toString() {
+		return `<observer ${this._name}>`;
 	}
 }
 
@@ -45,25 +49,35 @@ Object.assign(Observers.prototype, {
 Observers.Manager = (function() {
 	class Manager extends ObserversBase {
 		constructor() {
-			super();
+			super("manager");
 			this._timer = Timers.createRepeating(1000, this.notify, this);
+		}
+		notify() {
+			for (let o of this._obs) {
+				try {
+					o.notify();
+				}
+				catch (ex) {
+					log(LOG_ERROR, "failed to notify", ex);
+				}
+			}
 		}
 	}
 	return new Manager();
 })();
 
 class ByteBucket {
-	constructor(byteRate, burstFactor) {
-		this._obs = new Observers();
+	constructor(byteRate, burstFactor, name) {
+		log(LOG_DEBUG, `creating bucket: ${name} - ${byteRate} - ${burstFactor}`);
+		this._name = `<${name || "unnamed"} bucket>`;
+		this._obs = new Observers(this._name);
 		this.byteRate = byteRate;
-		if (arguments.length > 1) {
-			this.burstFactor = burstFactor;
-		}
+		this.burstFactor = burstFactor;
 		this._available = byteRate;
 		this._timer = null;
-		this._available = -1;
-		this._byteRate = 0;
-		this._burstFactor = 1.5;
+	}
+	get name() {
+		return this._name;
 	}
 	get byteRate() {
 		return this._byteRate;
@@ -96,19 +110,23 @@ class ByteBucket {
 		return this._burstFactor;
 	}
 	set burstFactor(nv) {
-		if (!isFinite(nv) || nv <= 1) {
+		if (!isFinite(nv) || nv < 1) {
 			throw new Error("Invalid burst factor");
 		}
 		return this._burstFactor = nv;
 	}
 	requestBytes(bytes) {
-		if (this._available < 0) {
+		if (this._available === -1) {
 			return bytes;
 		}
-		return Math.max(0, Math.min(bytes, this._available));
+		if (this._available < 0) {
+			throw new Error("invalid avail");
+		}
+		let rv = Math.max(0, Math.min(bytes, this._available));
+		return rv;
 	}
 	commitBytes(bytes) {
-		this._available -= bytes;
+		this._available = Math.max(-1, this._available - bytes);
 	}
 	register(observer) {
 		return this._obs.register(observer);
@@ -124,10 +142,9 @@ class ByteBucket {
 		this._available = Math.round(
 			Math.min(
 				this._available + (this._byteRate / 10),
-				this.byteRate * this._burstFactor
+				this._byteRate * this._burstFactor
 				)
 			);
-		this._obs.notify();
 	}
 	kill() {
 		Timers.killTimer(this._timer);
@@ -136,31 +153,31 @@ class ByteBucket {
 }
 
 class ByteBucketTee {
-	constructor() {
-		this._buckets = Array.filter(arguments, e => e instanceof ByteBucket);
+	constructor(...args) {
+		this._buckets = args.filter(e => e instanceof ByteBucket);
 		if (!this._buckets.length) {
 			throw new Error("No buckets supplied");
 		}
 	}
 	get byteRate() {
 		return this._buckets
-			.map(e => e.byteRange)
+			.map(e => e.byteRate)
 			.reduce((p, c) =>  c > 0 ? Math.min(p,c) : p);
 	}
 	get burstFactor() {
 		return this._buckets
-			.map(e =>e.burstFactor)
+			.map(e => e.burstFactor)
 			.reduce((p, c) => Math.min(p,c));
 	}
 	requestBytes(bytes) {
-		for (let i = 0, e = this._buckets.length; i < e; ++i) {
-			bytes = this._buckets[i].requestBytes(bytes);
+		for (let b of this._buckets) {
+			bytes = b.requestBytes(bytes);
 			if (!bytes) {
 				return 0;
 			}
 		}
-		for (let i = 0, e = this._buckets.length; i < e; ++i) {
-			this._buckets[i].commitBytes(bytes);
+		for (let b of this._buckets) {
+			b.commitBytes(bytes);
 		}
 		return bytes;
 	}

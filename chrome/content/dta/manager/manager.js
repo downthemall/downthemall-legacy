@@ -1475,7 +1475,7 @@ QueueItem.prototype = {
 		this._setStateInternal(nv);
 		if (this.state === RUNNING) {
 			// set up the bucket
-			this._bucket = new ByteBucket(this.speedLimit, 1.7);
+			this._bucket = new ByteBucket(this.speedLimit, 1.2, "download");
 		}
 		else if (this.state === FINISHING) {
 			++Dialog.finishing;
