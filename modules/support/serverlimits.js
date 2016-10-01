@@ -7,7 +7,7 @@
 const Prefs = require("preferences");
 requireJoined(this, "constants");
 const {ByteBucket} = require("./bytebucket");
-const {filterInSitu} = require("utils");
+const {filterInSitu, shuffle} = require("utils");
 const obs = require("./observers");
 
 const TOPIC = 'DTA:serverlimits-changed';
@@ -472,19 +472,7 @@ class RndScheduler extends BaseScheduler {
 	constructor(downloads, running) {
 		super();
 		this._schedule = downloads.filter(BaseScheduler._queuedFilter);
-		this.shuffle(this._schedule);
-	}
-	static shuffle(a) {
-		let c, e = a.length;
-		if (e < 4) {
-			// no need to shuffle for such small sets
-			return;
-		}
-		while (e > 1) {
-			c = Math.floor(Math.random() * (e--));
-			// swap
-			[a[e], a[c]] = [a[c], a[e]];
-		}
+		shuffle(this._schedule);
 	}
 }
 

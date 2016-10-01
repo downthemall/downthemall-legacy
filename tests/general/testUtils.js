@@ -1,6 +1,9 @@
+/* jshint strict:true, globalstrict:false */
+/* global module, test, ok, notEqual, strictEqual, throws, arrayEqual, deepEqual, checkExports */
 module("utils.js");
 
 test("exports", function() {
+	"use strict";
 	checkExports("utils", [
 		"MimeQuality",
 		"NS_DTA",
@@ -11,6 +14,7 @@ test("exports", function() {
 		"StringBundles",
 		"filterInSitu",
 		"filterMapInSitu",
+		"shuffle",
 		"formatNumber",
 		"formatTimeDelta",
 		"getTimestamp",
@@ -28,23 +32,27 @@ test("exports", function() {
 });
 
 test("valid schemes", function() {
+	"use strict";
 	var u = require("utils");
 	for (var k in u) {
-		if (k.indexOf("NS_") == 0) {
+		if (k.indexOf("NS_") === 0) {
 			ok(Services.io.newURI(u[k], null, null), k);
 		}
 	}
 });
 
 test("newUUIDString", function() {
+	"use strict";
 	const {newUUIDString} = require("utils");
 	ok(!!newUUIDString(), "set");
-	for (var i = 0; i < 10; ++i)
+	for (var i = 0; i < 10; ++i) {
 		notEqual(newUUIDString(), newUUIDString(), "different each call");
+	}
 	ok(/^\{[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}\}$/.test(newUUIDString()), "conforms");
 });
 
 test("range", function() {
+	"use strict";
 	const {range} = require("utils");
 
 	var r = range(2);
@@ -85,11 +93,13 @@ test("range", function() {
 });
 
 test("hexdigest", function() {
+	"use strict";
 	const {hexdigest} = require("utils");
 	strictEqual(hexdigest("0123456789abcdef"), "30313233343536373839616263646566");
 });
 
 test("formatNumber", function() {
+	"use strict";
 	const {formatNumber} = require("utils");
 	strictEqual(formatNumber(-1), "-1", "def; neg");
 	strictEqual(formatNumber(1), "001", "def; 1");
@@ -116,6 +126,7 @@ test("formatNumber", function() {
 });
 
 test("formatTimeDelta", function() {
+	"use strict";
 	const {formatTimeDelta} = require("utils");
 	strictEqual(formatTimeDelta(1), "00:01");
 	strictEqual(formatTimeDelta(61), "01:01");
@@ -125,6 +136,7 @@ test("formatTimeDelta", function() {
 });
 
 test("mapInSitu", function() {
+	"use strict";
 	const {mapInSitu} = require("utils");
 	var vec = [1,2,3,4];
 	deepEqual(mapInSitu(vec, i => i*i), [1,4,9,16]);
@@ -132,6 +144,7 @@ test("mapInSitu", function() {
 });
 
 test("filterInSitu", function() {
+	"use strict";
 	const {filterInSitu} = require("utils");
 	var vec = [1,2,3,4,null];
 	deepEqual(filterInSitu(vec, i => i % 2), [1,3]);
@@ -139,6 +152,7 @@ test("filterInSitu", function() {
 });
 
 test("filterMapInSitu", function() {
+	"use strict";
 	const {filterMapInSitu} = require("utils");
 	var vec = [1,2,3,4,null];
 	deepEqual(filterMapInSitu(vec, i => i % 2, i => i*i), [1,9]);
@@ -146,6 +160,7 @@ test("filterMapInSitu", function() {
 });
 
 test("mapFilterInSitu", function() {
+	"use strict";
 	const {mapFilterInSitu} = require("utils");
 	var vec = [1,2,3,4,null];
 	deepEqual(mapFilterInSitu(vec, i => i*2, i => i % 4), [2,6]);
@@ -153,14 +168,33 @@ test("mapFilterInSitu", function() {
 });
 
 test("naturalSort", function() {
+	"use strict";
 	const {naturalSort} = require("utils");
 	deepEqual(
-		naturalSort(["0x01", "0x02", "0xaf", "10x01", "9x01", "-10", "-1", "1", "01", "001", "0001", "0000001", "0000000001", "0000000000001", "000000000000000000001", "01", "0000000000001", "10", "2", "hallow-1", "hallow1", "hallow10", "hallow-10", "hallow2", "hallow-1foo", "hallow1foo", "hallow109xfoo", "hallow109", "hallow109", "hallow109zfoo", "hallow10zfoo", "hallow10foobar", "hallow10foo", "hallow-10foo", "hallow2foo", "bar-1foo", "BAR0foo", "bar1foo", "bar10foo", "bar-10foo", "bar101foo", "bar100foo", "bar200foo", "bar20foo", "bar2foo", "44", "44 (1)", "44 (2)", "44 (3)", "44(4)", "44(5)", "z24", "z2", "z15", "z1", "z3", "z20", "z5", "z11", "z 21", "z22"]),
-		["-10", "-1", "1", "01", "01", "001", "0x01", "0001", "0000001", "0000000001", "0000000000001", "0000000000001", "000000000000000000001", "2", "0x02", "9x01", "10", "10x01", "0xaf", "44", "44 (1)", "44 (2)", "44 (3)", "44(4)", "44(5)", "BAR0foo", "bar1foo", "bar-1foo", "bar2foo", "bar10foo", "bar-10foo", "bar20foo", "bar100foo", "bar101foo", "bar200foo", "hallow-10", "hallow-1", "hallow1", "hallow1foo", "hallow-1foo", "hallow2", "hallow2foo", "hallow10", "hallow10foo", "hallow10foobar", "hallow10zfoo", "hallow-10foo", "hallow109", "hallow109", "hallow109xfoo", "hallow109zfoo", "z1", "z2", "z3", "z5", "z11", "z15", "z20", "z 21", "z22", "z24"]
+		naturalSort(
+			["0x01", "0x02", "0xaf", "10x01", "9x01", "-10", "-1", "1", "01", "001", "0001",
+				"0000001", "0000000001", "0000000000001", "000000000000000000001", "01",
+				"0000000000001", "10", "2", "hallow-1", "hallow1", "hallow10", "hallow-10",
+				"hallow2", "hallow-1foo", "hallow1foo", "hallow109xfoo", "hallow109", "hallow109",
+				"hallow109zfoo", "hallow10zfoo", "hallow10foobar", "hallow10foo", "hallow-10foo",
+				"hallow2foo", "bar-1foo", "BAR0foo", "bar1foo", "bar10foo", "bar-10foo",
+				"bar101foo", "bar100foo", "bar200foo", "bar20foo", "bar2foo", "44", "44 (1)",
+				"44 (2)", "44 (3)", "44(4)", "44(5)", "z24", "z2", "z15", "z1", "z3", "z20",
+				"z5", "z11", "z 21", "z22"]),
+			["-10", "-1", "1", "01", "01", "001", "0x01", "0001", "0000001", "0000000001",
+				"0000000000001", "0000000000001", "000000000000000000001", "2", "0x02", "9x01",
+				"10", "10x01", "0xaf", "44", "44 (1)", "44 (2)", "44 (3)", "44(4)", "44(5)",
+				"BAR0foo", "bar1foo", "bar-1foo", "bar2foo", "bar10foo", "bar-10foo", "bar20foo",
+				"bar100foo", "bar101foo", "bar200foo", "hallow-10", "hallow-1", "hallow1",
+				"hallow1foo", "hallow-1foo", "hallow2", "hallow2foo", "hallow10", "hallow10foo",
+				"hallow10foobar", "hallow10zfoo", "hallow-10foo", "hallow109", "hallow109",
+				"hallow109xfoo", "hallow109zfoo", "z1", "z2", "z3", "z5", "z11", "z15", "z20",
+				"z 21", "z22", "z24"]
 		);
 });
 
 test("MimeQuality", function() {
+	"use strict";
 	const {MimeQuality} = require("utils");
 	var m = new MimeQuality();
 	m.add("a", 0.5);
@@ -174,9 +208,10 @@ test("MimeQuality", function() {
 	throws(() => m.add("f", -3));
 	throws(() => m.add("g", 1 / 0));
 	strictEqual(m.toString(), "c,a;q=0.5,x;q=0.105,b;q=0.1,y;q=0.1,z;q=0.1");
-})
+});
 
 test("normalizeMetaPrefs", function() {
+	"use strict";
 	const {normalizeMetaPrefs} = require("utils");
 	var vec = [{preference: 100}, {preference: 99}, {preference: -3}, {preference: 500}, {preference: 10}];
 	normalizeMetaPrefs(vec);

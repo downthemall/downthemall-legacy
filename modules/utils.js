@@ -151,6 +151,22 @@ exports.mapInSitu = fmi.mapInSitu;
 exports.filterMapInSitu = fmi.filterMapInSitu;
 exports.mapFilterInSitu = fmi.mapFilterInSitu;
 
+exports.shuffle = function(a) {
+	let c, e = a.length;
+	if (e < 2) {
+		return;
+	}
+	if (e === 2) {
+		[a[0], a[1]] = [a[1], a[0]];
+		return;
+	}
+
+	while (e > 1) {
+		c = Math.floor(Math.random() * (e--));
+		// swap
+		[a[e], a[c]] = [a[c], a[e]];
+	}
+};
 
 /**
  * Sorts an array with natural sort order.
