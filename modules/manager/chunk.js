@@ -107,7 +107,6 @@ class Chunk {
 		this._written = written > 0 ? written : 0;
 		this._sessionBytes = 0;
 		this._inited = false;
-		this._written = 0;
 		this.running = false;
 
 		this.end = end;
