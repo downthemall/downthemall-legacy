@@ -45,9 +45,6 @@ class ByteBucket {
 		}
 		let now = Date.now();
 		let diff = now - this._last;
-		if (diff < 250) {
-			return;
-		}
 		this._available = Math.max(-1, Math.round(
 			Math.min(this._available + (this._byteRate * diff / 1000), this._byteRate * this._burstFactor)
 			));

@@ -382,7 +382,7 @@ class Chunk {
 		if (this._schedTimer) {
 			return;
 		}
-		this._schedTimer = Timers.createOneshot(randint(300,500), function() {
+		this._schedTimer = Timers.createOneshot(randint(0, 150), function() {
 			delete this._schedTimer;
 			this.run();
 		}, this);
