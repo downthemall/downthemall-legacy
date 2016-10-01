@@ -106,7 +106,6 @@ class Chunk {
 		this._start = start;
 		this._written = written > 0 ? written : 0;
 		this._sessionBytes = 0;
-		this._inited = false;
 		this.running = false;
 
 		this.end = end;
@@ -189,18 +188,14 @@ class Chunk {
 	}
 
 	open() {
-		if (this._inited) {
-			return Promise.resolve();
-		}
-		this._inited = true;
-
 		if (this._openPromise) {
+			log(LOG_DEBUG, `opening ${this}: already pending`);
 			return this._openPromise;
 		}
 
 		const file = this.parent.tmpFile;
 		let pos = this.start + this.safeBytes;
-		log(LOG_DEBUG, "opening " + file.path + " at: " + pos);
+		log(LOG_DEBUG, `opening ${this}: ${file.path} at ${pos}`);
 		return this._openPromise = this._openAsync(file, pos);
 	}
 
@@ -214,11 +209,9 @@ class Chunk {
 	}
 
 	close() {
+		log(LOG_DEBUG, `closing ${this}`);
 		if (this._closing) {
 			return this._closing;
-		}
-		if (!this._inited) {
-			return Promise.resolve();
 		}
 		this.running = false;
 		this._closing = this._closeAsync();
@@ -566,7 +559,6 @@ Object.assign(Chunk.prototype, {
 		finally {
 			delete this.download;
 			delete this._closing;
-			this._inited = false;
 		}
 	}),
 });
