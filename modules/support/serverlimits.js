@@ -514,9 +514,6 @@ function loadServerBuckets() {
 	}
 }
 function killServerBuckets() {
-	for (let [,bucket] in new Iterator(buckets)) {
-		bucket.kill();
-	}
 	buckets = Object.create(null);
 }
 function getServerBucket(d) {
@@ -534,7 +531,6 @@ function getServerBucket(d) {
 const Observer = {
 	unload: function() {
 		killServerBuckets();
-		unlimitedBucket.kill();
 		unlimitedBucket = null;
 	},
 	observe: function(topic, subject, data) {

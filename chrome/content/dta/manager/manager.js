@@ -1503,7 +1503,6 @@ QueueItem.prototype = {
 			throw new Exception("Bucket is only nullable");
 		}
 		if (this._bucket) {
-			this._bucket.kill();
 			this._bucket = null;
 		}
 	},

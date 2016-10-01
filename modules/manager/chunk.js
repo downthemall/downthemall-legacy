@@ -10,7 +10,7 @@ const {ByteBucketTee} = require("support/bytebucket");
 const {GlobalBucket} = require("./globalbucket");
 const {TimerManager} = require("support/timers");
 const Limits = require("support/serverlimits");
-const {getTimestamp, formatNumber, makeDir} = require("utils");
+const {getTimestamp, formatNumber, makeDir, randint} = require("utils");
 const {Task} = requireJSM("resource://gre/modules/Task.jsm");
 const {memoryReporter} = require("./memoryreporter");
 
@@ -185,7 +185,6 @@ class Chunk {
 			Limits.getServerBucket(this.parent),
 			GlobalBucket
 			);
-		this._buckets.register(this);
 		return this._buckets;
 	}
 
@@ -390,7 +389,7 @@ class Chunk {
 		if (this._schedTimer) {
 			return;
 		}
-		this._schedTimer = Timers.createOneshot(250, function() {
+		this._schedTimer = Timers.createOneshot(randint(300,500), function() {
 			delete this._schedTimer;
 			this.run();
 		}, this);
@@ -410,18 +409,19 @@ class Chunk {
 			this._reqPending -= got;
 			this.parent.timeLastProgress = getTimestamp();
 			this._noteBytesWritten(got);
-			if (this._reqPending) {
-				this.schedule();
-			}
+			this.schedule();
 			return;
 		}
 
 		// Ready to resume the download
-		let req = this._req;
-		delete this._req;
-		delete this._reqPending;
-		req.resume();
-		this.parent.timeLastProgress = getTimestamp();
+		if (this._req) {
+			let req = this._req;
+			delete this._req;
+			delete this._reqPending;
+			req.resume();
+			this.parent.timeLastProgress = getTimestamp();
+			this.schedule();
+		}
 	}
 
 	toString() {
@@ -552,7 +552,6 @@ Object.assign(Chunk.prototype, {
 
 			// and do some cleanup
 			if (this._buckets) {
-				this._buckets.unregister(this);
 				delete this._buckets;
 			}
 			delete this._req;

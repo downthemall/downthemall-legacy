@@ -168,6 +168,12 @@ exports.shuffle = function(a) {
 	}
 };
 
+exports.randint = function(min, max) {
+	min = Math.ceil(min);
+	max = Math.floor(max);
+	return Math.floor(Math.random() * (max - min)) + min;
+};
+
 /**
  * Sorts an array with natural sort order.
  * @param arr (array) Array to sort
