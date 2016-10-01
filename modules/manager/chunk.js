@@ -366,7 +366,7 @@ class Chunk {
 	requestBytes(requested) {
 		let origRequested = requested;
 		if (this._overflowPipe) {
-			requested = this._subtractOverflow(requested);
+			requested = this._substractOverflow(requested);
 		}
 
 		if (memoryReporter.memoryPressure > 0) {
