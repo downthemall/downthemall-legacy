@@ -15,6 +15,7 @@ test("exports", function() {
 		"filterInSitu",
 		"filterMapInSitu",
 		"shuffle",
+		"randint",
 		"formatNumber",
 		"formatTimeDelta",
 		"getTimestamp",
