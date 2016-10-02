@@ -202,8 +202,8 @@ var Prefs = {
 	_currentConns: 0,
 	refreshConnPrefs: function(downloads) {
 		let conns = 0;
-		for (let i = 0, e = downloads.length; i < e; i++) {
-			conns += downloads[i].activeChunks;
+		for (let d of downloads) {
+			conns += d.activeChunks;
 		}
 		conns = Math.max(this._baselineConns, Math.min(50, conns));
 		if (this._currentConns !== conns) {

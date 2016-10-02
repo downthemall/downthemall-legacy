@@ -179,7 +179,7 @@ var Dialog = {
 	_wasRunning: false,
 	_sum: 0,
 	_speeds: new SpeedStats(10),
-	_running: [],
+	_running: new Set(),
 	_autoClears: [],
 	completed: 0,
 	finishing: 0,
@@ -707,7 +707,7 @@ var Dialog = {
 		}
 	},
 	_continueReinit: function() {
-		this._running = [];
+		this._running = new Set();
 		delete this._forceQuit;
 		this._speeds.clear();
 		this.offlineForced = false;
@@ -769,8 +769,7 @@ var Dialog = {
 	refresh: function() {
 		try {
 			const now = Utils.getTimestamp();
-			for (let i = 0, e = this._running.length; i < e; ++i) {
-				let d = this._running[i];
+			for (let d of this._running) {
 				if (!d) {
 					continue;
 				}
@@ -810,8 +809,8 @@ var Dialog = {
 
 			// Refresh status bar
 			this.statusText.label = _("currentdownloadstats",
-				[this.completed, Tree.downloadCount, Tree.rowCount, this._running.length]);
-			if (!this._running.length) {
+				[this.completed, Tree.downloadCount, Tree.rowCount, this._running.size]);
+			if (!this._running.size) {
 				this.statusSpeed.hidden = true;
 			}
 			else {
@@ -820,10 +819,11 @@ var Dialog = {
 			}
 
 			// Refresh window title
-			if (this._running.length === 1 && this._running[0].totalSize > 0) {
+			let fr = this._running.values().next().value || null;
+			if (this._running.size === 1 && fr.totalSize > 0) {
 				if (Tree.filtered) {
 					document.title = _('titlespeedfiltered', [
-						this._running[0].percent,
+						fr.percent,
 						this.statusSpeed.label,
 						this.completed,
 						Tree.downloadCount,
@@ -832,20 +832,20 @@ var Dialog = {
 				}
 				else {
 					document.title = _('titlespeed', [
-						this._running[0].percent,
+						fr.percent,
 						this.statusSpeed.label,
 						this.completed,
 						Tree.downloadCount,
 					]);
 				}
-				if (this._running[0].totalSize) {
-					GlobalProgress.activate(this._running[0].progress * 10, 1000);
+				if (fr.totalSize) {
+					GlobalProgress.activate(fr.progress * 10, 1000);
 				}
 				else {
 					GlobalProgress.unknown();
 				}
 			}
-			else if (this._running.length > 0) {
+			else if (this._running.size > 0) {
 				let p = Math.floor(this.completed * 1000 / Tree.downloadCount);
 				let pt = Math.floor(this.completed * 100 / Tree.downloadCount) + '%';
 				if (Tree.filtered) {
@@ -917,8 +917,7 @@ var Dialog = {
 		}
 	},
 	refreshWritten: function() {
-		for (let i = 0, e = this._running.length; i < e; ++i) {
-			let d = this._running[i];
+		for (let d of this._running) {
 			if (!d) {
 				continue;
 			}
@@ -927,11 +926,11 @@ var Dialog = {
 		}
 	},
 	saveRunning: function() {
-		if (!this._running.length) {
+		if (!this._running.size) {
 			return;
 		}
-		for (let i = 0, e = this._running.length; i < e; ++i) {
-			this._running[i].save();
+		for (let d of this._running) {
+			d.save();
 		}
 	},
 
@@ -965,8 +964,7 @@ var Dialog = {
 			this.refresh();
 
 			let ts = Utils.getTimestamp();
-			for (let i = 0, e = this._running.length; i < e; ++i) {
-				let d = this._running[i];
+			for (let d of this._running) {
 				if (!d || d.isCritical) {
 					continue;
 				}
@@ -1015,7 +1013,7 @@ var Dialog = {
 		try {
 			var rv = false;
 			// pre-condition, do check prior to loop, or else we'll have the generator cost.
-			if (this._running.length >= Prefs.maxInProgress) {
+			if (this._running.size >= Prefs.maxInProgress) {
 				return false;
 			}
 			if (Prefs.schedEnabled) {
@@ -1048,7 +1046,7 @@ var Dialog = {
 				log(LOG_DEBUG, "rebuild scheduler");
 			}
 			let finishingPenality = Math.ceil(this.finishing / 10);
-			while (this._running.length < Prefs.maxInProgress - finishingPenality) {
+			while (this._running.size < Prefs.maxInProgress - finishingPenality) {
 				let d = this.scheduler.next(this._running);
 				if (!d) {
 					break;
@@ -1106,16 +1104,13 @@ var Dialog = {
 		else {
 			log(LOG_INFO, "Let's resume " + download + " at " + download.partialSize);
 		}
-		this._running.push(download);
+		this._running.add(download);
 		download.prealloc();
 		download.resumeDownload();
 		return true;
 	},
 	wasStopped: function(download) {
-		let idx = this._running.indexOf(download);
-		if (idx > -1) {
-			this._running.splice(idx, 1);
-		}
+		this._running.delete(download);
 	},
 	wasFinished: function() {
 		--this.finishing;
@@ -1192,11 +1187,8 @@ var Dialog = {
 		}
 	},
 	wasRemoved: function(download) {
-		let idx = this._running.indexOf(download);
-		if (idx > -1) {
-			this._running.splice(idx, 1);
-		}
-		idx = this._autoRetrying.indexOf(download);
+		this._running.delete(download);
+		let idx = this._autoRetrying.indexOf(download);
 		if (idx > -1) {
 			this._autoRetrying.splice(idx, 1);
 		}

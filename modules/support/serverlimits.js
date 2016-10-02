@@ -209,11 +209,11 @@ class FastScheduler extends BaseScheduler {
 		}
 
 		// count running downloads per host
-		for (i = 0, e = running.length; i < e; ++i) {
-			if (running[i].totalSize && running[i].totalSize < 1024*1024) {
+		for (let r of running) {
+			if (r.totalSize && r.totalSize < 1024*1024) {
 				continue;
 			}
-			host = running[i].urlManager.domain;
+			host = r.urlManager.domain;
 			downloadSet[host] = ++downloadSet[host] || 1;
 		}
 
@@ -293,12 +293,11 @@ class FairScheduler extends BaseScheduler {
 		}
 
 		// Count the running tasks
-		for (i = 0, e = running.length; i < e; ++i) {
-			if (running[i].totalSize && running[i].totalSize < 1024*1024) {
+		for (let r of running) {
+			if (r.totalSize && r.totalSize < 1024*1024) {
 				continue;
 			}
-			d = running[i];
-			host = d.urlManager.domain;
+			host = r.urlManager.domain;
 			if (!(host in this._downloadSet)) {
 				// we don't care, because we don't have any more queued downloads for this host
 				continue;
@@ -422,8 +421,7 @@ class DirScheduler extends BaseScheduler {
 		}
 
 		// Count the running tasks
-		for (i = 0, e = running.length; i < e; ++i) {
-			d = running[i];
+		for (let d of running) {
 			dir = d.destinationPath;
 			if (!(dir in this._downloadSet)) {
 				// we don't care, because we don't have any more queued downloads for this directory
