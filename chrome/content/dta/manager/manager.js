@@ -75,7 +75,7 @@ function timeout(secs) {
 function _moveFile(destination, self) {
 	let remakeDir = false;
 	let move = function*() {
-		for (let x = 0; x < 5; ++x) {
+		for (let x = 0; x < 10; ++x) {
 			if (remakeDir) {
 				yield Utils.makeDir(destination, Prefs.dirPermissions, true);
 			}
@@ -106,7 +106,7 @@ function _moveFile(destination, self) {
 					remakeDir = true;
 				}
 				log(LOG_ERROR, ex);
-				yield timeout(x * 250);
+				yield timeout(x * 500);
 			}
 		}
 		log(LOG_ERROR, "shit hit the fan!");
