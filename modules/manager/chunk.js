@@ -474,6 +474,7 @@ Object.assign(Chunk.prototype, {
 			this._copier = asyncCopy(this._inStream, outStream, true);
 			this._copier.catch(status => {
 				this.errored = true;
+				this.close(); // start closing right now
 				this.download.writeFailed(status);
 			});
 		}
