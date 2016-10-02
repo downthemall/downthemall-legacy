@@ -18,6 +18,7 @@ const {formatNumber, StringBundles, getTimestamp} = require("utils");
 const {modifyURL, modifyHttp} = require("support/requestmanipulation");
 const Preferences = require("preferences");
 const DomainPrefs = require("support/domainprefs");
+const {ProxyManager} = require("support/proxyprovider");
 const {Task} = requireJSM("resource://gre/modules/Task.jsm");
 
 const {
@@ -44,35 +45,6 @@ const _ = (function(global) {
 })(this);
 
 const cleanRequest = Symbol.for("cleanRequest");
-
-let proxyInfo = null;
-const proxyObserver = {
-	observe: function() {
-		let type = Preferences.getExt("proxy.type", "");
-		let host = Preferences.getExt("proxy.host", "");
-		let port = Preferences.getExt("proxy.port", 0);
-		let resolve = Preferences.getExt("proxy.resolve", true);
-		if (!type || !host || !port) {
-			log(LOG_DEBUG, "no proxy info");
-			proxyInfo = null;
-			return;
-		}
-		try {
-			let flags = 0;
-			if (resolve) {
-				flags |= Ci.nsIProxyInfo.TRANSPARENT_PROXY_RESOLVES_HOST;
-			}
-			proxyInfo = Services.pps.newProxyInfo(type, host, port, flags, 0xffffffff, null);
-			log(LOG_DEBUG, "created proxy info");
-		}
-		catch (ex) {
-			log(LOG_ERROR, "Failed to create proxy info", ex);
-			proxyInfo = null;
-		}
-	}
-};
-Preferences.addObserver("extensions.dta.proxy", proxyObserver);
-proxyObserver.observe();
 
 function maybeTempBlacklisted(conn, item, httpchan) {
 	try {
@@ -104,7 +76,7 @@ function Connection(d, c, isInfoGetter) {
 	let referrer = d.referrer;
 	log(LOG_INFO, "starting: " + url.spec);
 
-	this._chan = Services.oldio.newProxiedChannel(url, proxyInfo);
+	this._chan = Services.oldio.newProxiedChannel(url, ProxyManager.getFor(url));
 	let r = Ci.nsIRequest;
 	let loadFlags = r.LOAD_NORMAL;
 	if (!Preferences.getExt('useCache', false)) {
