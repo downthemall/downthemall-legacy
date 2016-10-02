@@ -454,7 +454,7 @@ Object.assign(Chunk.prototype, {
 			catch (ex if ex.becauseExists) {
 				// no op
 			}
-			let outStream = new Instances.FileOutputStream(
+			let outStream = this._fileOutputStream = new Instances.FileOutputStream(
 				file,
 				0x02 | 0x08,
 				Prefs.permissions,
@@ -557,6 +557,15 @@ Object.assign(Chunk.prototype, {
 			log(LOG_ERROR, "Damn!", ex);
 		}
 		finally {
+			if (this._fileOutputStream) {
+				try {
+					this._fileOutputStream.close();
+				}
+				catch (ex) {
+					// might have been already closed
+				}
+			}
+			delete this._fileOutputStream;
 			delete this.download;
 			delete this._closing;
 		}
