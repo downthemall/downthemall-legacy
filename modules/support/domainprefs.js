@@ -5,18 +5,19 @@
 
 const DOMAINS_FILE = "domain-prefs.json";
 
+const {notifyLocal} = require("./observers");
 const {symbolize} = require("./stringfuncs");
 const {Task} = requireJSM("resource://gre/modules/Task.jsm");
 const {DeferredSave} = requireJSM("resource://gre/modules/DeferredSave.jsm");
 
-const domains = new LRUMap(1000);
+const domains = new Map();
 
 const PENDING = Symbol();
 
 class Saver extends DeferredSave {
 	constructor() {
 		let file = require("api").getProfileFile(DOMAINS_FILE, true).path;
-		super(file, () => this.serialize(), 5000);
+		super(file, () => this.serialize(), 1000);
 		this.load();
 	}
 	get file() {
@@ -27,6 +28,10 @@ class Saver extends DeferredSave {
 			this[PENDING] = this._loadAsync();
 		}
 		return this[PENDING];
+	}
+	_deferredSave() {
+		super._deferredSave();
+		notifyLocal("DTA:domain-prefs", null, null);
 	}
 	serialize() {
 		let rv = [];
@@ -92,16 +97,34 @@ function domain(url, tld) {
 	}
 }
 
+function _getPref(dom, pref, defaultValue) {
+	let prefs = domains.get(dom);
+	if (!prefs) {
+		return defaultValue;
+	}
+	return prefs.get(symbolize(pref)) || defaultValue;
+}
+
 function getPref(url, pref, defaultValue, tld) {
 	let dom = domain(url, tld);
 	if (!dom) {
 		return defaultValue;
 	}
-	let prefs = domains.get(Symbol.for(dom));
+	return _getPref(Symbol.for(dom), pref, defaultValue);
+}
+
+function getHost(host, pref, defaultValue) {
+	return _getPref(symbolize(host), pref, defaultValue);
+}
+
+function _setPref(dom, pref, value) {
+	let prefs = domains.get(dom);
 	if (!prefs) {
-		return defaultValue;
+		prefs = new Map();
+		domains.set(dom, prefs);
 	}
-	return prefs.get(symbolize(pref)) || defaultValue;
+	prefs.set(symbolize(pref), value);
+	saver.saveChanges();
 }
 
 function setPref(url, pref, value, tld) {
@@ -112,22 +135,14 @@ function setPref(url, pref, value, tld) {
 		// XXX this may change
 		return;
 	}
-	dom = Symbol.for(dom);
-	let prefs = domains.get(dom);
-	if (!prefs) {
-		prefs = new Map();
-		domains.set(dom, prefs);
-	}
-	prefs.set(symbolize(pref), value);
-	saver.saveChanges();
+	return _setPref(Symbol.for(dom), pref, value);
 }
 
-function deletePref(url, pref, tld) {
-	let dom = domain(url, tld);
-	if (!dom) {
-		return;
-	}
-	dom = Symbol.for(dom);
+function setHost(host, pref, value) {
+	return _setPref(symbolize(host), pref, value);
+}
+
+function _deletePref(dom, pref) {
 	let prefs = domains.get(dom);
 	if (!prefs) {
 		return;
@@ -139,17 +154,55 @@ function deletePref(url, pref, tld) {
 	saver.saveChanges();
 }
 
+function deletePref(url, pref, tld) {
+	let dom = domain(url, tld);
+	if (!dom) {
+		return;
+	}
+	return _deletePref(Symbol.for(dom), pref);
+}
+
+function deleteHost(host, pref) {
+	return _deletePref(symbolize(host), pref);
+}
+
+
+function* enumHosts() {
+	for (let domain of domains.keys()) {
+		domain = Symbol.keyFor(domain);
+		if (domain) {
+			yield domain;
+		}
+	}
+}
+
 Object.defineProperties(exports, {
+	"load": {
+		value: () => saver.load(),
+		enumerable: true
+	},
 	"get": {
 		value: getPref,
+		enumerable: true
+	},
+	"getHost": {
+		value: getHost,
 		enumerable: true
 	},
 	"set": {
 		value: setPref,
 		enumerable: true
 	},
+	"setHost": {
+		value: setHost,
+		enumerable: true
+	},
 	"delete": {
 		value: deletePref,
+		enumerable: true
+	},
+	"deleteHost": {
+		value: deleteHost,
 		enumerable: true
 	},
 	"getTLD": {
@@ -168,6 +221,10 @@ Object.defineProperties(exports, {
 		value: function(url, pref, value) {
 			return deletePref(url, pref, true);
 		},
+		enumerable: true
+	},
+	"enumHosts": {
+		value: enumHosts,
 		enumerable: true
 	}
 });

@@ -9,6 +9,8 @@ requireJoined(this, "constants");
 const {ByteBucket} = require("./bytebucket");
 const {filterInSitu, shuffle} = require("utils");
 const obs = require("./observers");
+const domainprefs = require("./domainprefs");
+const {Task} = requireJSM("resource://gre/modules/Task.jsm");
 
 const TOPIC = 'DTA:serverlimits-changed';
 const PREFS = 'extensions.dta.serverlimit.';
@@ -22,6 +24,10 @@ const SCHEDULER_LEGACY = 'legacy';
 
 let limits = {};
 
+const CONNECTIONS = Symbol.for("conns");
+const SPEED = Symbol.for("spd");
+const SEGMENTS = Symbol.for("seg");
+
 const LIMIT_PROTO = {
 	c: 2,
 	s: -1,
@@ -33,21 +39,35 @@ class Limit {
 	constructor(host, isNew) {
 		this._host = host;
 		this._isNew = isNew;
-		let o = LIMIT_PROTO;
 		try {
-			o = JSON.parse(Prefs.get(LIMITS_PREF + this._host, ""));
-			for (let p in LIMIT_PROTO) {
-				if (!o.hasOwnProperty(p)) {
-					o[p] = LIMIT_PROTO[p];
+			this.connections = domainprefs.getHost(this._host, CONNECTIONS, null);
+			if (!this.connections) {
+				throw new Error("domain pref not available");
+			}
+			this.speed = domainprefs.getHost(this._host, SPEED, LIMIT_PROTO.s);
+			this.segments = domainprefs.getHost(this._host, SEGMENTS, LIMIT_PROTO.seg);
+		}
+		catch (oex) {
+			try {
+				let branch = LIMITS_PREF + this._host;
+				let o = JSON.parse(Prefs.get(branch, ""));
+				for (let p in LIMIT_PROTO) {
+					if (!o.hasOwnProperty(p)) {
+						o[p] = LIMIT_PROTO[p];
+					}
 				}
+				this.connections = o.c;
+				this.speed = o.s;
+				this.segments = o.seg;
+				this.save();
+				Prefs.resetBranch(branch);
+			}
+			catch (ex) {
+				this.connections = LIMIT_PROTO.c;
+				this.speed = LIMIT_PROTO.s;
+				this.segments = LIMIT_PROTO.seg;
 			}
 		}
-		catch (ex) {
-			// no op;
-		}
-		this.connections = o.c;
-		this.speed = o.s;
-		this.segments = o.seg;
 	}
 
 	get host() {
@@ -85,14 +105,16 @@ class Limit {
 	}
 
 	save() {
-		Prefs.set(
-			LIMITS_PREF + this._host,
-			JSON.stringify({c: this._connections, s: this._speed, seg: this._segments})
-			);
+		domainprefs.setHost(this._host, CONNECTIONS, this.connections);
+		domainprefs.setHost(this._host, SPEED, this.speed);
+		domainprefs.setHost(this._host, SEGMENTS, this.segments);
 		this._isNew = false;
 	}
 
 	remove() {
+		domainprefs.deleteHost(this._host, CONNECTIONS);
+		domainprefs.deleteHost(this._host, SPEED);
+		domainprefs.deleteHost(this._host, SEGMENTS);
 		Prefs.reset(LIMITS_PREF + this._host);
 	}
 
@@ -101,15 +123,20 @@ class Limit {
 	}
 }
 
-function loadLimits() {
-	limits = Object.create(null);
+const loadLimits = Task.async(function* loadLimits() {
+	yield domainprefs.load();
+	limits = new Map();
+	let dp = Array.from(domainprefs.enumHosts()).filter(h => domainprefs.getHost(h, CONNECTIONS));
 	let hosts = Prefs.getChildren(LIMITS_PREF).map(e => e.substr(LIMITS_PREF.length));
+	log(LOG_ERROR, "dp " + dp.join(", "));
+	log(LOG_ERROR, "hosts " + hosts.join(", "));
+	hosts = Array.from((new Set(dp.concat(hosts))).values());
 	hosts.sort();
 
 	for (let host of hosts) {
 		try {
 			let limit = new Limit(host);
-			limits[limit.host] = limit;
+			limits.set(limit.host, limit);
 			log(LOG_DEBUG, "loaded limit: " + limit);
 		}
 		catch (ex) {
@@ -117,7 +144,7 @@ function loadLimits() {
 		}
 	}
 	obs.notify(null, TOPIC, null);
-}
+});
 
 function getEffectiveHost(url) {
 	try {
@@ -130,24 +157,20 @@ function getEffectiveHost(url) {
 
 function addLimit(host) {
 	host = getEffectiveHost(Services.fixups.createFixupURI(host, 0x0));
-	if (host in limits) {
-		return limits[host];
+	if (limits.has(host)) {
+		return limits.get(host);
 	}
 	return new Limit(host, true);
 }
 
 function listLimits() {
-	return limits;
+	return limits.entries();
 }
 
 function getLimitFor(d) {
 	let host = d.urlManager.domain;
-	if (host in limits) {
-		return limits[host];
-	}
-	return null;
+	return limits.get(host, null);
 }
-
 
 let globalConnections = -1;
 
@@ -539,6 +562,7 @@ const Observer = {
 	}
 };
 Prefs.addObserver(PREFS, Observer);
+require("./observers").add(Observer, "DTA:domain-prefs");
 unload(() => Observer.unload());
 Observer.observe();
 

@@ -3,7 +3,15 @@
 module("support/domainprefs.js");
 
 test("exports", function() {
-	checkExports("support/domainPrefs", ["get", "getTLD", "set", "setTLD", "delete", "deleteTLD"]);
+	checkExports(
+		"support/domainPrefs",
+		["load",
+			"get", "getTLD", "getHost",
+			"set", "setTLD", "setHost",
+			"delete", "deleteTLD", "deleteHost",
+			"enumHosts"
+		]
+	);
 });
 
 test("basic", function() {
@@ -20,12 +28,16 @@ test("basic", function() {
 	strictEqual(dp.get(uri, "test", 1), "a");
 	strictEqual(dp.get(uri, "test"), "a");
 	strictEqual(dp.get(uri, Symbol.for("test")), "a");
+	strictEqual(dp.getHost("code.downthemall.net", "test"), "a");
+	strictEqual(dp.getHost("code.downthemall.net", Symbol.for("test")), "a");
 
 	dp.delete(uri, "test");
 	ok(!dp.get(uri, "test"));
 	strictEqual(dp.get(uri, "test", "val"), "val");
+	strictEqual(dp.getHost("code.downthemall.net", "test", "val"), "val");
 	strictEqual(dp.get(uri, "test", 1), 1);
 	strictEqual(dp.get(uri, "test"), undefined);
+	strictEqual(dp.getHost("code.downthemall.net", "test"), undefined);
 });
 
 test("tld", function() {
@@ -35,9 +47,11 @@ test("tld", function() {
 
 	dp.set(uri, "test", "a", true);
 	strictEqual(dp.get(uri, "test", "val", true), "a");
+	strictEqual(dp.getHost("downthemall.net", "test", "val"), "a");
 	strictEqual(dp.get(uri, "test", 1, true), "a");
 	strictEqual(dp.get(uri, "test", undefined, true), "a");
 	strictEqual(dp.get(uri, Symbol.for("test"), undefined, true), "a");
+	strictEqual(dp.getHost("downthemall.net", Symbol.for("test"), "val"), "a");
 
 	strictEqual(dp.get(uri2, "test", "val", true), "a");
 	strictEqual(dp.get(uri2, "test", 1, true), "a");
@@ -50,6 +64,7 @@ test("tld", function() {
 	strictEqual(dp.get(uri, "test", "val", true), "val");
 	strictEqual(dp.get(uri2, "test", 1, true), 1);
 	strictEqual(dp.get(uri, "test", undefined, true), undefined);
+	strictEqual(dp.getHost("downthemall.net", Symbol.for("test")), undefined);
 });
 
 test("TLD", function() {
