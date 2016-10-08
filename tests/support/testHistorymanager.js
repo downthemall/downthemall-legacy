@@ -1,4 +1,7 @@
+"use strict";
+/* globals module, test, asyncTest, expect, checkExports, QUnit, equal, strictEqual, deepEqual, arrayEqual, ok, throws*/
 module("support/historymanager.js");
+
 (function() {
 	function SetupHistoryManager(key) {
 		this.key = key;

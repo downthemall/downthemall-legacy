@@ -1,3 +1,5 @@
+"use strict";
+/* globals module, test, asyncTest, checkExports, equal, notEqual, strictEqual, deepEqual, arrayEqual, ok, throws */
 module("support/textlinks.js");
 
 test("exports", function() {

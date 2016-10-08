@@ -1,4 +1,7 @@
 "use strict";
+/* jshint browser:true */
+/* globals module, test, asyncTest, checkExports, QUnit, equal, ok */
+/* globals FileUtils, start */
 module("manager/preallocator.js");
 
 (function() {
@@ -13,7 +16,8 @@ module("manager/preallocator.js");
 				var bytesPerSecond = ((size / 1048576.0) / (allocDiff / 1000.0)).toFixed(0);
 				ok(result, title);
 				if (result) {
-					equal(file.fileSize, size, "file size correct, run time " + (allocDiff) + "ms, " + bytesPerSecond + " Mbytes/s");
+					equal(file.fileSize, size,
+								"file size correct, run time " + (allocDiff) + "ms, " + bytesPerSecond + " Mbytes/s");
 				}
 				try {
 					file.remove(false);

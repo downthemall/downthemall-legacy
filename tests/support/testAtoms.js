@@ -1,3 +1,5 @@
+"use strict";
+/* globals module, test, asyncTest, checkExports, QUnit, equal, strictEqual, deepEqual, arrayEqual, ok, throws, start */
 module("support/atoms.js");
 
 test("exports", function() {
@@ -23,5 +25,6 @@ test("getAtoms", function() {
 	equal(Atoms.getAtom("foobar").toString(), "foobar", "toString works");
 
 	var Atoms2 = new (require("support/atoms").Atoms)();
-	strictEqual(Atoms.getAtom("foobar"), Atoms2.getAtom("foobar"), "getting twice by different instances yields the same atom");
+	strictEqual(Atoms.getAtom("foobar"), Atoms2.getAtom("foobar"),
+							"getting twice by different instances yields the same atom");
 });

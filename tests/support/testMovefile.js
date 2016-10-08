@@ -1,9 +1,14 @@
+"use strict";
+/* jshint browser:true */
+/* globals module, test, asyncTest, expect, checkExports, QUnit, equal, strictEqual, deepEqual, arrayEqual, ok, throws*/
+/* globals Task */
 module("support/movefile.js");
 
 test("exports", function() {
 	checkExports("support/movefile", ["moveFile", "maxWorkers"]);
 });
 
+// jshint -W083
 for (var i = 0; i < require("support/moveFile").maxWorkers * 2; ++i) {
 	asyncTest("movefile OK (" + i + ")", Task.async(function*() {
 		const {OS} = requireJSM("resource://gre/modules/osfile.jsm");
@@ -41,7 +46,7 @@ for (var i = 0; i < require("support/moveFile").maxWorkers * 2; ++i) {
 		try {
 			yield moveFile(path, path2);
 			yield OS.File.remove(path2);
-			ok(falee, "move worked, but shouldn't have");
+			ok(false, "move worked, but shouldn't have");
 		}
 		catch (ex) {
 			ok(true, ex.message || ex.toString());

@@ -1,21 +1,9 @@
+"use strict";
+/* jshint browser:true */
+/* global module, asyncTest, QUnit, ok */
 module("XML");
 
 asyncTest("verify that UI XML actually loads", function() {
-	function runNext() {
-		var file = files.pop();
-		if (!file) {
-			QUnit.start();
-			return;
-		}
-		var req = new XMLHttpRequest();
-		req.overrideMimeType("text/xml");
-		req.open("GET", "chrome://dta/content/" + file);
-		req.onloadend = function() {
-				runNext();
-				ok(req.responseXML && req.responseXML.documentElement.localName !== "parsererror", file);
-		};
-		req.send();
-	}
 	var files = [
 								"about/about.xul",
 								"common/bindings.xml",
@@ -44,5 +32,20 @@ asyncTest("verify that UI XML actually loads", function() {
 								"preferences/serversPane.xul",
 								"privacy/overlaySanitize191.xul",
 								];
+	const runNext = function runNext() {
+		var file = files.pop();
+		if (!file) {
+			QUnit.start();
+			return;
+		}
+		var req = new XMLHttpRequest();
+		req.overrideMimeType("text/xml");
+		req.open("GET", "chrome://dta/content/" + file);
+		req.onloadend = function() {
+				runNext();
+				ok(req.responseXML && req.responseXML.documentElement.localName !== "parsererror", file);
+		};
+		req.send();
+	};
 	runNext();
 });

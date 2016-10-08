@@ -1,3 +1,8 @@
+"use strict";
+/* jshint browser:true */
+/* globals Cc:true, Ci:true, Cu:true, Cr:true, Services:true, Exception:true */
+/* globals QUnit */
+
 QUnit.config.autostart = false;
 QUnit.extend(QUnit, {
 	arrayEqual: function arrayEqual(actual, expected, message) {
@@ -67,15 +72,14 @@ function _createTestHttpChannelInternal() {
 		this.notificationCallbacks = null;
 		this.securityInfo = null;
 
-		this.redirectionLimit = 0,
+		this.redirectionLimit = 0;
 		this.requestMethod =  "GET";
 		this.requestSucceeded =  true;
 		this.requestStatus =  true;
 		this.responseStatus = 200;
 		this.responseStatusText = "OK";
 		this._stub = true;
-
-	}
+	};
 	testHttpChannel.prototype = {
 		initializeTestChannel: function(opts) {
 			var requestHeaders = {}, responseHeaders = {};
@@ -123,7 +127,6 @@ function _createTestHttpChannelInternal() {
 
 			listener.onStartRequest(this, ctx);
 
-			count++;
 			var pipe = Cc["@mozilla.org/pipe;1"].createInstance(Ci.nsIPipe);
 			pipe.init(true,true,0,0,null);
 			var result = 'test http channel result';
@@ -176,10 +179,9 @@ var createTestHttpChannel = function(conf) {
 	var chanObj = chan.wrappedJSObject;
 	chanObj.initializeTestChannel(conf);
 	return chan;
-}
+};
 
 addEventListener("load", function load() {
-	"use strict";
 	removeEventListener("load", load, false);
 	QUnit.start();
 }, false);

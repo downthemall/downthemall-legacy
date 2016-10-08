@@ -1,3 +1,5 @@
+"use strict";
+/* globals module, test, asyncTest, expect, checkExports, QUnit, equal, strictEqual, deepEqual, arrayEqual, ok, throws*/
 module("support/memorypressure.js");
 
 test("exports", function() {
@@ -8,7 +10,7 @@ test("plain", 1, function() {
 	var mp = require("support/memorypressure");
 	var o = function(s, t, d) {
 		strictEqual(t, "memory-pressure");
-	}
+	};
 	mp.add(o);
 	Services.obs.notifyObservers(null, "memory-pressure", "heap-minimize");
 	mp.remove(o);

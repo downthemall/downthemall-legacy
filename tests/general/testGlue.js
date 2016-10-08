@@ -1,4 +1,5 @@
 "use strict";
+/* global module, test, arrayEqual, strictEqual, equal, ok, throws */
 module("glue.jsm");
 
 test("Service contents", function() {
@@ -7,7 +8,6 @@ test("Service contents", function() {
 
 	var k2 = Object.keys(S2);
 	arrayEqual(Object.keys(S1.__proto__), k2, "Glue Services contains Services.jsm");
-	// TODO: comprehensions arrayEqual([k for (k in S1)], Object.keys(S1).concat(k2), "All glue Services accessible (sans dupes)");
 });
 
 test("Instances contents", function() {
@@ -129,7 +129,7 @@ test("lazy", function() {
 
 test("lazyProto", function() {
 	var {lazyProto} = requireJSM("chrome://dta-modules/content/glue.jsm");
-	var O = function() {}
+	var O = function() {};
 	O.prototype = {};
 	var io = {1:1};
 	var i = 0;
@@ -164,7 +164,7 @@ test("lazyProto", function() {
 
 test("lazyProto frozen proto", function() {
 	var {lazyProto} = requireJSM("chrome://dta-modules/content/glue.jsm");
-	var O = function() {}
+	var O = function() {};
 	O.prototype = {};
 	var io = {1:1};
 	var i = 0;
@@ -200,7 +200,7 @@ test("lazyProto frozen proto", function() {
 
 test("lazyProto very frozen", function() {
 	var {lazyProto} = requireJSM("chrome://dta-modules/content/glue.jsm");
-	var O = function() {}
+	var O = function() {};
 	O.prototype = {};
 	var io = {1:1};
 	var i = 0;
@@ -234,7 +234,7 @@ test("require cyclic", function() {
 	var b = require('testsupport/require/cyclicB');
 
 	ok(a.a, 'a exists');
-	ok(b.b, 'b exists')
+	ok(b.b, 'b exists');
 	strictEqual(a.a().b, b.b, 'a gets b');
 	strictEqual(b.b().a, a.a, 'b gets a');
 });

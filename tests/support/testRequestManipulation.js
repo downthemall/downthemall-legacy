@@ -1,3 +1,5 @@
+"use strict";
+/* globals module, test, asyncTest, expect, checkExports, equal, strictEqual, deepEqual, arrayEqual, ok, throws */
 module("support/requestmanipulation.js");
 
 test("exports", function() {
@@ -33,15 +35,15 @@ test("url", function() {
 test("http", function() {
 	var {registerHttp, unregisterHttp, modifyHttp, overrideUA, makeAnonymous} = require("support/requestmanipulation");
 	var chan = Services.oldio.newChannel("http://example.org/", null, null);
-	chan instanceof Ci.nsIHttpChannel && chan instanceof Ci.nsIPrivateBrowsingChannel;
+	let dummy = chan instanceof Ci.nsIHttpChannel && chan instanceof Ci.nsIPrivateBrowsingChannel;
 
 	registerHttp("example", /example.org/, overrideUA, makeAnonymous);
 	modifyHttp(chan);
 	throws(() => chan.getRequestHeader("Referer"));
 	throws(() => chan.getRequestHeader("Cookie"));
-	ok(chan.getRequestHeader("User-Agent").indexOf("DownThemAll") != -1);
-	ok(chan.getRequestHeader("User-Agent").indexOf("wget") != -1);
-	ok(chan.getRequestHeader("User-Agent").indexOf("Firefox") == -1);
+	ok(chan.getRequestHeader("User-Agent").indexOf("DownThemAll") !== -1);
+	ok(chan.getRequestHeader("User-Agent").indexOf("wget") !== -1);
+	ok(chan.getRequestHeader("User-Agent").indexOf("Firefox") === -1);
 	ok(chan.isChannelPrivate);
 	unregisterHttp("example");
 });

@@ -1,3 +1,5 @@
+"use strict";
+/* globals module, test, asyncTest, checkExports, equal, notEqual, strictEqual, deepEqual, arrayEqual, ok, throws */
 module("support/stringfuncs.js");
 
 test("exports", function() {
@@ -73,8 +75,8 @@ test("normalizeSlashes", function() {
 
 test("removeLeadingSlash", function() {
 	const {removeLeadingSlash, SYSTEMSLASH} = require("support/stringfuncs");
-	strictEqual(removeLeadingSlash("/"), SYSTEMSLASH == "/" ? "" : "/");
-	strictEqual(removeLeadingSlash("\\"), SYSTEMSLASH == "/" ? "\\" : "");
+	strictEqual(removeLeadingSlash("/"), SYSTEMSLASH === "/" ? "" : "/");
+	strictEqual(removeLeadingSlash("\\"), SYSTEMSLASH === "/" ? "\\" : "");
 	strictEqual(removeLeadingSlash("a" + SYSTEMSLASH), "a" + SYSTEMSLASH);
 	strictEqual(removeLeadingSlash(SYSTEMSLASH + "a"), "a");
 });

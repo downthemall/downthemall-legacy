@@ -1,3 +1,6 @@
+"use strict";
+/* globals module, test, asyncTest, expect, checkExports, QUnit, equal, strictEqual, deepEqual, arrayEqual, ok */
+/* globals throws, notThrows*/
 module("support/observers.js");
 
 test("exports", function() {
@@ -9,7 +12,7 @@ test("plain", function() {
 	var i = 0;
 	var o = function(s, t, d) {
 		++i;
-	}
+	};
 	var topics = obs.topics;
 	obs.add(o, "dta-test-topic");
 	topics.push("dta-test-topic");
@@ -107,10 +110,10 @@ test("exceptions", function() {
 	function e() {
 		throw new Error("test");
 	}
-	function r() {
-		++i;
-	}
 	var i = 0;
+	var r = function r() {
+		++i;
+	};
 	var obs = require("support/observers");
 	notThrows(function badobserver() {
 		obs.add(e, "dta-test-topic");

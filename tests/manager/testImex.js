@@ -1,5 +1,7 @@
 "use strict";
-module("manager/imex.js")
+/* globals module, test, asyncTest, checkExports, QUnit, equal */
+/* globals metalink_getExportedResults, metalink_checkDownload, start */
+module("manager/imex.js");
 
 test("exports", function() {
 	checkExports("manager/imex", [

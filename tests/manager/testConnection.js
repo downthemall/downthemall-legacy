@@ -1,4 +1,6 @@
 "use strict";
+/* global module, test, asyncTest, checkExports, createTestHttpChannel, strictEqual, arrayEqual */
+/* global ok, getRelURI, start */
 module("manager/connection.js");
 
 test("exports", function() {
@@ -17,7 +19,8 @@ test("exports", function() {
 		"Connection": "keep-alive",
 		"Accept-Language": "en-US,en;q=0.5",
 		"Accept-Encoding": "gzip, deflate",
-		"Accept": "text/html,application/xhtml+xml,application/xml,application/metalink,application/metalink4+xml;q=0.9,*/*;q=0.8",
+		"Accept": "text/html,application/xhtml+xml,application/xml,application/metalink," +
+			"application/metalink4+xml;q=0.9,*/*;q=0.8",
 		"Want-Digest": DTA.WANT_DIGEST_STRING
 	};
 	const range = function(num) {
@@ -44,7 +47,7 @@ test("exports", function() {
 			d: download,
 			c: { running: false },
 			_chan: channel
-		}, arguments)
+		}, arguments);
 	};
 	const getTestDownload = function() {
 		return {
@@ -72,13 +75,13 @@ test("exports", function() {
 				"Content-Type": "text/html; charset=utf8",
 				"Content-Length": "1024",
 				"Digest": "SHA-256=" + btoa(hash.sum),
-				"Link": "<http://example.com/mirror1>; rel=duplicate; pri=1; geo=de"
-					+ ",<http://example.com/mirror2>; rel=duplicate; pri=2; geo=us"
-					+ ",<http://example.com/mirror3>; rel=duplicate; pri=3; geo=pk"
-					+ ",<http://example.com/mirror4>; rel=duplicate; pri=4; geo=ve"
-					+ ",<http://example.com/mirror5>; rel=duplicate; pri=5; geo=vi"
-					+ ",<http://example.com/mirror6>; rel=duplicate"
-					+ ",<http://example.com/mirror7>; rel=duplicate"
+				"Link": "<http://example.com/mirror1>; rel=duplicate; pri=1; geo=de" +
+				",<http://example.com/mirror2>; rel=duplicate; pri=2; geo=us" +
+				",<http://example.com/mirror3>; rel=duplicate; pri=3; geo=pk" +
+				",<http://example.com/mirror4>; rel=duplicate; pri=4; geo=ve" +
+				",<http://example.com/mirror5>; rel=duplicate; pri=5; geo=vi" +
+				",<http://example.com/mirror6>; rel=duplicate" +
+				",<http://example.com/mirror7>; rel=duplicate"
 			}
 		});
 
@@ -116,8 +119,8 @@ test("exports", function() {
 				"Content-Type": "text/html; charset=utf8",
 				"Content-Length": "1024",
 				"Digest": hash.type.toUpperCase() + "=" + btoa(hash.sum),
-				"Link": "<http://example.com/mirror1>; rel=duplicate; pri=1; geo=de"
-					+ ",<http://example.com/mirror2>; rel=duplicate; pri=2; geo=us"
+				"Link": "<http://example.com/mirror1>; rel=duplicate; pri=1; geo=de" +
+					",<http://example.com/mirror2>; rel=duplicate; pri=2; geo=us"
 			}
 		});
 
@@ -128,7 +131,8 @@ test("exports", function() {
 	});
 	asyncTest("metalink describedby real world", function() {
 		var download = getTestDownload();
-		var uri = Services.io.newURI("http://ftp.ad.kernel.org/pub/linux/kernel/v2.6/linux-2.6.16.19.tar.bz2", null, null);
+		var uri = Services.io.newURI(
+			"http://ftp.ad.kernel.org/pub/linux/kernel/v2.6/linux-2.6.16.19.tar.bz2", null, null);
 		var hash = new DTA.Hash("2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892", "sha256");
 		download.urlManager = new UrlManager([uri]);
 
@@ -166,15 +170,20 @@ test("exports", function() {
 			];
 			strictEqual(download.fileName, "linux-2.6.16.19.tar.bz2", "file name merged correctly");
 			strictEqual(download.hashCollection.full.sum,
-				"2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892", "higher hash value not overwritten");
-			strictEqual(download.hashCollection.full.type.toLowerCase(), "sha256", "higher hash type not overwritten");
+				"2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892",
+				"higher hash value not overwritten");
+			strictEqual(download.hashCollection.full.type.toLowerCase(), "sha256",
+									"higher hash type not overwritten");
 			arrayEqual(expMirrors, download.urlManager.toArray().map(u => u.url.spec), "correct mirrors merged");
 		}, visitor);
 	});
 	asyncTest("metalink describedby hash merging", function() {
 		var download = getTestDownload();
 		var uri = Services.io.newURI("http://example.com/sha512_hash", null, null);
-		var expHash = new DTA.Hash("cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e", "sha512");
+		var expHash = new DTA.Hash(
+			"cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2" +
+			"b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e",
+			"sha512");
 		var hash = new DTA.Hash("2413fb3789b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892", "sha256");
 		download.urlManager = new UrlManager([uri]);
 
@@ -202,8 +211,10 @@ test("exports", function() {
 			strictEqual(download.fileName, "sha512_hash", "correct metalink file merged");
 			strictEqual(download.hashCollection.full.type, hash.type, "full hash type merged correctly");
 			strictEqual(download.hashCollection.full.sum, hash.sum, "full hash value merged correctly");
-			arrayEqual(download.hashCollection.partials.map(p => p.sum), range(8).map(i => expHash.sum), "partial hash value merged correctly");
-			arrayEqual(download.hashCollection.partials.map(p => p.type), range(8).map(i => expHash.type), "partial hash type merged correctly");
+			arrayEqual(download.hashCollection.partials.map(p => p.sum), range(8).map(i => expHash.sum),
+								 "partial hash value merged correctly");
+			arrayEqual(download.hashCollection.partials.map(p => p.type), range(8).map(i => expHash.type),
+								 "partial hash type merged correctly");
 		}, visitor);
 	});
 	asyncTest("metalink describedby unsafe protocol switching without a safe hash", function() {
@@ -285,7 +296,8 @@ test("exports", function() {
 	});
 	asyncTest("metalink describedby with conflicting size", function() {
 		var download = getTestDownload();
-		var uri = Services.io.newURI("http://ftp.ad.kernel.org/pub/linux/kernel/v2.6/linux-2.6.16.19.tar.bz2", null, null);
+		var uri = Services.io.newURI(
+			"http://ftp.ad.kernel.org/pub/linux/kernel/v2.6/linux-2.6.16.19.tar.bz2", null, null);
 		var hash = new DTA.Hash("2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892", "sha256");
 		download.urlManager = new UrlManager([uri]);
 

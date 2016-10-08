@@ -1,4 +1,7 @@
 "use strict";
+/* jshint browser:true */
+/* globals module, test, asyncTest, checkExports, QUnit, equal */
+/* globals Task, getRelURI, console, FileUtils */
 module("manager/decompressor.js");
 
 test("exports", function() {
@@ -6,6 +9,18 @@ test("exports", function() {
 });
 
 asyncTest("decompress something", Task.async(function*() {
+	function get(base) {
+		return new Promise((res, rej) => {
+			let content = new XMLHttpRequest();
+			content.open("GET", base.spec);
+			content.responseType = "arraybuffer";
+			content.onloadend = function(e) {
+				res(content);
+			};
+			content.send();
+		});
+	}
+
 	const {OS} = requireJSM("resource://gre/modules/osfile.jsm");
 	try {
 		let base = getRelURI("data/compressed.gz");
@@ -13,19 +28,8 @@ asyncTest("decompress something", Task.async(function*() {
 		let file = FileUtils.getFile("TmpD", ["dta-test-compressed.gz"]);
 		let out = FileUtils.getFile("TmpD", ["dta-test-uncompressed"]);
 
-		function get() {
-			return new Promise((res, rej) => {
-				let content = new XMLHttpRequest();
-				content.open("GET", base.spec);
-				content.responseType = "arraybuffer";
-				content.onloadend = function(e) {
-					res(content);
-				};
-				content.send();
-			});
-		}
 
-		let content = yield get();
+		let content = yield get(base);
 		content = new Uint8Array(content.response);
 		yield OS.File.writeAtomic(file.path, content);
 

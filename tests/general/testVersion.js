@@ -1,16 +1,23 @@
+"use strict";
+/* global module, test, asyncTest, QUnit, ok, equal,notEqual, strictEqual, throws,
+ * arrayEqual, deepEqual, checkExports */
 module("version.js");
 
 test("exports", function() {
-	checkExports("version", ["APP_ID", "APP_NAME", "APP_VERSION", "BASE_VERSION", "ID", "LOCALE", "NAME", "OS", "TOPIC_SHOWABOUT", "VERSION", "ready", "showAbout"]);
+	checkExports("version",
+		["APP_ID", "APP_NAME", "APP_VERSION", "BASE_VERSION", "ID", "LOCALE",
+		"NAME", "OS", "TOPIC_SHOWABOUT", "VERSION", "ready", "showAbout"]);
 });
 
 
 asyncTest("getVersion", function() {
+	const keys = ["TOPIC_SHOWABOUT", "ID", "LOCALE", "APP_NAME", "OS", "APP_VERSION",
+		"APP_ID", "VERSION", "BASE_VERSION", "NAME"];
 	var Version = require("version");
 	Version.getInfo(function(v) {
 		QUnit.start();
-		ok(Version == v, "callback gets fed back the original Version");
-		for (var k of ["TOPIC_SHOWABOUT", "ID", "LOCALE", "APP_NAME", "OS", "APP_VERSION", "APP_ID", "VERSION", "BASE_VERSION", "NAME"]) {
+		ok(Version === v, "callback gets fed back the original Version");
+		for (var k of keys) {
 			ok(k in Version, k + "in Version");
 			ok(!!Version[k], k + " is set");
 		}
@@ -18,7 +25,8 @@ asyncTest("getVersion", function() {
 		ok("compareVersion" in Version);
 		notEqual(Version.VERSION, "0.0", "VERSION was initialized");
 		notEqual(Version.BASE_VERSION, "0.0", "BASE_VERSION was initialized");
-		equal(Version.VERSION.slice(0, Version.BASE_VERSION.length), Version.BASE_VERSION, "VERSION starts with BASE_VERSION");
+		equal(Version.VERSION.slice(0, Version.BASE_VERSION.length), Version.BASE_VERSION,
+					"VERSION starts with BASE_VERSION");
 	});
 });
 
@@ -36,4 +44,4 @@ asyncTest("compare", function() {
 		equal(cv("2"), 1, "Version is smaller than Inf (omit)");
 		ok(cv(v.VERSION, v.BASE_VERSION) >= 0, `${v.VERSION} is gte ${v.BASE_VERSION}`);
 	});
-})
+});

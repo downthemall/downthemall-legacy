@@ -1,3 +1,5 @@
+"use strict";
+/* global module, test, arrayEqual, strictEqual, equal, ok, throws, checkExports */
 module("preferences.js");
 
 test("exports", function() {
@@ -26,9 +28,8 @@ test("read", function() {
 	strictEqual(p.get("extensions.dta.nokeepalive"), !p.hasUserValue("extensions.dta.nokeepalive"), "get() works");
 	strictEqual(p.getExt("nokeepalive"), !p.hasUserValueExt("nokeepalive"), "getExt() works");
 	strictEqual(p.get("extensions.dta.nokeepalive"), p.getExt("nokeepalive"), "get() eq getExt()");
-	strictEqual(p.get("extensions.dta.renaming.default"), p.getExt("renaming.default"), "get() eq getExt() (string + point)");
-	//deepEqual(p.getChildren("extensions.dta.renaming"), ["extensions.dta.renaming.default", "extensions.dta.renaming"]);
-	//deepEqual(p.getChildrenExt("renaming"), ["extensions.dta.renaming.default", "extensions.dta.renaming"]);
+	strictEqual(p.get("extensions.dta.renaming.default"), p.getExt("renaming.default"),
+							"get() eq getExt() (string + point)");
 });
 
 test("setters", function() {

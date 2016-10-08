@@ -1,3 +1,5 @@
+"use strict";
+/* globals module, test, equal, checkExports */
 module("constants.js");
 
 test("exports", function() {

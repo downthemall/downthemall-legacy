@@ -1,5 +1,8 @@
 "use strict";
-module("support/metalinker.js")
+/* jshint browser:true */
+/* globals module, test, asyncTest, expect, checkExports, QUnit, equal, strictEqual, deepEqual, arrayEqual, ok, throws*/
+/* globals metalink_asyncTestFile, metalink_checkInfo, metalink_checkDownload, metalink_getDownload */
+module("support/metalinker.js");
 
 test("exports", function() {
 	checkExports("support/metalinker", [
@@ -375,7 +378,8 @@ metalink_asyncTestFile(
 			},
 			{
 				type: "sha512",
-				val: "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"
+				val: "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47" +
+					"d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"
 			},
 			{
 				type: "md4",
@@ -403,7 +407,8 @@ metalink_asyncTestFile(
 				strictEqual(download.hashCollection.full.type.toLowerCase(), hash.type, hash.type + ": correct type");
 				if (hash.val) {
 					strictEqual(download.hashCollection.parLength, 262144, hash.type + ": piece length");
-					strictEqual(download.hashCollection.partials[0].type.toLowerCase(), hash.type, hash.type + ": piece type");
+					strictEqual(download.hashCollection.partials[0].type.toLowerCase(), hash.type,
+											hash.type + ": piece type");
 					var pieces = download.hashCollection.partials.map(function(e) {
 						return e.sum;
 					});

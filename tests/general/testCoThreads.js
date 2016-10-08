@@ -1,3 +1,5 @@
+"use strict";
+/* global module, test, asyncTest, checkExports, expect, QUnit, equal */
 module("cothreads.js");
 
 test("exports", function() {
@@ -92,7 +94,7 @@ asyncTest("CoThreadListWalker generator", function() {
 	new CoThreadListWalker(
 			function() {
 				++hit;
-				return true
+				return true;
 			},
 			(function*() { yield 1; yield 2; })()
 	).start(function() {

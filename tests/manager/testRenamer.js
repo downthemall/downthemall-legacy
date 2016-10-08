@@ -1,4 +1,5 @@
 "use strict";
+/* globals module, test, asyncTest, checkExports, QUnit, equal, strictEqual, ok */
 module("manager/renamer.js");
 
 test("exports", function() {
@@ -16,9 +17,12 @@ test("exports", function() {
 		referrerFileNameAndExtension: {name: "rname", extension: "rext"},
 		description: "desc/desc",
 		title: "title/title",
-		urlManager: new UrlManager([Services.io.newURI("https://www.host.tld/path/to/fname.fext?fqs#fref", null, null)]),
-		referrer: Services.io.newURI("https://ref.refhost.rtld/rpath/rto/rfile.rext?rqs#rref", null, null),
-		referrerUrlManager: new UrlManager([Services.io.newURI("https://ref.refhost.rtld/rpath/rto/rfile.rext?rqs#rref", null, null)]),
+		urlManager: new UrlManager([
+			Services.io.newURI("https://www.host.tld/path/to/fname.fext?fqs#fref", null, null)]),
+		referrer: Services.io.newURI(
+			"https://ref.refhost.rtld/rpath/rto/rfile.rext?rqs#rref", null, null),
+		referrerUrlManager: new UrlManager([
+			Services.io.newURI("https://ref.refhost.rtld/rpath/rto/rfile.rext?rqs#rref", null, null)]),
 		bNum: 1,
 		iNum: 2,
 		startDate: new Date(123456789),

@@ -1,3 +1,6 @@
+"use strict";
+/* jshint browser:true */
+/* globals module, test, asyncTest, expect, checkExports, QUnit, equal, strictEqual, deepEqual, arrayEqual, ok, throws*/
 module("support/fileextsheet.js");
 
 test("exports", function() {

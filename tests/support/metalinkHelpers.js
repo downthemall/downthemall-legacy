@@ -1,11 +1,14 @@
 "use strict";
+/* jshint browser:true */
+/* globals module, test, asyncTest, checkExports, QUnit, equal, strictEqual, deepEqual, arrayEqual, ok, throws */
+/* globals getRelURI, start, DTA, FileUtils */
 var metalink_filterEqual = function(a, b, prop, message) {
 	message = message || "";
 	for (var i = 0; i < prop.length; i++) {
 		var index = prop[i];
 		deepEqual(a[index], b[index], message + index);
 	}
-}
+};
 
 var metalink_getDownload = function(downloads, fileName) {
 	for (var i = 0; i < downloads.length; i++) {
@@ -13,7 +16,8 @@ var metalink_getDownload = function(downloads, fileName) {
 			return downloads[i];
 		}
 	}
-}
+};
+
 var metalink_checkDownload = function(downloads, d, message) {
 	message = message || "";
 
@@ -56,34 +60,36 @@ var metalink_checkDownload = function(downloads, d, message) {
 	else {
 		ok(!d.hash, message + "hash");
 	}
-}
+};
+
 var metalink_checkInfo = function(info, i, message) {
 	metalink_filterEqual(info, i, [
 		"identity", "description", "logo",
 		"license", "publisher", "start"
 	], message);
-}
+};
+
 var metalink_asyncTestFile = function(files, cb) {
 	if (typeof files === "string") {
 		files = [files + ".metalink", files + ".meta4"];
 	}
 	const {parse} = require("support/metalinker");
-	for (var i = 0; i < files.length; i++) {
-		(function(f) {
-			asyncTest(f, function() {
-				parse(getRelURI(f), "", function(data, ex) {
-					start();
-					cb(data, ex);
-				});
-			});
-		})(files[i]);
+	const process = function() {
+		parse(getRelURI(this), "", function(data, ex) {
+			start();
+			cb(data, ex);
+		});
+	};
+	for (let f of files) {
+		asyncTest(f, process.bind(f));
 	}
-}
+};
 
 var metalink_createUrlManager = function(urls) {
 	const {UrlManager} = require("support/urlmanager");
 	return new UrlManager(Array.from(urls, e => Services.io.newURI(e, null, null)));
-}
+};
+
 var metalink_downloadCollection = function(downloads) {
 	return downloads.map(function(d) {
 		var top_hash, hashCollection = null;
@@ -109,7 +115,8 @@ var metalink_downloadCollection = function(downloads) {
 			hashCollection: hashCollection
 		};
 	});
-}
+};
+
 function metalink_getExportedResults(downloads, cb) {
 	const {exportToMetalink4File} = require("manager/imex");
 	const Prefs = require("preferences");
