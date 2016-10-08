@@ -28,6 +28,7 @@
 			<preference id="dtaStartMinimized" name="extensions.dta.startminimized" type="bool" />
 			<preference id="dtaMinimizeToTray" name="extensions.mintrayr.downthemall.watchmanager" type="bool" />
 			<preference id="dtaNotification" name="extensions.dta.notification2" type="int" />
+			<preference id="dtaShowActions" name="extensions.dta.showactions" type="bool" />
 		</preferences>
 
 		<groupbox>
@@ -37,6 +38,7 @@
 				<checkbox flex="1" id="minimizetotray" label="&uipane.minimizetotray.label;" preference="dtaMinimizeToTray" />
 				<label id="minimizetotray_link" value="&uipane.getmintrayr.label;" onclick="Interface.openMinTrayR();" hidden="true" class="text-link" />
 			</hbox>
+			<checkbox label="&uipane.sidebar.label;" preference="dtaShowActions" />
 			<checkbox label="&uipane.namesonly.label;" preference="dtaHideUrl" />
 			<checkbox label="&uipane.showtooltip.label;" preference="dtaShowTooltip" />
 		</groupbox>

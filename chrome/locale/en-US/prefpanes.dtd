@@ -122,6 +122,7 @@
 <!ENTITY uipane.tools.caption "Tools Menu">
 <!ENTITY uipane.compact.label "Use a compact menu">
 <!ENTITY uipane.hide.label "Hide this menu">
+<!ENTITY uipane.sidebar.label "Show the actions sidebar">
 <!ENTITY uipane.showtooltip.label "Show download tooltips">
 <!ENTITY uipane.manager.caption "Manager Window">
 <!ENTITY uipane.startminimized.label "Start minimized">
