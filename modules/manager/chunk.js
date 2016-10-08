@@ -109,7 +109,7 @@ class Chunk {
 		this.running = false;
 
 		this.end = end;
-		this.safeBytes = this._written;
+		this.startBytes = this.safeBytes = this._written;
 
 		log(LOG_INFO, "chunk created: " + this);
 	}
@@ -202,7 +202,7 @@ class Chunk {
 	_noteBytesWritten(bytes) {
 		this._written += bytes;
 		this._sessionBytes += bytes;
-		this.safeBytes =  Math.max(this.safeBytes, this._written - this.buffered);
+		this.safeBytes =  Math.max(this.startBytes, this._written - this.buffered);
 		memoryReporter.noteBytesWritten(bytes);
 
 		this.parent.timeLastProgress = getTimestamp();
@@ -222,6 +222,7 @@ class Chunk {
 			throw new Error("Cannot merge incomplete chunks this way!");
 		}
 		this.end = ch.end;
+		this.safeBytes += ch.safeBytes;
 		this._written += ch._written;
 		this.safeBytes += ch.safeBytes;
 	}
@@ -552,7 +553,12 @@ Object.assign(Chunk.prototype, {
 			memoryReporter.unregisterChunk(this);
 
 			this._sessionBytes = 0;
-			this._written = this.safeBytes;
+			if (this.errored || !this.complete) {
+				this.startBytes = this._written = Math.max(this.startBytes, this.safeBytes - 2048);
+			}
+			else {
+				this.startBytes = this._written = this.safeBytes;
+			}
 		}
 		catch (ex) {
 			log(LOG_ERROR, "Damn!", ex);
