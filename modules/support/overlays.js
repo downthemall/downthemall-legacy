@@ -208,7 +208,7 @@ exports.registerOverlay = function registerOverlay(src, location, callback) {
 		return;
 	}
 
-	let _r = new Instances.XHR();
+	let _r = new XMLHttpRequest();
 	_r.onload = function() {
 		let doc = _r.responseXML;
 

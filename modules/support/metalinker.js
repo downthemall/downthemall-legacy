@@ -540,7 +540,7 @@ const __parsers__ = [
  */
 function parse(aURI, aReferrer, aCallback) {
 	let xhrLoad, xhrError;
-	let xhr = new Instances.XHR();
+	let xhr = new XMLHttpRequest();
 	xhr.open("GET", aURI.spec);
 	log(LOG_DEBUG, "parsing metalink at " + aURI.spec);
 	xhr.overrideMimeType("application/xml");

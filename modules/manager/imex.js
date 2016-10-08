@@ -14,7 +14,7 @@ const XPathResult = Ci.nsIDOMXPathResult;
 
 exports.parseTextFile = function parseTextFile(aFile, cb) {
 	log(LOG_INFO, "Parsing text file: " + aFile.spec);
-	let req = new Instances.XHR();
+	let req = new XMLHttpRequest();
 	req.onload = function() {
 		let links = [];
 		for (let l of getTextLinks(req.responseText, false)) {

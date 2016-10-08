@@ -37,6 +37,19 @@ Cm.QueryInterface(Ci.nsIComponentRegistrar);
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://gre/modules/Services.jsm");
+Cu.importGlobalProperties([
+	"atob",
+	"btoa",
+	"Blob",
+	"crypto",
+	"fetch",
+	"File",
+	"TextDecoder",
+	"TextEncoder",
+	"URL",
+	"URLSearchParams",
+	"XMLHttpRequest",
+]);
 
 var weak = Cu.getWeakReference.bind(Cu);
 var reportError = Cu.reportError.bind(Cu);
@@ -212,7 +225,6 @@ this.LRUMap = LRUMap;
 	Instances = exports.Instances = {};
 
 	// non-init
-	itor("XHR", "@mozilla.org/xmlextras/xmlhttprequest;1", "nsIXMLHttpRequest");
 	itor("DOMSerializer", "@mozilla.org/xmlextras/xmlserializer;1", "nsIDOMSerializer");
 	itor("MimeInputStream", "@mozilla.org/network/mime-input-stream;1", "nsIMIMEInputStream");
 	itor("SupportsArray","@mozilla.org/supports-array;1", "nsISupportsArray");

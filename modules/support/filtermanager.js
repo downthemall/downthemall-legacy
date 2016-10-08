@@ -564,7 +564,7 @@ Object.assign(FilterManagerImpl.prototype, {
 				let decoder = new TextDecoder();
 				if (!this.defFilters) {
 					yield new Promise(function(resolve, reject) {
-						let x = new Instances.XHR();
+						let x = new XMLHttpRequest();
 						this._filters = {};
 						this._all = [];
 						x.overrideMimeType("application/json");

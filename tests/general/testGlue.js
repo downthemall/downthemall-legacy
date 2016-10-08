@@ -63,7 +63,6 @@ test("Instances contents", function() {
 		"Timer",
 		"Transferable",
 		"UniConverter",
-		"XHR",
 		"ZipReader",
 		"domserializer",
 		"mimeinputstream",
@@ -75,7 +74,6 @@ test("Instances contents", function() {
 		"supportsuint32",
 		"transferable",
 		"uniconverter",
-		"xhr"
 	];
 	var {Instances: I} = requireJSM("chrome://dta-modules/content/glue.jsm");
 	arrayEqual(Object.keys(I), expected, "Glue Instances are complete");
