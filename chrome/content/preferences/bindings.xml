@@ -16,6 +16,7 @@
 			<field name="_connectionsLabel">document.getAnonymousElementByAttribute(this, 'anonid', 'connectionsLabel');</field>
 			<field name="_speedLabel">document.getAnonymousElementByAttribute(this, 'anonid', 'speedLabel');</field>
 			<field name="_segmentsLabel">document.getAnonymousElementByAttribute(this, 'anonid', 'segmentsLabel');</field>
+			<field name="_cleanLabel">document.getAnonymousElementByAttribute(this, 'anonid', 'cleanLabel');</field>
 
 			<property name="host" onget="return this._host.value;" />
 
@@ -35,6 +36,7 @@
 					this._connectionsLabel.value = (this.connections > 0) ? this.connections : _('unlimited');
 					this._speedLabel.value = (this.speed > 0) ? Utils.formatSpeed(this.speed * 1024) : _('unlimited');
 					this._segmentsLabel.value = (this.segments > 0) ? this.segments : _('unlimited');
+					this._cleanLabel.value = this.clean;
 				]]></body>
 			</method>
 
@@ -69,6 +71,10 @@
 						<xul:label value="&serverspane.segments.label;" class="serverlimit-desc-label" />
 						<xul:label class="serverlimit-segments-label serverlimit-value-label" anonid="segmentsLabel" />
 					</xul:row>
+					<xul:row>
+						<xul:label value="&serverspane.clean.label;" class="serverlimit-desc-label" />
+						<xul:label class="serverlimit-clean-label serverlimit-value-label" anonid="cleanLabel" />
+					</xul:row>
 				</xul:rows>
 			</xul:grid>
 		</content>
@@ -76,6 +82,7 @@
 			<property name="connections" onget="return parseInt(this.getAttribute('connections'));" />
 			<property name="speed" onget="return parseInt(this.getAttribute('speed'));" />
 			<property name="segments" onget="return parseInt(this.getAttribute('segments'));" />
+			<property name="clean" onget="return showBool(this.getAttribute('clean'));" />
 		</implementation>
 	</binding>
 	<binding id="serverlimit-selected" extends="chrome://dta/content/preferences/bindings.xml#serverlimit-base">
@@ -103,6 +110,10 @@
 							<xul:label value="&serverspane.segments.label;" class="serverlimit-desc-label" />
 							<xul:label class="serverlimit-segments-label serverlimit-value-label" anonid="segmentsLabel" />
 						</xul:row>
+						<xul:row>
+							<xul:label value="&serverspane.clean.label;" class="serverlimit-desc-label" />
+							<xul:label class="serverlimit-clean-label serverlimit-value-label" anonid="cleanLabel" />
+						</xul:row>
 					</xul:rows>
 				</xul:grid>
 				<xul:separator class="thin"/>
@@ -116,6 +127,8 @@
 			<property name="connections" onget="return parseInt(this.getAttribute('connections'));" />
 			<property name="speed" onget="return parseInt(this.getAttribute('speed'));" />
 			<property name="segments" onget="return parseInt(this.getAttribute('segments'));" />
+			<property name="clean" onget="return showBool(this.getAttribute('clean'));" />
+
 			<method name="removeLimit">
 				<body><![CDATA[
 					if (!this.postEvent('LimitsCanRemove')) {
@@ -188,6 +201,13 @@
 								</xul:hbox>
 							</xul:radiogroup>
 						</xul:row>
+						<xul:row>
+							<xul:label value="&serverspane.clean.label;" />
+							<xul:radiogroup anonid="cleanGroup" orient="horizontal" class="serverlimit-radiogroup">
+								<xul:radio label="&serverspane.yes;" value="true" />
+								<xul:radio label="&serverspane.no;" value="false" />
+							</xul:radiogroup>
+						</xul:row>
 					</xul:rows>
 				</xul:grid>
 				<xul:separator class="thin"/>
@@ -206,6 +226,9 @@
 
 			<field name="_segmentsGroup">document.getAnonymousElementByAttribute(this, 'anonid', 'segmentsGroup');</field>
 			<field name="_segments">document.getAnonymousElementByAttribute(this, 'anonid', 'segments');</field>
+
+			<field name="_cleanGroup">document.getAnonymousElementByAttribute(this, 'anonid', 'cleanGroup');</field>
+			<field name="_clean">document.getAnonymousElementByAttribute(this, 'anonid', 'clean');</field>
 
 			<field name="_saveButton">document.getAnonymousElementByAttribute(this, 'anonid', 'saveButton');</field>
 
@@ -236,10 +259,17 @@
 				]]></getter>
 			</property>
 
+			<property name="clean">
+				<getter><![CDATA[
+					return this._cleanGroup.value == "true";
+				]]></getter>
+			</property>
+
 			<constructor><![CDATA[
 				this._connectionsGroup.value = this.getAttribute('connections') <= 0 ? 'unlimited' : 'limited';
 				this._speedGroup.value = this.getAttribute('speed') <= 0 ? 'unlimited' : 'limited';
 				this._segmentsGroup.value = this.getAttribute('segments') <= 0 ? 'unlimited' : 'limited';
+				this._cleanGroup.value = this.getAttribute('clean');
 
 				this._saveButton.label = _(this.limit.isNew ? 'createlimit' : 'savelimit');
 				this.parentNode.ensureElementIsVisible(this);
@@ -254,10 +284,12 @@
 					this.limit.connections = this.connections;
 					this.limit.speed = this.speed;
 					this.limit.segments = this.segments;
+					this.limit.clean = this.clean;
 
 					this.setAttribute('connections', this.connections);
 					this.setAttribute('speed', this.speed);
 					this.setAttribute('segments', this.segments);
+					this.setAttribute('clean', this.clean);
 
 					this.limit.save();
 				]]></body>

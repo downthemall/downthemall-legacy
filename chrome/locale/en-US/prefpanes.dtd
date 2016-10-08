@@ -65,8 +65,11 @@
 <!ENTITY serverspane.connections.label "Connections:">
 <!ENTITY serverspane.speed2.label "Speed limit:">
 <!ENTITY serverspane.segments.label "Segments:">
+<!ENTITY serverspane.clean.label "Use clean requests:">
 <!ENTITY serverspane.unlimited "Unlimited">
 <!ENTITY serverspane.limited "Limited">
+<!ENTITY serverspane.yes "Yes">
+<!ENTITY serverspane.no "No">
 <!ENTITY serverspane.autoretry2.caption "Automatic Retries">
 <!ENTITY serverspane.autoretry.interval.label "Retry each">
 <!ENTITY serverspane.autoretry.max.label "Max. Retries">

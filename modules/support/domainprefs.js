@@ -99,8 +99,13 @@ function domain(url, tld) {
 }
 
 function _getPref(dom, pref, defaultValue, options) {
-	let domains = (options && options.isPrivate) ? privDomains : storedDomains;
-	let prefs = domains.get(dom);
+	let prefs = null;
+	if (options && options.isPrivate) {
+		prefs = privDomains.get(dom);
+	}
+	if (!prefs) {
+		prefs = storedDomains.get(dom);
+	}
 	if (!prefs) {
 		return defaultValue;
 	}

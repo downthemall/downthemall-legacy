@@ -27,11 +27,13 @@ let limits = {};
 const CONNECTIONS = Symbol.for("conns");
 const SPEED = Symbol.for("spd");
 const SEGMENTS = Symbol.for("seg");
+const CLEAN = Symbol.for("cleanRequest");
 
 const LIMIT_PROTO = {
-	c: 2,
+	c: Prefs.getExt("ntask", 2),
 	s: -1,
-	seg: 0
+	seg: 0,
+	cr: false,
 };
 Object.freeze(LIMIT_PROTO);
 
@@ -46,6 +48,7 @@ class Limit {
 			}
 			this.speed = domainprefs.getHost(this._host, SPEED, LIMIT_PROTO.s);
 			this.segments = domainprefs.getHost(this._host, SEGMENTS, LIMIT_PROTO.seg);
+			this.clean = domainprefs.getHost(this._host, CLEAN, LIMIT_PROTO.cr);
 		}
 		catch (oex) {
 			try {
@@ -59,6 +62,7 @@ class Limit {
 				this.connections = o.c;
 				this.speed = o.s;
 				this.segments = o.seg;
+				this.clean = o.cr;
 				this.save();
 				Prefs.resetBranch(branch);
 			}
@@ -66,6 +70,7 @@ class Limit {
 				this.connections = LIMIT_PROTO.c;
 				this.speed = LIMIT_PROTO.s;
 				this.segments = LIMIT_PROTO.seg;
+				this.clean = LIMIT_PROTO.cr;
 			}
 		}
 	}
@@ -108,6 +113,7 @@ class Limit {
 		domainprefs.setHost(this._host, CONNECTIONS, this.connections);
 		domainprefs.setHost(this._host, SPEED, this.speed);
 		domainprefs.setHost(this._host, SEGMENTS, this.segments);
+		domainprefs.setHost(this._host, CLEAN, this.clean);
 		this._isNew = false;
 	}
 
@@ -115,11 +121,12 @@ class Limit {
 		domainprefs.deleteHost(this._host, CONNECTIONS);
 		domainprefs.deleteHost(this._host, SPEED);
 		domainprefs.deleteHost(this._host, SEGMENTS);
+		domainprefs.deleteHost(this._host, CLEAN, this.clean);
 		Prefs.reset(LIMITS_PREF + this._host);
 	}
 
 	toString() {
-		return `[Limit(conn: ${this._connections}, spd: ${this._speed}, seg: ${this._segments})]`;
+		return `[Limit(conn: ${this._connections}, spd: ${this._speed}, seg: ${this._segments}, cr:${this.clean})]`;
 	}
 }
 
