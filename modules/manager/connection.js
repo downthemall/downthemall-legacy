@@ -83,7 +83,7 @@ function Connection(d, c, isInfoGetter) {
 
 	this._chan = Services.oldio.newProxiedChannel(url, ProxyManager.getFor(url));
 	let r = Ci.nsIRequest;
-	let loadFlags = r.LOAD_NORMAL;
+	let loadFlags = r.LOAD_NORMAL | Ci.nsIChannel.LOAD_EXPLICIT_CREDENTIALS;
 	if (!Preferences.getExt('useCache', false)) {
 		loadFlags = loadFlags | r.LOAD_BYPASS_CACHE;
 	}

@@ -7,7 +7,8 @@ const XRegExp = require("thirdparty/xregexp");
 
 // Link matcher
 const regLinks = new XRegExp(
-	"\\b(?:(?:h(?:x+|tt)?ps?|f(?:x+|t)p):\\/\\/|www\\d?\\.)[\\d\\w.-]+\\.?(?:\\/[\\p{N}\\p{L}\\pP\\pS]*)?",
+	"\\b(?:(?:h(?:x+|tt)?ps?|f(?:x+|t)p):\\/\\/(?:[\\pL\\pN\\pS]+?:[\\pL\\pN\\pS]+?@)?|www\\d?\\.)" +
+	"[\\d\\w.-]+\\.?(?:\\/[\\p{N}\\p{L}\\pP\\pS]*)?",
 	"giu");
 // Match more exactly or more than 3 dots. Links are then assumed "cropped" and will be ignored.
 const regShortened = /\.{3,}/;
