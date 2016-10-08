@@ -135,8 +135,8 @@ const loadLimits = Task.async(function* loadLimits() {
 	limits = new Map();
 	let dp = Array.from(domainprefs.enumHosts()).filter(h => domainprefs.getHost(h, CONNECTIONS));
 	let hosts = Prefs.getChildren(LIMITS_PREF).map(e => e.substr(LIMITS_PREF.length));
-	log(LOG_ERROR, "dp " + dp.join(", "));
-	log(LOG_ERROR, "hosts " + hosts.join(", "));
+	log(LOG_DEBUG, "dp " + dp.join(", "));
+	log(LOG_DEBUG, "hosts " + hosts.join(", "));
 	hosts = Array.from((new Set(dp.concat(hosts))).values());
 	hosts.sort();
 
