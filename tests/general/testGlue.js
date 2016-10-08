@@ -242,30 +242,58 @@ test("require cyclic", function() {
 test("LRUMap", function() {
 	var {LRUMap} = requireJSM("chrome://dta-modules/content/glue.jsm");
 	let map = new LRUMap(2);
-	ok(!map.has("a"));
+	strictEqual(map.limit, 2, "correct limit");
+	strictEqual(map.capacity, map.limit, "correct capacity");
+	strictEqual(map.free, map.limit, "correct initial free");
+	ok(!map.has("a"), "pre-check");
 	map.set("a", "b");
-	ok(map.has("a"));
-	strictEqual(map.get("a"), "b");
+	ok(map.has("a"), "correctly set");
+	strictEqual(map.get("a"), "b", "correct value");
+	strictEqual(map.free, 1, "correct free");
 
 	map.set(1, 2);
-	ok(map.has(1));
-	ok(!map.has("1"));
-	strictEqual(map.get(1), 2);
+	ok(map.has(1), "correctly set (num)");
+	ok(!map.has("1"), "not string-coerced");
+	strictEqual(map.get(1), 2, "correct value (num)");
+	strictEqual(map.free, 0, "correct free");
+
+	map.set("a", "b");
+
+	map.set(Math.NaN, 3);
+	ok(map.has(Math.NaN), "correctly set (NaN)");
+	strictEqual(map.get(Math.NaN), 3, "correct value (NaN)");
+	strictEqual(map.free, 0, "correct initial free");
+	map.delete(Math.NaN);
+	strictEqual(map.get(Math.NaN), undefined, "correct removal (NaN)");
+	strictEqual(map.free, 1, "correct free");
+
+	ok(map.has("a"), "correctly lrued");
+	strictEqual(map.get("a"), "b", "correct value");
 
 	map.set("b", null);
-	ok(!map.has("a"));
-	ok(map.has(1));
-	ok(map.has("b"));
-	strictEqual(map.get("b"), null);
+	ok(map.has("a"), "correctly purged earlier");
+	ok(!map.has(1), "correctly deleted earlier");
+	ok(map.has("b"), "correctly inserted after limit");
+	strictEqual(map.get("b"), null, "correct value after limit");
+	strictEqual(map.free, 0, "correct free");
 
-	strictEqual(JSON.stringify(map), "[[1,2],[\"b\",null]]");
+	strictEqual(JSON.stringify(map), "[[\"a\",\"b\"],[\"b\",null]]", "correct serialization");
 	map.set(2, undefined);
-	strictEqual(JSON.stringify(map), "[[\"b\",null],[2,null]]");
+	strictEqual(JSON.stringify(map), "[[\"b\",null],[2,null]]", "correct serialization of undefined");
 
 	let map2 = new LRUMap(2, JSON.parse(JSON.stringify(map)));
-	throws(() => new LRUMap());
-	throws(() => new LRUMap(0));
-	throws(() => new LRUMap(-1));
-	throws(() => new LRUMap(NaN));
-	throws(() => new LRUMap(1.1));
+	strictEqual(JSON.stringify(map2), JSON.stringify(map), "stringify the same");
+
+	throws(() => new LRUMap(), "Must provide limit");
+	throws(() => new LRUMap(0), "Limit cannot be null");
+	throws(() => new LRUMap(-1), "... or negative");
+	throws(() => new LRUMap(NaN), "... or NaN");
+	throws(() => new LRUMap(1.1), "... or a float");
+	let keys1 = [];
+	for (let i in map) {
+		keys1.push(i);
+	}
+	let keys2 = Array.from(Object.keys(map));
+	arrayEqual(keys1, keys2, "keys/enumerable the same");
+	strictEqual(JSON.stringify(keys2), "[]", "correct enumerable keys");
 });

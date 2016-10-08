@@ -82,56 +82,43 @@ var lazyProto = (function() {
 	};
 })();
 
-class LRUMap {
+class LRUMap extends Map {
 	constructor(limit, values) {
 		if (!(limit > 1) || (limit !== (limit | 0))) {
 			throw new Error("Invalid limit");
 		}
-		this._limit = limit;
-		this.clear();
-		Object.preventExtensions(this);
-
-		for (let i = (values || DEAD).length - 1; i >= 0; --i) {
-			Cu.reportError(i);
-			this.set(values[i][0], values[i][1]);
-		}
+		super(values);
+		Object.defineProperty(this, "_limit", {value: limit});
+	}
+	get limit() {
+		return this._limit;
+	}
+	get capacity() {
+		return this._limit;
+	}
+	get free() {
+		return this._limit - this.size;
 	}
 
-	"get"(key) {
-		return this._dict.get(key);
-	}
 	"set"(key, val) {
 		if (this.has(key)) {
-			this._dict.set(key, val);
-			return;
+			super.delete(key);
+			return super.set(key, val);
 		}
-		if (this._arr.length === this._limit) {
-			this._dict.delete(this._arr.shift());
+		if (this.size === this._limit) {
+			this.delete(this.keys().next().value);
 		}
-		this._dict.set(key, val);
-		this._arr.push(key);
+		return super.set(key, val);
 	}
-	has(key) {
-		return this._dict.has(key);
-	}
-	delete(key) {
-		if (!this._dict.has(key)) {
-			return;
-		}
-		this._dict.delete(key);
-		this._arr.splice(this._arr.indexOf(key), 1);
-	}
-	clear() {
-		this._dict = new Map();
-		this._arr = [];
-	}
-
+	/**
+	 * Serialize to JSON (via JSON.stringify)
+	 * Please not that it is serialized to an array containing key/value pairs.
+	 * Please note that therefore keys and values need to be serializable with
+	 * JSON.
+	 * Please note that the limit is not imcluded!
+	 */
 	toJSON() {
-		let rv = [];
-		for (let i of this._arr) {
-			rv.push([i, this._dict.get(i)]);
-		}
-		return rv;
+		return Array.from(this.entries());
 	}
 };
 this.LRUMap = LRUMap;
