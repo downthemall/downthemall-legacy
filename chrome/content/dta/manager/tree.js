@@ -1266,7 +1266,7 @@ var Tree = {
 		}
 	},
 	import: function() {
-		function processResponse(fp, rv) {
+		const processResponse = Task.async(function*(fp, rv) {
 			if (rv !== Ci.nsIFilePicker.returnOK) {
 				return;
 			}
@@ -1275,17 +1275,16 @@ var Tree = {
 					Metalinker.handleFile(fp.file);
 					return;
 				}
-				ImportExport.parseTextFile(fp.file, function importcb(lnks) {
-					if (lnks.length) {
-						DTA.saveLinkArray(window, lnks, []);
-					}
-				});
+				let lnks = yield ImportExport.parseTextFile(fp.file);
+				if (lnks.length) {
+					DTA.saveLinkArray(window, lnks, []);
+				}
 			}
 			catch (ex) {
 				log(LOG_ERROR, "Cannot import downloads (processResponse)", ex);
 				Prompts.alert(window, _('import.title'), _('importfailed'));
 			}
-		}
+		});
 		try {
 			let fp = new Instances.FilePicker(window, _('import.title'), Ci.nsIFilePicker.modeOpen);
 			fp.appendFilters(Ci.nsIFilePicker.filterText);

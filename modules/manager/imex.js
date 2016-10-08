@@ -9,32 +9,32 @@ const {getTextLinks} = require("support/textlinks");
 const Version = require("version");
 const {NS_DTA, NS_METALINKER3, NS_METALINK_RFC5854} = require("support/metalinker");
 const {filterInSitu} = require("utils");
+const {Task} = requireJSM("resource://gre/modules/Task.jsm");
 
 const XPathResult = Ci.nsIDOMXPathResult;
 
-exports.parseTextFile = function parseTextFile(aFile, cb) {
+exports.parseTextFile = Task.async(function*(aFile) {
 	log(LOG_INFO, "Parsing text file: " + aFile.spec);
-	let req = new XMLHttpRequest();
-	req.onload = function() {
-		let links = [];
-		for (let l of getTextLinks(req.responseText, false)) {
-			l = Services.io.newURI(l, null, null);
-			links.push({
-				url: new DTA.URL(l),
-				referrer: null,
-				description: 'imported from ' + aFile.leafName,
-				isPrivate: false
-			});
-		}
-		log(LOG_INFO, "parsed text file, links: " + links.length);
-		cb(filterInSitu(links, function(e) {
-			return (e = e.url.spec) && !((e in this) || (this[e] = null));
-		}, {}));
-	};
-	req.overrideMimeType("text/plain");
-	req.open("GET", Services.io.newFileURI(aFile).spec);
-	req.send();
-};
+
+	let req = yield fetch(Services.io.newFileURI(aFile).spec);
+	req = yield req.text();
+	log(LOG_ERROR, req);
+	
+	let links = [];
+	for (let l of getTextLinks(req, false)) {
+		l = Services.io.newURI(l, null, null);
+		links.push({
+			url: new DTA.URL(l),
+			referrer: null,
+			description: 'imported from ' + aFile.leafName,
+			isPrivate: false
+		});
+	}
+	log(LOG_INFO, "parsed text file, links: " + links.length);
+	return filterInSitu(links, function(e) {
+		return (e = e.url.spec) && !((e in this) || (this[e] = null));
+	}, {});
+});
 
 exports.exportToTextFile = function exportToTextFile(aDownloads, aFile, aPermissions) {
 	let fs = new Instances.FileOutputStream(aFile, 0x02 | 0x08 | 0x20, aPermissions, 0);

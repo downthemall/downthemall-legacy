@@ -3,8 +3,12 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
+const XRegExp = require("thirdparty/xregexp");
+
 // Link matcher
-const regLinks = /\b(?:(?:h(?:x+|tt)?ps?|f(?:x+|t)p):\/\/|www\d?\.)[\d\w.-]+\.?(?:\/[\d\w+&@#\/%?=~_|!:,.;\(\)$-]*)?/ig;
+const regLinks = new XRegExp(
+	"\\b(?:(?:h(?:x+|tt)?ps?|f(?:x+|t)p):\\/\\/|www\\d?\\.)[\\d\\w.-]+\\.?(?:\\/[\\p{N}\\p{L}\\pP\\pS]*)?",
+	"giu");
 // Match more exactly or more than 3 dots. Links are then assumed "cropped" and will be ignored.
 const regShortened = /\.{3,}/;
 // http cleanup
