@@ -118,6 +118,7 @@ var Prefs = {
 		['schedEnd', 'schedule.end', 1380],
 		['sparseFiles', false],
 		['scrollToNew', true],
+		['showActions', true],
 	],
 
 	// nsIObserver
@@ -194,6 +195,12 @@ var Prefs = {
 		}
 		else {
 			RequestManipulation.unregisterHttp('dtaua');
+		}
+		if (this.showActions) {
+			$("actionsbox").setAttribute("show", "true");
+		}
+		else {
+			$("actionsbox").removeAttribute("show");
 		}
 
 		Dialog.scheduler = null;

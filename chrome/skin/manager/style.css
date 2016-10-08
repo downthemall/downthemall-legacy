@@ -440,6 +440,10 @@ treechildren::-moz-tree-cell-text(private) {
 	list-style-image: url(icons.png);
 }
 
+#actionsbox:not([show]) {
+	display: none !important;
+}
+
 #actions {
 	padding: 2pt;
 }
