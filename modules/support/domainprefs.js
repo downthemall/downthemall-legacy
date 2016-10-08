@@ -10,7 +10,8 @@ const {symbolize} = require("./stringfuncs");
 const {Task} = requireJSM("resource://gre/modules/Task.jsm");
 const {DeferredSave} = requireJSM("resource://gre/modules/DeferredSave.jsm");
 
-const domains = new Map();
+const storedDomains = new Map();
+const privDomains = new LRUMap(200);
 
 const PENDING = Symbol();
 
@@ -35,7 +36,7 @@ class Saver extends DeferredSave {
 	}
 	serialize() {
 		let rv = [];
-		for (let [domain, prefs] of domains.entries()) {
+		for (let [domain, prefs] of storedDomains.entries()) {
 			domain = Symbol.keyFor(domain);
 			if (!domain) {
 				continue;
@@ -60,10 +61,10 @@ Object.assign(Saver.prototype, {
 			for (let [domain, prefs] of json) {
 				domain = Symbol.for(domain);
 				for (let [pref, value] of prefs) {
-					let prefs = domains.get(domain);
+					let prefs = storedDomains.get(domain);
 					if (!prefs) {
 						prefs = new Map();
-						domains.set(domain, prefs);
+						storedDomains.set(domain, prefs);
 					}
 					prefs.set(symbolize(pref), value);
 				}
@@ -97,7 +98,8 @@ function domain(url, tld) {
 	}
 }
 
-function _getPref(dom, pref, defaultValue) {
+function _getPref(dom, pref, defaultValue, options) {
+	let domains = (options && options.isPrivate) ? privDomains : storedDomains;
 	let prefs = domains.get(dom);
 	if (!prefs) {
 		return defaultValue;
@@ -105,19 +107,20 @@ function _getPref(dom, pref, defaultValue) {
 	return prefs.get(symbolize(pref)) || defaultValue;
 }
 
-function getPref(url, pref, defaultValue, tld) {
-	let dom = domain(url, tld);
+function getPref(url, pref, defaultValue, options) {
+	let dom = domain(url, options && options.tld);
 	if (!dom) {
 		return defaultValue;
 	}
-	return _getPref(Symbol.for(dom), pref, defaultValue);
+	return _getPref(Symbol.for(dom), pref, defaultValue, options);
 }
 
 function getHost(host, pref, defaultValue) {
 	return _getPref(symbolize(host), pref, defaultValue);
 }
 
-function _setPref(dom, pref, value) {
+function _setPref(dom, pref, value, options) {
+	let domains = (options && options.isPrivate) ? privDomains : storedDomains;
 	let prefs = domains.get(dom);
 	if (!prefs) {
 		prefs = new Map();
@@ -127,22 +130,23 @@ function _setPref(dom, pref, value) {
 	saver.saveChanges();
 }
 
-function setPref(url, pref, value, tld) {
-	let dom = domain(url, tld);
+function setPref(url, pref, value, options) {
+	let dom = domain(url, options && options.tld);
 	if (!dom) {
 		// We cannot store for stuff we cannot get a domain from
 		// then again, no big deal, since the prefs are not persistent anyway at the moment
 		// XXX this may change
 		return;
 	}
-	return _setPref(Symbol.for(dom), pref, value);
+	return _setPref(Symbol.for(dom), pref, value, options);
 }
 
 function setHost(host, pref, value) {
 	return _setPref(symbolize(host), pref, value);
 }
 
-function _deletePref(dom, pref) {
+function _deletePref(dom, pref, options) {
+	let domains = (options && options.isPrivate) ? privDomains : storedDomains;
 	let prefs = domains.get(dom);
 	if (!prefs) {
 		return;
@@ -154,12 +158,12 @@ function _deletePref(dom, pref) {
 	saver.saveChanges();
 }
 
-function deletePref(url, pref, tld) {
-	let dom = domain(url, tld);
+function deletePref(url, pref, options) {
+	let dom = domain(url, options && options.tld);
 	if (!dom) {
 		return;
 	}
-	return _deletePref(Symbol.for(dom), pref);
+	return _deletePref(Symbol.for(dom), pref, options);
 }
 
 function deleteHost(host, pref) {
@@ -168,7 +172,7 @@ function deleteHost(host, pref) {
 
 
 function* enumHosts() {
-	for (let domain of domains.keys()) {
+	for (let domain of storedDomains.keys()) {
 		domain = Symbol.keyFor(domain);
 		if (domain) {
 			yield domain;
@@ -206,20 +210,29 @@ Object.defineProperties(exports, {
 		enumerable: true
 	},
 	"getTLD": {
-		value: function(url, pref, defaultValue) {
-			return getPref(url, pref, defaultValue, true);
+		value: function(url, pref, defaultValue, isPrivate) {
+			return getPref(url, pref, defaultValue, {
+				tld: true,
+				isPrivate
+			});
 		},
 		enumerable: true
 	},
 	"setTLD": {
-		value: function(url, pref, value) {
-			return setPref(url, pref, value, true);
+		value: function(url, pref, value, isPrivate) {
+			return setPref(url, pref, value, {
+				tld: true,
+				isPrivate
+			});
 		},
 		enumerable: true
 	},
 	"deleteTLD": {
-		value: function(url, pref, value) {
-			return deletePref(url, pref, true);
+		value: function(url, pref, isPrivate) {
+			return deletePref(url, pref, {
+				tld: true,
+				isPrivate
+			});
 		},
 		enumerable: true
 	},

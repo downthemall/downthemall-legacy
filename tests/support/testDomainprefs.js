@@ -44,26 +44,27 @@ test("tld", function() {
 	let dp = require("support/domainprefs");
 	let uri = Services.io.newURI("https://code.downthemall.net/test.jpg", null, null);
 	let uri2 = Services.io.newURI("https://downthemall.net/test.jpg", null, null);
+	let tld = { tld: true };
 
-	dp.set(uri, "test", "a", true);
-	strictEqual(dp.get(uri, "test", "val", true), "a");
+	dp.set(uri, "test", "a", tld);
+	strictEqual(dp.get(uri, "test", "val", tld), "a");
 	strictEqual(dp.getHost("downthemall.net", "test", "val"), "a");
-	strictEqual(dp.get(uri, "test", 1, true), "a");
-	strictEqual(dp.get(uri, "test", undefined, true), "a");
-	strictEqual(dp.get(uri, Symbol.for("test"), undefined, true), "a");
+	strictEqual(dp.get(uri, "test", 1, tld), "a");
+	strictEqual(dp.get(uri, "test", undefined, tld), "a");
+	strictEqual(dp.get(uri, Symbol.for("test"), undefined, tld), "a");
 	strictEqual(dp.getHost("downthemall.net", Symbol.for("test"), "val"), "a");
 
-	strictEqual(dp.get(uri2, "test", "val", true), "a");
-	strictEqual(dp.get(uri2, "test", 1, true), "a");
-	strictEqual(dp.get(uri2, "test", undefined, true), "a");
-	strictEqual(dp.get(uri2, Symbol.for("test"), undefined, true), "a");
+	strictEqual(dp.get(uri2, "test", "val", tld), "a");
+	strictEqual(dp.get(uri2, "test", 1, tld), "a");
+	strictEqual(dp.get(uri2, "test", undefined, tld), "a");
+	strictEqual(dp.get(uri2, Symbol.for("test"), undefined, tld), "a");
 
-	dp.delete(uri, "test", true);
-	ok(!dp.get(uri, "test", undefined, true));
-	ok(!dp.get(uri2, "test", undefined, true));
-	strictEqual(dp.get(uri, "test", "val", true), "val");
-	strictEqual(dp.get(uri2, "test", 1, true), 1);
-	strictEqual(dp.get(uri, "test", undefined, true), undefined);
+	dp.delete(uri, "test", tld);
+	ok(!dp.get(uri, "test", undefined, tld));
+	ok(!dp.get(uri2, "test", undefined, tld));
+	strictEqual(dp.get(uri, "test", "val", tld), "val");
+	strictEqual(dp.get(uri2, "test", 1, tld), 1);
+	strictEqual(dp.get(uri, "test", undefined, tld), undefined);
 	strictEqual(dp.getHost("downthemall.net", Symbol.for("test")), undefined);
 });
 
@@ -89,4 +90,32 @@ test("TLD", function() {
 	strictEqual(dp.getTLD(uri, "test", "val"), "val");
 	strictEqual(dp.getTLD(uri2, "test", 1), 1);
 	strictEqual(dp.getTLD(uri, "test"), undefined);
+});
+
+test("priv", function() {
+	let dp = require("support/domainprefs");
+	let uri = Services.io.newURI("https://code.downthemall.net/test.jpg", null, null);
+	let uri2 = Services.io.newURI("https://downthemall.net/test.jpg", null, null);
+	let tld = { tld: true };
+	let priv = { isPrivate: true, tld: true };
+
+	dp.set(uri, "test", "a", priv);
+	strictEqual(dp.get(uri, "test", "val", priv), "a");
+	strictEqual(dp.get(uri, "test", 1, priv), "a");
+	strictEqual(dp.get(uri, "test", undefined, priv), "a");
+	strictEqual(dp.get(uri, Symbol.for("test"), undefined, priv), "a");
+
+	strictEqual(dp.get(uri2, "test", "val", priv), "a");
+	strictEqual(dp.get(uri2, "test", "val", tld), "val");
+	strictEqual(dp.get(uri2, "test", 1, priv), "a");
+	strictEqual(dp.get(uri2, "test", undefined, priv), "a");
+	strictEqual(dp.get(uri2, "test", undefined, tld), undefined);
+	strictEqual(dp.get(uri2, Symbol.for("test"), undefined, priv), "a");
+
+	dp.delete(uri, "test", priv);
+	ok(!dp.get(uri, "test", undefined, priv));
+	ok(!dp.get(uri2, "test", undefined, priv));
+	strictEqual(dp.get(uri, "test", "val", priv), "val");
+	strictEqual(dp.get(uri2, "test", 1, priv), 1);
+	strictEqual(dp.get(uri, "test", undefined, priv), undefined);
 });

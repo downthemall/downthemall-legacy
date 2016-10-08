@@ -34,6 +34,10 @@ const DISCONNECTION_CODES = [
 	NS_ERROR_NET_RESET
 ];
 
+function canPrivate(chan) {
+	return ("nsIPrivateBrowsingChannel" in Ci) && (this._chan instanceof Ci.nsIPrivateBrowsingChannel);
+}
+
 const _ = (function(global) {
 	let bundles = new StringBundles(["chrome://dta/locale/manager.properties"]);
 	return function() {
@@ -51,8 +55,9 @@ function maybeTempBlacklisted(conn, item, httpchan) {
 		let server = httpchan.getResponseHeader("Server");
 		if (server.includes("cloudflare")) {
 			item.cleanRequest = true;
-			DomainPrefs.setTLD(conn.origURL, cleanRequest, true);
-			DomainPrefs.setTLD(httpchan.URI, cleanRequest, true);
+			let priv = canPrivate(httpchan) && httpchan.isChannelPrivate;
+			DomainPrefs.setTLD(conn.origURL, cleanRequest, true, priv);
+			DomainPrefs.setTLD(httpchan.URI, cleanRequest, true, priv);
 			return true;
 		}
 		return false;
@@ -89,7 +94,7 @@ function Connection(d, c, isInfoGetter) {
 	this._chan.notificationCallbacks = this;
 
 	if (d.isPrivate) {
-		if (("nsIPrivateBrowsingChannel" in Ci) && (this._chan instanceof Ci.nsIPrivateBrowsingChannel)) {
+		if (canPrivate(this._chan)) {
 			try {
 				this._chan.setPrivate(d.isPrivate);
 				log(LOG_DEBUG, url.spec + ": setPrivate");
@@ -186,7 +191,7 @@ Connection.prototype = {
 
 				if (!d.cleanRequest &&
 						!Preferences.getExt("usecleanrequests", false) &&
-						!DomainPrefs.getTLD(chan.URI, cleanRequest)) {
+						!DomainPrefs.getTLD(chan.URI, cleanRequest, canPrivate(chan) && chan.isChannelPrivate)) {
 					log(LOG_DEBUG, `setting up ${chan.URI.spec}`);
 					// Cannot hash when compressed
 					chan.setRequestHeader("Accept-Encoding", "", false);
