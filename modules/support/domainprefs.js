@@ -3,12 +3,79 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
-// for now domain prefs are non-persistent
-// XXX Make persistent and migrate limits
+const DOMAINS_FILE = "domain-prefs.json";
 
 const {symbolize} = require("./stringfuncs");
+const {Task} = requireJSM("resource://gre/modules/Task.jsm");
+const {DeferredSave} = requireJSM("resource://gre/modules/DeferredSave.jsm");
 
-const domains = new LRUMap(500);
+const domains = new LRUMap(1000);
+
+const PENDING = Symbol();
+
+class Saver extends DeferredSave {
+	constructor() {
+		let file = require("api").getProfileFile(DOMAINS_FILE, true).path;
+		super(file, () => this.serialize(), 5000);
+		this.load();
+	}
+	get file() {
+		return this._path || this._file;
+	}
+	load() {
+		if (!this[PENDING]) {
+			this[PENDING] = this._loadAsync();
+		}
+		return this[PENDING];
+	}
+	serialize() {
+		let rv = [];
+		for (let [domain, prefs] of domains.entries()) {
+			domain = Symbol.keyFor(domain);
+			if (!domain) {
+				continue;
+			}
+			let cur = [];
+			for (let [pref, value] of prefs.entries()) {
+				pref = Symbol.keyFor(pref);
+				cur.push([pref, value]);
+			}
+			if (cur.length) {
+				rv.push([domain, cur]);
+			}
+		}
+		return JSON.stringify(rv);
+	}
+}
+Object.assign(Saver.prototype, {
+	_loadAsync: Task.async(function*() {
+		try {
+			let req = yield fetch(Services.io.newFileURI(new Instances.LocalFile(this.file)).spec);
+			let json = yield req.json();
+			for (let [domain, prefs] of json) {
+				domain = Symbol.for(domain);
+				for (let [pref, value] of prefs) {
+					let prefs = domains.get(domain);
+					if (!prefs) {
+						prefs = new Map();
+						domains.set(domain, prefs);
+					}
+					prefs.set(symbolize(pref), value);
+				}
+			}
+		}
+		catch (ex) {
+			this.saveChanges();
+		}
+	}),
+});
+let saver = new Saver();
+unload(function() {
+	if (saver) {
+		saver.flush();
+	}
+	saver = null;
+});
 
 function domain(url, tld) {
 	try {
@@ -16,7 +83,7 @@ function domain(url, tld) {
 	}
 	catch (ex) {
 		try {
-			log(LOG_ERROR, "Failed to get tld for " + (url.spec || url));
+			log(LOG_DEBUG, "Failed to get tld for " + (url.spec || url));
 			return url.host;
 		}
 		catch (ex) {
@@ -52,6 +119,7 @@ function setPref(url, pref, value, tld) {
 		domains.set(dom, prefs);
 	}
 	prefs.set(symbolize(pref), value);
+	saver.saveChanges();
 }
 
 function deletePref(url, pref, tld) {
@@ -68,6 +136,7 @@ function deletePref(url, pref, tld) {
 	if (!prefs.size) {
 		domains.delete(dom);
 	}
+	saver.saveChanges();
 }
 
 Object.defineProperties(exports, {
