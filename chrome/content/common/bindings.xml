@@ -440,9 +440,11 @@
 							return !((e in this) || (this[e] = null))
 						},
 						{}
-						).sort(function(a,b) a - b);
+						).sort(function(a,b) {
+							return a - b;
+						});
 					let sep = document.createElement('menuseparator');
-					for (let v of mapInSitu(items, function(e) e * 1024)) {
+					for (let v of mapInSitu(items, e => e * 1024)) {
 						let item = this.appendItem(Utils.formatKBytes(v, 0) + '/s', v);
 						if (v == iv) {
 							if (item.previousSibling) {
@@ -795,7 +797,11 @@
 								// whoops, removed a little too many colors :p
 								return ref;
 							}
-							let newRef = [r,g,b,a].map(function(i) Math.round(i.reduce(function(p,c) p + c, 0) / i.length));
+							let newRef = [r,g,b,a].map(function(i) {
+								return Math.round(i.reduce(function(p,c) {
+									return p + c;
+								}, 0) / i.length);
+							});
 							if (l && poorMansSimilarity(newRef, ref) < 5) {
 								return newRef;
 							}
