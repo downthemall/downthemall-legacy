@@ -2547,13 +2547,7 @@ QueueItem.prototype = {
 				}
 			}
 		}
-		function downloadNewChunk(download, start, end, header) {
-			let chunk = new Chunk(download, start, end);
-			download.chunks.push(chunk);
-			download.chunks.sort(function(a,b) { return a.start - b.start; });
-			downloadChunk(download, chunk, header);
-		}
-		function downloadChunk(download, chunk, header) {
+		function _downloadChunk(download, chunk, header) {
 			chunk.download = new Connection(download, chunk, header || download.mustGetInfo);
 			chunk.running = true;
 			download.mustGetInfo = false;
@@ -2561,6 +2555,21 @@ QueueItem.prototype = {
 			log(LOG_DEBUG, "started: " + chunk);
 			++download.activeChunks;
 			++download.sessionConnections;
+		}
+		function downloadNewChunk(download, start, end, header) {
+			let chunk = new Chunk(download, start, end);
+			download.chunks.push(chunk);
+			download.chunks.sort(function(a,b) { return a.start - b.start; });
+			_downloadChunk(download, chunk, header);
+		}
+		function downloadOldChunk(download, chunk, header) {
+			let idx = download.chunks.indexOf(chunk);
+			if (idx < 0) {
+				throw Error("Invalid chunk");
+			}
+			let newChunk = new Chunk(download, chunk.start, chunk.end, chunk.safeBytes);
+			download.chunks[idx] = newChunk;
+			_downloadChunk(download, newChunk, header);
 		}
 
 		cleanChunks(this);
@@ -2593,7 +2602,7 @@ QueueItem.prototype = {
 				// restart paused chunks
 				if (paused.length) {
 					let p = paused.shift();
-					downloadChunk(this, p, p.end === 0);
+					downloadOldChunk(this, p, p.end === 0);
 					rv = true;
 					continue;
 				}
