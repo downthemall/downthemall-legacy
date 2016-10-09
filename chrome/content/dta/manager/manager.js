@@ -2563,13 +2563,17 @@ QueueItem.prototype = {
 			_downloadChunk(download, chunk, header);
 		}
 		function downloadOldChunk(download, chunk, header) {
-			let idx = download.chunks.indexOf(chunk);
-			if (idx < 0) {
-				throw Error("Invalid chunk");
+			if (chunk.wasOpened) {
+				let idx = download.chunks.indexOf(chunk);
+				if (idx < 0) {
+					throw Error("Invalid chunk");
+				}
+				let newChunk = new Chunk(download, chunk.start, chunk.end, chunk.safeBytes);
+				download.chunks[idx] = newChunk;
 			}
-			let newChunk = new Chunk(download, chunk.start, chunk.end, chunk.safeBytes);
-			download.chunks[idx] = newChunk;
-			_downloadChunk(download, newChunk, header);
+			else {
+				_downloadChunk(download, chunk, header);
+			}
 		}
 
 		cleanChunks(this);

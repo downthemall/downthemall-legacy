@@ -106,10 +106,12 @@ class Chunk {
 		this._start = start;
 		this._written = written > 0 ? written : 0;
 		this._sessionBytes = 0;
+		this.errored = false;
 		this.running = false;
 
 		this.end = end;
 		this.startBytes = this.safeBytes = this._written;
+		this.wasOpened = false;
 
 		log(LOG_INFO, "chunk created: " + this);
 	}
@@ -188,6 +190,9 @@ class Chunk {
 	}
 
 	open() {
+		if (this.wasOpened) {
+			throw new Error("No recylcing");
+		}
 		if (this._openPromise) {
 			log(LOG_DEBUG, `opening ${this}: already pending`);
 			return this._openPromise;
@@ -196,6 +201,7 @@ class Chunk {
 		const file = this.parent.tmpFile;
 		let pos = this.start + this.safeBytes;
 		log(LOG_DEBUG, `opening ${this}: ${file.path} at ${pos}`);
+		this.wasOpened = true;
 		return this._openPromise = this._openAsync(file, pos);
 	}
 
@@ -441,14 +447,6 @@ class Chunk {
 Object.assign(Chunk.prototype, {
 	_openAsync: Task.async(function*(file, pos) {
 		try {
-			if (this._closing) {
-				yield this._closing;
-			}
-
-			this.errored = false;
-			this._sessionBytes = 0;
-			memoryReporter.registerChunk(this);
-
 			try {
 				yield makeDir(file.parent, Prefs.dirPermissions, true);
 			}
@@ -493,6 +491,7 @@ Object.assign(Chunk.prototype, {
 			});
 		}
 		finally {
+			memoryReporter.registerChunk(this);
 			delete this._openPromise;
 		}
 	}),
@@ -564,7 +563,6 @@ Object.assign(Chunk.prototype, {
 				delete this._buckets;
 			}
 			delete this._req;
-			memoryReporter.unregisterChunk(this);
 
 			this._sessionBytes = 0;
 			if (this.errored || !this.complete) {
@@ -578,6 +576,7 @@ Object.assign(Chunk.prototype, {
 			log(LOG_ERROR, "Damn!", ex);
 		}
 		finally {
+			memoryReporter.unregisterChunk(this);
 			delete this.download;
 			delete this._closing;
 		}
