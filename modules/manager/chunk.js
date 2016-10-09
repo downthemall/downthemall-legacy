@@ -455,12 +455,24 @@ Object.assign(Chunk.prototype, {
 			catch (ex if ex.becauseExists) {
 				// no op
 			}
-			let outStream = this._fileOutputStream = new Instances.FileOutputStream(
+			let outStream = new Instances.FileOutputStream(
 				file,
 				0x02 | 0x08,
 				Prefs.permissions,
 				Ci.nsIFileOutputStream.DEFER_OPEN
 				);
+			let closeStream = () => {
+				if (outStream) {
+					try {
+						outStream.close();
+					}
+					catch (ex) {
+						// might have been already closed
+					}
+				}
+				outStream = null;
+				this.close();
+			};
 			if (pos) {
 				let seekable = outStream.QueryInterface(Ci.nsISeekableStream);
 				seekable.seek(0x00, pos);
@@ -473,9 +485,10 @@ Object.assign(Chunk.prototype, {
 			this._inStream = this._pipe.inputStream;
 			this._outStream = this._pipe.outputStream;
 			this._copier = asyncCopy(this._inStream, outStream, true);
+			this._copier.then(closeStream);
 			this._copier.catch(status => {
 				this.errored = true;
-				this.close(); // start closing right now
+				closeStream();
 				this.download.writeFailed(status);
 			});
 		}
@@ -498,6 +511,7 @@ Object.assign(Chunk.prototype, {
 					this.download.writeFailed(status);
 				}
 			}
+
 			if (this._overflowPipe) {
 				// Still got an overflow pipe, meaning we failed a write
 				// Since we kill the pipe now, we need to adjust written sizes
@@ -564,15 +578,6 @@ Object.assign(Chunk.prototype, {
 			log(LOG_ERROR, "Damn!", ex);
 		}
 		finally {
-			if (this._fileOutputStream) {
-				try {
-					this._fileOutputStream.close();
-				}
-				catch (ex) {
-					// might have been already closed
-				}
-			}
-			delete this._fileOutputStream;
 			delete this.download;
 			delete this._closing;
 		}
