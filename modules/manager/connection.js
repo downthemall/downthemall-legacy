@@ -35,7 +35,7 @@ const DISCONNECTION_CODES = [
 ];
 
 function canPrivate(chan) {
-	return ("nsIPrivateBrowsingChannel" in Ci) && (this._chan instanceof Ci.nsIPrivateBrowsingChannel);
+	return ("nsIPrivateBrowsingChannel" in Ci) && (chan instanceof Ci.nsIPrivateBrowsingChannel);
 }
 
 const _ = (function(global) {
