@@ -45,11 +45,13 @@ XPCOMUtils.defineLazyGetter(window, "FileExts", () => new FileExtensionSheet(win
 
 /* global TextCache_PAUSED, TextCache_QUEUED, TextCache_COMPLETE, TextCache_CANCELED, TextCache_NAS */
 /* global TextCache_UNKNOWN, TextCache_OFFLINE, TextCache_TIMEOUT, TextCache_STARTING, TextCache_DECOMPRESSING */
-/* global TextCache_VERIFYING, TextCache_MOVING */
+/* global TextCache_VERIFYING, TextCache_MOVING, TextCache_FINISHING */
 addEventListener("load", function load_textCache() {
 	removeEventListener("load", load_textCache, false);
 	const texts = ['paused', 'queued', 'complete', 'canceled', 'nas', 'unknown',
-		'offline', 'timeout', 'starting', 'decompressing', 'verifying', 'moving'];
+		'offline', 'timeout', 'starting', 'decompressing', 'verifying', 'moving',
+		'finishing',
+	];
 	for (let i = 0, text; i < texts.length; ++i) {
 		text = texts[i];
 		window["TextCache_" + text.toUpperCase()] = _(text);
@@ -2219,6 +2221,7 @@ QueueItem.prototype = {
 	_runFinishDownloadTask: Task.async(function*() {
 		try {
 			this.setState(FINISHING);
+			this.status = TextCache_FINISHING;
 			yield this.closeChunks();
 			if (this.hashCollection && !(yield this.verifyHash())) {
 				return;
