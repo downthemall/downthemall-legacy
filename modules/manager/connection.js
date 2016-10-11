@@ -1125,7 +1125,14 @@ Connection.prototype = {
 			d.critical();
 		}
 		try {
-			yield c.close();
+			try {
+				yield c.close();
+			}
+			finally {
+				if (d) {
+					d.uncritical();
+				}
+			}
 			log(LOG_DEBUG, "closed");
 			if (!d || !d.chunks || !~d.chunks.indexOf(c)) {
 				log(LOG_INFO, "chunk unknown");
@@ -1247,9 +1254,6 @@ Connection.prototype = {
 		finally {
 			delete this.c;
 			delete this._chan;
-			if (d) {
-				d.uncritical();
-			}
 		}
 	}),
 
