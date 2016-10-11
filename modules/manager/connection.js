@@ -1226,11 +1226,15 @@ Connection.prototype = {
 					d.finishDownload();
 					return;
 				}
+
 				if (d.resumable && c.sessionBytes > 0) {
 					// fast retry unless we didn't actually receive something
-					d.resumeDownload();
+					if (d.resumeDownload()) {
+						return;
+					}
 				}
-				else if (d.resumable || Preferences.getExt('resumeonerror', false)) {
+
+				if (d.resumable || Preferences.getExt('resumeonerror', false)) {
 					d.pauseAndRetry();
 					d.status = _('errmismatchtitle');
 				}
@@ -1245,11 +1249,16 @@ Connection.prototype = {
 			}
 
 			if (!d.isOf(PAUSED | CANCELED)) {
-				d.resumeDownload();
+				if (!d.resumeDownload() && !d.chunks.every(e => e.complete || e.running)) {
+					d.dumpScoreBoard();
+					log(LOG_ERROR, "Failed to resume although not complete yet", null, true);
+					d.pauseAndRetry();
+					d.status = _('errmismatchtitle');
+				}
 			}
 		}
 		catch (ex) {
-			log(LOG_ERROR, "Failed onStopRequest", ex);
+			log(LOG_ERROR, "Failed onStopRequest", ex, true);
 		}
 		finally {
 			delete this.c;
