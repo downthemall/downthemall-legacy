@@ -1,4 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
+""" Build a DownThemAll! xpi"""
+
+# pylint: disable=too-few-public-methods,broad-except,invalid-name,missing-docstring
+
 import os
 import re
 import sys
@@ -7,15 +11,71 @@ from fnmatch import fnmatch
 from functools import wraps
 from glob import glob
 from io import BytesIO
-from optparse import OptionParser
+from argparse import ArgumentParser
 from time import strftime
 from warnings import warn
 from xml.dom.minidom import parseString as XML
 from zipfile import ZipFile, ZIP_STORED, ZIP_DEFLATED
 
+
+NS_RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+NS_EM = "http://www.mozilla.org/2004/em-rdf#"
+
+RELEASE_ID = "{DDC359D1-844A-42a7-9AA1-88A850A938A8}"
+
+FILES = (
+    "install.rdf",
+    "icon*.png",
+    "bootstrap.js",
+    "MPL", "GPL", "LGPL", "LICENSE",
+    "chrome.manifest",
+    "chrome/content/about/about.xul",
+    "chrome/content/common/",
+    "chrome/content/dta/",
+    "chrome/content/integration/",
+    "chrome/content/preferences/",
+    "chrome/content/privacy/",
+    "chrome/content/mac/",
+    "chrome/content/unix/",
+    "chrome/content/win/",
+    "chrome/public/",
+    "chrome/skin/",
+    "chrome/locale/*/",
+    "modules/*.js*",
+    "modules/loaders/",
+    "modules/manager/",
+    "modules/support/",
+    "modules/thirdparty/",
+    )
+
+TESTS = (
+    "modules/tests/",
+    "tests",
+    )
+
+EXCLUDED = (
+    "chrome/locale/*/landingpage.dtd",
+    "chrome/locale/*/description.properties",
+    )
+
+PLAIN = (
+    "*.png",
+    "*.jpg",
+    "*.gif",
+    )
+
+
 try:
     from xpisign.context import ZipFileMinorCompression as _Minor
-    Minor = _Minor
+
+    class Minor(_Minor):
+        """ Compatiblity stub"""
+
+        @property
+        def compat(self):
+            """Only a compat layer"""
+            return False
+
 except ImportError:
     warn("No optimal compression available")
 
@@ -31,9 +91,13 @@ except ImportError:
         def __exit__(self, *args):
             pass
 
+        @property
+        def compat(self):
+            """Only a compat layer"""
+            return True
+
 try:
-    from Mozilla.CompareLocales import compareDirs as _compare_locales
-    compare_locales = _compare_locales
+    from Mozilla.CompareLocales import compareDirs as compare_locales
 except ImportError:
     warn("CompareLocales is not available!")
     compare_locales = None
@@ -44,14 +108,15 @@ class Reset(object):
     Reset the tracked file-like object stream position when done
     """
 
-    def __init__(self, fp):
-        self.fp = fp
+    def __init__(self, filep):
+        self.filep = filep
+        self.position = 0
 
     def __enter__(self):
-        self.pos = self.fp.tell()
+        self.position = self.filep.tell()
 
     def __exit__(self, *args):
-        self.fp.seek(self.pos, 0)
+        self.filep.seek(self.position, 0)
 
 
 class WorkingDirectory(object):
@@ -59,68 +124,32 @@ class WorkingDirectory(object):
     Change the working directory to make.py's path and restore when done
     """
 
+    def __init__(self):
+        self.workdir = "."
+
     def __enter__(self):
-        self.wd = os.getcwd()
+        self.workdir = os.getcwd()
         try:
             os.chdir(os.path.split(__file__)[0])
-        except:
+        except Exception:
             pass
 
     def __exit__(self, *args):
-        os.chdir(self.wd)
+        os.chdir(self.workdir)
 
     @staticmethod
-    def change(f):
+    def change(func):
         """
         Decorator: Change the working directory before calling wrapped
         function.
         """
 
-        @wraps(f)
+        @wraps(func)
         def wrapper(*args, **kw):
+            """ Automatic changing of working directory"""
             with WorkingDirectory():
-                return f(*args, **kw)
+                return func(*args, **kw)
         return wrapper
-
-
-NS_RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-NS_EM = "http://www.mozilla.org/2004/em-rdf#"
-
-RELEASE_ID = "{DDC359D1-844A-42a7-9AA1-88A850A938A8}"
-
-FILES = ("install.rdf",
-         "icon*.png",
-         "bootstrap.js",
-         "MPL", "GPL", "LGPL", "LICENSE",
-         "chrome.manifest",
-         "chrome/content/about/about.xul",
-         "chrome/content/common/",
-         "chrome/content/dta/",
-         "chrome/content/integration/",
-         "chrome/content/preferences/",
-         "chrome/content/privacy/",
-         "chrome/content/mac/",
-         "chrome/content/unix/",
-         "chrome/content/win/",
-         "chrome/public/",
-         "chrome/skin/",
-         "chrome/locale/*/",
-         "modules/*.js*",
-         "modules/loaders/",
-         "modules/manager/",
-         "modules/support/",
-         "modules/thirdparty/",
-         )
-TESTS = ("modules/tests/",
-         "tests"
-         )
-EXCLUDED = ("chrome/locale/*/landingpage.dtd",
-            "chrome/locale/*/description.properties",
-            )
-PLAIN = ("*.png",
-         "*.jpg",
-         "*.gif"
-         )
 
 
 @WorkingDirectory.change
@@ -132,14 +161,14 @@ def check_locales(errors_only=False):
     if not compare_locales:
         return
     listed = dict()
-    with open("chrome.manifest", "rb") as mp:
-        r = re.compile(r"^locale\s+.+?\s+(.+?)\s+(.+?)\s*$")
-        for l in mp:
-            m = r.match(l)
-            if not m:
+    with open("chrome.manifest", "r", encoding="utf-8") as manip:
+        expr = re.compile(r"^locale\s+.+?\s+(.+?)\s+(.+?)\s*$")
+        for line in manip:
+            match = expr.match(line)
+            if not match:
                 continue
-            l, p = m.groups()
-            listed[l] = p
+            locale, loc = match.groups()
+            listed[locale] = loc
 
     if not listed:
         raise ValueError("did not read any locales")
@@ -147,39 +176,39 @@ def check_locales(errors_only=False):
     if len(listed) == 1:
         return
 
-    for x in ("en-US", "en", "de", "fr"):
-        baseloc = listed.pop(x, None)
+    for locale in ("en-US", "en", "de", "fr"):
+        baseloc = listed.pop(locale, None)
         if baseloc:
             break
     else:
         raise ValueError("failed to determine base locale")
 
-    for l, p in listed.items():
-        if not os.path.isdir(p):
-            raise ValueError("Listed locale not available {}".format(l))
+    for locale, locpath in listed.items():
+        if not os.path.isdir(locpath):
+            raise ValueError("Listed locale not available {}".format(locale))
 
-        res = compare_locales(baseloc, p)
+        res = compare_locales(baseloc, locpath)
         summary = res.getSummary()[None]
         if "errors" in summary or (not errors_only and "missing" in summary):
-            raise ValueError("{}: {}\n{}".format(l, summary, res.details))
+            raise ValueError("{}: {}\n{}".format(locale, summary, res.details))
 
 
-def filesort(f):
+def filesort(file):
     """
     Package file sort keys
     """
 
-    if f in ("install.rdf",):
-        return 0, f
-    if f in ("bootstrap.js", "chrome.manifest"):
-        return 1, f
-    if fnmatch(f, "icon*.png"):
-        return 2, f
-    if fnmatch(f, "modules/*"):
-        return 3, f
-    if f in ("MPL", "GPL", "LGPL", "LICENSE"):
-        return 1000, f
-    return 500, f
+    if file in ("install.rdf",):
+        return 0, file
+    if file in ("bootstrap.js", "chrome.manifest"):
+        return 1, file
+    if fnmatch(file, "icon*.png"):
+        return 2, file
+    if fnmatch(file, "modules/*"):
+        return 3, file
+    if file in ("MPL", "GPL", "LGPL", "LICENSE"):
+        return 1000, file
+    return 500, file
 
 
 def files(*args, **kw):
@@ -192,14 +221,16 @@ def files(*args, **kw):
 
     excluded = kw.pop("excluded", ())
 
-    def items(f):
-        if os.path.isdir(f):
-            if not f.endswith("/"):
-                f += "/"
-            for i in files(f + "*"):
+    def items(file):
+        """Enumerate files"""
+        if os.path.isdir(file):
+            if not file.endswith("/"):
+                file += "/"
+            for i in files(file + "*"):
                 yield i
-        elif os.path.isfile(f) and not any(fnmatch(f, x) for x in excluded):
-            yield f.replace("\\", "/")
+        elif os.path.isfile(file) and \
+                not any(fnmatch(file, x) for x in excluded):
+            yield file.replace("\\", "/")
 
     for p in args:
         gg = glob(p)
@@ -212,51 +243,59 @@ def files(*args, **kw):
 
 def releaseversionjs(fp, **kw):
     """ Preprocess version.js in release mode """
+    kw = kw
     io = BytesIO()
     with Reset(io):
         for l in fp:
-            if "const ID = " in l:
-                print >> io, 'const ID = "{}"'.format(RELEASE_ID)
+            if b"const ID = " in l:
+                io.write(('const ID = "{}";\n'.format(RELEASE_ID)).encode("utf-8"))
             else:
-                print >> io, l,
+                io.write(l)
     return io
 
 
 def droptests(fp, **kw):
     """ Drop tests from chrome.manifest """
+    kw = kw
     io = BytesIO()
     with Reset(io):
         for l in fp:
-            if "dta-tests" in l:
+            if b"dta-tests" in l:
                 continue
-            print >> io, l,
+            io.write(l)
     return io
 
 
 def localize(fp, **kw):
     """ Generate em:localized """
+    kw = kw
+
     def sort(f):
         if "en-US" in f["locale"]:
             return 0, f["locale"]
         return 1, f["locale"]
 
-    locales = list()
-    for f in sorted(files("chrome/locale/*/description.properties")):
-        locale = dict(locale=(f.split("/", 3)[2],))
-        with open(f, "rb") as lp:
-            for l in lp:
-                l = unicode(l, "utf-8").strip()
-                if not l or l.startswith("#"):
-                    continue
-                k, v = l.split("=", 1)
-                k = k.split(".")
-                k = k[-2] if len(k[-1]) < 3 else k[-1]
-                if not k or not v:
-                    continue
-                if k not in locale:
-                    locale[k] = list()
-                locale[k] += v,
-        locales += locale,
+    def get_locale_strings():
+        locales = list()
+        for f in sorted(files("chrome/locale/*/description.properties")):
+            locale = dict(locale=(f.split("/", 3)[2],))
+            with open(f, "r", encoding="utf-8") as lp:
+                for l in lp:
+                    l = l.strip()
+                    if not l or l.startswith("#"):
+                        continue
+                    k, v = l.split("=", 1)
+                    k = k.split(".")
+                    k = k[-2] if len(k[-1]) < 3 else k[-1]
+                    if not k or not v:
+                        continue
+                    if k not in locale:
+                        locale[k] = list()
+                    locale[k] += v,
+            locales += locale,
+        return locales
+
+    locales = get_locale_strings()
 
     with Reset(fp):
         rdf = XML(fp.read())
@@ -275,24 +314,27 @@ def localize(fp, **kw):
             "developer", "translator", "contributor")
     baseprops = dict(mapkey(k) for k in keys)
 
-    parent = rdf.getElementsByTagNameNS(NS_EM, "id")[0].parentNode
-    for props in sorted(locales, key=sort):
-        node = rdf.createElementNS(NS_EM, "em:localized")
-        desc = rdf.createElementNS(NS_RDF, "Description")
-        for k in keys:
-            vals = props.get(k, baseprops.get(k, list()))
-            for v in vals:
-                n = rdf.createElementNS(NS_EM, "em:" + k)
-                n.appendChild(rdf.createTextNode(v))
-                desc.appendChild(n)
-        parent.appendChild(rdf.createTextNode("\n\t\t"))
-        node.appendChild(desc)
-        parent.appendChild(node)
-    parent.appendChild(rdf.createTextNode("\n\t"))
+    def add_props():
+        parent = rdf.getElementsByTagNameNS(NS_EM, "id")[0].parentNode
+        for props in sorted(locales, key=sort):
+            node = rdf.createElementNS(NS_EM, "em:localized")
+            desc = rdf.createElementNS(NS_RDF, "Description")
+            for k in keys:
+                vals = props.get(k, baseprops.get(k, list()))
+                for v in vals:
+                    n = rdf.createElementNS(NS_EM, "em:" + k)
+                    n.appendChild(rdf.createTextNode(v))
+                    desc.appendChild(n)
+            parent.appendChild(rdf.createTextNode("\n\t\t"))
+            node.appendChild(desc)
+            parent.appendChild(node)
+        parent.appendChild(rdf.createTextNode("\n\t"))
+
+    add_props()
 
     io = BytesIO()
     with Reset(io):
-        print >> io, rdf.toxml(encoding="utf-8")
+        io.write(rdf.toxml(encoding="utf-8"))
         rdf.unlink()
     return io
 
@@ -307,6 +349,8 @@ def localized(fn):
 
 
 def releasify(fp, **kw):
+    """ Decorator: Transform into release version """
+    kw = kw
     with Reset(fp):
         rdf = XML(fp.read())
     node = rdf.getElementsByTagNameNS(NS_EM, "id")[0].childNodes[0]
@@ -314,7 +358,7 @@ def releasify(fp, **kw):
 
     io = BytesIO()
     with Reset(io):
-        print >> io, rdf.toxml(encoding="utf-8")
+        io.write(rdf.toxml(encoding="utf-8"))
     rdf.unlink()
     return io
 
@@ -333,7 +377,7 @@ def set_uurl(fp, **kw):
 
     io = BytesIO()
     with Reset(io):
-        print >> io, rdf.toxml(encoding="utf-8")
+        io.write(rdf.toxml(encoding="utf-8"))
     rdf.unlink()
     return io
 
@@ -345,7 +389,7 @@ def releaserdf(fp, **kw):
     with Reset(fp):
         rdf = XML(fp.read())
     node = rdf.getElementsByTagNameNS(NS_EM, 'version')[0].childNodes[0]
-    if not re.match(r"^[\d.]+$", node.data):
+    if not re.match(r"^[\d.]+$", node.data) and not kw.get("force"):
         raise ValueError("Invalid release version: {}".format(node.data))
 
     return releasify(fp, **kw)
@@ -378,7 +422,7 @@ def nightlyrdf(fp, **kw):
 
     io = BytesIO()
     with Reset(io):
-        print >> io, rdf.toxml(encoding="utf-8")
+        io.write(rdf.toxml(encoding="utf-8"))
     rdf.unlink()
     return set_uurl(io, **kw)
 
@@ -386,14 +430,14 @@ def nightlyrdf(fp, **kw):
 @localized
 def devrdf(fp, **kw):
     """ Preprocesses install.rdf for default mode """
-
+    kw = kw
     rdf = XML(fp.read())
     node = rdf.getElementsByTagNameNS(NS_EM, 'name')[0].childNodes[0]
     node.data += " *unofficial developer build*"
 
     io = BytesIO()
     with Reset(io):
-        print >> io, rdf.toxml(encoding="utf-8")
+        io.write(rdf.toxml(encoding="utf-8"))
     rdf.unlink()
     return io
 
@@ -406,7 +450,8 @@ def pack(xpi, patterns, **kw):
                      key=filesort)
     with ZipFile(xpi, "w", ZIP_DEFLATED) as zp:
         def write(fn, mode, modifier=None):
-            with file(fn, "rb") as fp:
+            """Write a file, propably modified"""
+            with open(fn, "rb") as fp:
                 if modifier:
                     with modifier(fp, **kw) as mp:
                         zp.writestr(fn, mp.read(), mode)
@@ -440,58 +485,69 @@ def pack(xpi, patterns, **kw):
 def create(args):
     """ Process arguments and create the XPI """
 
-    parser = OptionParser()
-    parser.add_option("--force",
-                      dest="force",
-                      help="force overwrite output file if exists",
-                      action="store_true",
-                      default=False
-                      )
-    parser.add_option("--release",
-                      dest="type",
-                      help="create release XPI",
-                      action="store_const",
-                      const="release"
-                      )
-    parser.add_option("--beta",
-                      dest="type",
-                      help="create release XPI",
-                      action="store_const",
-                      const="beta"
-                      )
-    parser.add_option("--nightly",
-                      dest="type",
-                      help="create nightly XPI",
-                      action="store_const",
-                      const="nightly"
-                      )
-    parser.add_option("--updateURL",
-                      dest="updateurl",
-                      help="nightly update url",
-                      type="string",
-                      default=None
-                      )
-    parser.add_option("--tests",
-                      dest="tests",
-                      help="ships tests as well",
-                      action="store_true",
-                      default=False
-                      )
-    opts, args = parser.parse_args(args)
+    parser = ArgumentParser()
+    parser.add_argument(
+        "--force",
+        dest="force",
+        help="force overwrite output file if exists",
+        action="store_true",
+        default=False
+        )
+    parser.add_argument(
+        "--release",
+        dest="type",
+        help="create release XPI",
+        action="store_const",
+        const="release"
+        )
+    parser.add_argument(
+        "--beta",
+        dest="type",
+        help="create release XPI",
+        action="store_const",
+        const="beta"
+        )
+    parser.add_argument(
+        "--nightly",
+        dest="type",
+        help="create nightly XPI",
+        action="store_const",
+        const="nightly"
+        )
+    parser.add_argument(
+        "--updateURL",
+        dest="updateurl",
+        help="nightly update url",
+        type=str,
+        default=None
+        )
+    parser.add_argument(
+        "--tests",
+        dest="tests",
+        help="ships tests as well",
+        action="store_true",
+        default=False
+        )
+    parser.add_argument(
+        "xpi",
+        nargs=1,
+        type=str,
+        help="output XPI"
+        )
+    args = parser.parse_args(args)
 
     patterns = FILES
-    if opts.tests:
+    if args.tests:
         patterns += TESTS
 
-    if len(args) != 1:
-        raise ValueError("No distinct XPI name provided")
-    output = args[0]
+    output = args.xpi.pop()
+    del args.xpi
 
-    if opts.type in ("nightly", "beta") and not opts.updateurl:
+    if args.type in ("nightly", "beta") and not args.updateurl:
         raise ValueError("Nightly/Beta requested but no update URL provided")
-    elif opts.type == "release" and opts.updateurl:
+    elif args.type == "release" and args.updateurl:
         raise ValueError("Release versions cannot have an update URL")
-    if not opts.force and os.path.exists(output):
+    if not args.force and os.path.exists(output):
         raise ValueError("Output file already exists")
 
     check_locales(errors_only=True)
@@ -499,17 +555,15 @@ def create(args):
     with BytesIO() as io:
         try:
             with Reset(io):
-                pack(io, patterns, **opts.__dict__)
+                pack(io, patterns, **args.__dict__)
         except Exception as ex:
-            raise Exception("Failed packing: {}".format(ex)), None, \
-                sys.exc_info()[2]
+            raise Exception("Failed packing: {}".format(ex)) from ex
 
         try:
             with open(output, "wb") as op:
                 op.write(io.read())
         except Exception as ex:
-            raise Exception("Failed writing XPI: {}".format(ex)), None, \
-                sys.exc_info()[2]
+            raise Exception("Failed writing XPI: {}".format(ex)) from ex
 
 
 if __name__ == "__main__":
