@@ -251,6 +251,7 @@ def releaseversionjs(fp, **kw):
                 io.write(('const ID = "{}";\n'.format(RELEASE_ID)).encode("utf-8"))
             else:
                 io.write(l)
+        io.truncate()
     return io
 
 
@@ -263,6 +264,7 @@ def droptests(fp, **kw):
             if b"dta-tests" in l:
                 continue
             io.write(l)
+        io.truncate()
     return io
 
 
@@ -335,7 +337,8 @@ def localize(fp, **kw):
     io = BytesIO()
     with Reset(io):
         io.write(rdf.toxml(encoding="utf-8"))
-        rdf.unlink()
+        io.truncate()
+    rdf.unlink()
     return io
 
 
@@ -359,6 +362,7 @@ def releasify(fp, **kw):
     io = BytesIO()
     with Reset(io):
         io.write(rdf.toxml(encoding="utf-8"))
+        io.truncate()
     rdf.unlink()
     return io
 
@@ -378,6 +382,7 @@ def set_uurl(fp, **kw):
     io = BytesIO()
     with Reset(io):
         io.write(rdf.toxml(encoding="utf-8"))
+        io.truncate()
     rdf.unlink()
     return io
 
@@ -423,6 +428,7 @@ def nightlyrdf(fp, **kw):
     io = BytesIO()
     with Reset(io):
         io.write(rdf.toxml(encoding="utf-8"))
+        io.truncate()
     rdf.unlink()
     return set_uurl(io, **kw)
 
@@ -438,6 +444,7 @@ def devrdf(fp, **kw):
     io = BytesIO()
     with Reset(io):
         io.write(rdf.toxml(encoding="utf-8"))
+        io.truncate()
     rdf.unlink()
     return io
 
