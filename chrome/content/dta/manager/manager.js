@@ -960,9 +960,8 @@ var Dialog = {
 	},
 
 	process: function() {
-		Prefs.refreshConnPrefs(this._running);
-
 		try {
+			Prefs.refreshConnPrefs(this._running);
 			this.refresh();
 
 			let ts = Utils.getTimestamp();
@@ -2199,7 +2198,7 @@ QueueItem.prototype = {
 		this._criticals++;
 	},
 	uncritical: function() {
-		this._criticals = Math.max(0, this._criticals + 1);
+		this._criticals = Math.max(0, this._criticals - 1);
 	},
 	finishDownload: function(exception) {
 		if (this._finishDownloadTask) {
