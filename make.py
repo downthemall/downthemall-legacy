@@ -109,6 +109,7 @@ FILES = ("install.rdf",
          "modules/loaders/",
          "modules/manager/",
          "modules/support/",
+         "modules/thirdparty/",
          )
 TESTS = ("modules/tests/",
          "tests"
