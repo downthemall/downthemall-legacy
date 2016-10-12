@@ -1837,7 +1837,7 @@ QueueItem.prototype = {
 	set activeChunks(nv) {
 		nv = Math.max(0, nv);
 		if (!nv && this.state === RUNNING) {
-			log(LOG_INFO, `active chunks set to zero while running: ${nv} ${this._activeChunks}`, null, true);
+			log(LOG_INFO, `active chunks set to zero while running: ${nv} ${this._activeChunks}`);
 		}
 		this._activeChunks = nv;
 		this.invalidate(6);
