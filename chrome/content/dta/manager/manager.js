@@ -2647,11 +2647,16 @@ QueueItem.prototype = {
 				downloadNewChunk(this, biggest.end + 1, end);
 				rv = true;
 			}
+			if (this.activeChunks < 1 &&
+					this.chunks.some(chunk => !(chunk.running || chunk.complete))) {
+				throw new Error("Nothing started but no actives, yet paused");
+			}
 
 			return rv;
 		}
 		catch(ex) {
-			log(LOG_ERROR, "resumeDownload():", ex);
+			this.dumpScoreboard();
+			log(LOG_ERROR, "resumeDownload():", ex, true);
 		}
 		return false;
 	},
