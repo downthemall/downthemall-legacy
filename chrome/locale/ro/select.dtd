@@ -1,0 +1,16 @@
+<!ENTITY title "Selectare surse">
+<!ENTITY filters.caption "Filtre">
+<!ENTITY additional.caption "Filtrare rapidă">
+<!ENTITY additional.tip "Puteți defini filtre text multiple, separându-le cu virgule. Filtrele pot conține orice text pe baza căruia se va face filtrarea">
+<!ENTITY filter.tip "Specificați aici textul pe baza căruia se va face filtrarea (câteva exemple sunt furnizare în lista derulantă)">
+<!ENTITY menu.check.label "Marchează elementele selectate">
+<!ENTITY menu.uncheck.label "Demarchează elementele selectate">
+<!ENTITY menu.toggle.label "Inversează marcajul pentru elementele selectate">
+<!ENTITY menu.copylinks2.label "Copiază adresele">
+<!ENTITY tab.links.label "Adrese">
+<!ENTITY tab.media.label "Imagini alte elemente media">
+<!ENTITY header.desc.label "Descriere">
+<!ENTITY selectfiltered.label "Selectează elementele filtrate">
+<!ENTITY disableother.label "Dezactivează alte filtre">
+<!ENTITY disableother.tooltip "Dezactivează alte filtre și folosește numai filtrarea rapidă (opțiunea nu se memorează în acest moment)">
+<!ENTITY resname.value "Denumire resursă">

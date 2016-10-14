@@ -1,0 +1,31 @@
+<!ENTITY mask.tags "Șabloane de redenumire">
+<!ENTITY mask.name "Denumire fișier">
+<!ENTITY mask.ext "Extensie fișier">
+<!ENTITY mask.url "URL de bază">
+<!ENTITY mask.curl "URL complet">
+<!ENTITY mask.flatcurl "URL complet prescurtat">
+<!ENTITY mask.batch "Număr serie">
+<!ENTITY mask.inum "Număr element">
+<!ENTITY mask.hh "Ore">
+<!ENTITY mask.mm "Minute">
+<!ENTITY mask.ss "Secunde">
+<!ENTITY mask.d "Zi">
+<!ENTITY mask.m "Lună">
+<!ENTITY mask.y "An">
+<!ENTITY mask.subdirs "Subdirectoare din URL">
+<!ENTITY mask.flatsubdirs "Subdirectoare din URL-ul prescurtat">
+<!ENTITY mask.linktext "Text în adresă">
+<!ENTITY mask.flatlinktext "Text în adresa prescurtată">
+<!ENTITY mask.refername "Denumire fișier de proveniență">
+<!ENTITY mask.referext "Extensie fișier de proveniență">
+<!ENTITY mask.refer "URL de proveniență">
+<!ENTITY mask.crefer "URL de proveniență complet">
+<!ENTITY mask.flatcrefer "URL de proveniență prescurtat">
+<!ENTITY mask.referdirs "Subdirectoare din URL-ul de proveniență">
+<!ENTITY mask.flatreferdirs "Subdirectoare din URL-ul de proveniență prescurtat">
+<!ENTITY mask.qstring "Șir de interogare">
+<!ENTITY mask.referqstring "Șir de interogare inițial">
+<!ENTITY mask.title "Titlu asociat cu adresa">
+<!ENTITY mask.flattitle2 "Titlu prescurtat asociat cu adresa">
+<!ENTITY mask.tip "Faceți clic sa trageți cu mausul pentru a adăuga în șablon">
+<!ENTITY mask.open.tip "Tabelă de șabloane de redenumire">
