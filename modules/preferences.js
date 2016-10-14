@@ -221,7 +221,7 @@ function removeObserver(branch, obj) {
 }
 
 /**
- * Converts/encapsulates object into weak nsIObserser.
+ * Converts/encapsulates object into weak nsIObserver.
  * Object must already implement observe().
  * Object may already implement QueryInterface
  * @param obj (object) Object to convert
