@@ -1,0 +1,67 @@
+<!ENTITY tooladddownload.label "Adaugă surse">
+<!ENTITY tooladd.tooltip "Adaugă manual o adresă în DownThemAll">
+<!ENTITY tooldonate.tooltiptext "Ne puteți ajuta să facem DownThemAll mai bun. Puteți face o mică donație!">
+<!ENTITY movetop.label "Mută la început">
+<!ENTITY movebottom.label "Mută la sfârșit">
+<!ENTITY moveup.label "Mută în sus">
+<!ENTITY movedown.label "Mută în jos">
+<!ENTITY search.placeholder "Căutare descărcări">
+<!ENTITY download.label "Descărcare/Denumire">
+<!ENTITY domain.label "Domeniu">
+<!ENTITY percent.label "Procent">
+<!ENTITY pct.label "Evoluție">
+<!ENTITY dim.label "Dimensiune">
+<!ENTITY time2.label "Durată estimată">
+<!ENTITY parts.label "Segmente">
+<!ENTITY speed.label "Viteză">
+<!ENTITY infoURLTitle.value "De la:">
+<!ENTITY infoSizeTitle.value "Dimensiune:">
+<!ENTITY infoDateTitle.value "Data adăugării:">
+<!ENTITY infoMultiple.value "Elemente multiple">
+<!ENTITY infoPrivate.value "Descărcare „fără urme”">
+<!ENTITY elapsedTitle.value "Timp scurs:">
+<!ENTITY remainingTitle.value "Timp rămas:">
+<!ENTITY currentSpeedTitle.value "Viteză curentă:">
+<!ENTITY avgSpeedTitle.value "Viteză medie:">
+<!ENTITY path.label "Cale de stocare">
+<!ENTITY hash.label "Sumă de control">
+<!ENTITY infos.label "Informații despre descărcare">
+<!ENTITY launch.label "Deschide fișierul">
+<!ENTITY rename.label "Redenumește fișierul">
+<!ENTITY delete.label "Șterge fișierul">
+<!ENTITY targetdir.label "Deschide dosarul">
+<!ENTITY pause.label "Întrerupe">
+<!ENTITY resume.label "Repornește">
+<!ENTITY cancel.label "Anulează…">
+<!ENTITY removemenu.label "Elimină descărcările…">
+<!ENTITY removeselected.label "Elimină descărcările selectate…">
+<!ENTITY removehost.label "Elimină descărcările din domeniu…">
+<!ENTITY removebatch.label "Elimină seria curentă…">
+<!ENTITY removecompleted.label "Elimină descărcările complete…">
+<!ENTITY removeAll.label "Elimină tot…">
+<!ENTITY removeFailed.label "Proces de eliminare eșuat">
+<!ENTITY removePaused.label "Proces de eliminare în pauză">
+<!ENTITY removeDupes.label "Elimină dublurile…">
+<!ENTITY removeGone.label "Elimină înregistrările fișierelor șterse…">
+<!ENTITY advanced.label "Complex">
+<!ENTITY addchunk.label "Adaugă un segment">
+<!ENTITY removechunk.label "Elimină un segment">
+<!ENTITY force.label "Forțează pornirea">
+<!ENTITY import.label "Importă din fișier">
+<!ENTITY exportto.label "Exportă în fișier…">
+<!ENTITY addlimits.label "Definește limitări per domeniu…">
+<!ENTITY options.caption "Opțiuni">
+<!ENTITY loading2.label "Se încarcă…">
+<!ENTITY restore.label "Restaurează">
+<!ENTITY close.label "Închide">
+<!ENTITY invertmatcher.label "Inversează criteriile de filtrare">
+<!ENTITY clearmatcher.label "Elimină filtrele">
+<!ENTITY speedlimit2.tooltip "Modifică limita maximă globală a vitezei de descărcare. Lista este actualizată dinamic">
+<!ENTITY perdownloadspeedlimit2.label "Viteză de descărcare">
+<!ENTITY perdownloadspeedlimit2.tooltip "Modifică limita maximă a vitezei de descărcare. Limita maximă globală va fi, în continuare, respectată">
+<!ENTITY mirrors.label "Gestionează saiturile alternative">
+<!ENTITY mirrors.tooltip "Gestionează locațiile alternative de descărcare">
+<!ENTITY toolbar.icons "Afișează doar pictograme">
+<!ENTITY toolbar.full "Afișează pictograme și text">
+<!ENTITY sortascending.label "Sortează de la A la Z">
+<!ENTITY sortdescending.label "Sortează de la Z la A">

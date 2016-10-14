@@ -1,0 +1,6 @@
+<!ENTITY windowtitle "Adaugă fişiere">
+<!ENTITY adddescription.value "Furnizează adresa de descărcare și (opțional) pagina de referință.">
+<!ENTITY createbatchdescriptor.label "Creează un descriptor de serie">
+<!ENTITY createbatchdescriptor.tooltip "Se creează un descriptor de descărcare în serie pentru textul selectat">
+<!ENTITY desc.batches.value "Puteți folosi, de asemenea, și descriptori pentru descărcarea simultană a mai multor fișiere.">
+<!ENTITY examples.value "Exemple:">

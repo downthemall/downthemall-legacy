@@ -1,0 +1,95 @@
+<!ENTITY lp.localedir "ltr">
+<!ENTITY language "Română">
+<!ENTITY transAuthor "Cătălin Zamfirescu">
+<!ENTITY fulltranslation "Traducere în română: Cătălin Zamfirescu">
+<!ENTITY amo.summary2 "The first and only download manager/accelerator inside your browser!">
+<!ENTITY amo.description.intro "DownThemAll! este tot ceea ce se poate dori de la un gestionar de descărcări: are un accelerator avansat care mărește viteza de descărcare de până la 4 ori și vă permite să întrerupeți și să reluați descărcările în orice moment.">
+<!ENTITY amo.description.feat2 "DownThemAll is fast, reliable and easy-to-use! It lets you download all the links or images contained in a web page and much more: you can refine your downloads by fully customizable criteria to get only what you really want. Be in full control over your downloads, dedicated speed and number of parallel connections at any time. Use Metalinks or add mirrors manually to download a file from different servers at the same time.">
+<!ENTITY amo.description.free2 "DownThemAll is open-source and freeware. No Adware, no Spyware, no tracking, no costs at all!">
+<!ENTITY amo.description.more "Pentru informații suplimentare vizitați pagina <a href='http://www.downthemall.net/howto/features/'>Caracteristici</a> (în limba engleză).">
+<!ENTITY lp.title "Despre DownThemAll!">
+<!ENTITY lp.welcome "Bun venit la DownThemAll!">
+<!ENTITY lp.info "Urmăriți clipurile video care ilustrează modul de utilizare a DownThemAll! și aflați mai multe despre confidențialitate și drepturile dumneavoastră.">
+<!ENTITY lp.moreinfo "Pentru informații suplimentare vizitați pagina <a href='http://www.downthemall.net/howto/features/'>Caracteristici</a>.">
+<!ENTITY lp.gettingstarted "Primii pași">
+<!ENTITY lp.toolbar "Butoanele barei de unelte">
+<!ENTITY lp.privacy "Confidențialitate">
+<!ENTITY lp.yourrights "Drepturile dumneavoastră">
+<!ENTITY lp.contact "Contact">
+<!ENTITY lp.pleasenote "Notă:">
+<!ENTITY lp.donate2 "Please consider making a contribution">
+<!ENTITY lp.tut.firsttitle "<font face="Helvetica">Prima descărcare&quot;&gt;">
+<!ENTITY lp.tut.fd2 "Downloading a file in dTa is fairly easy but also very powerful. If prompted to open or save a file you may use the DownThemAll! item. After choosing where to save the download, you may start to download immediately or queue the file to be downloaded later.">
+<!ENTITY lp.tut.selecttitle "<font face="Helvetica">Caseta de selectare surse&quot;&gt;">
+<!ENTITY lp.tut.selintro "Meniul contextual al unei pagini web oferă o nouă opțiune — DownThemAll!. Folosind această opțiune se va deschide caseta de selectare surse DownThemAll!, de unde puteți selecta cu ușurință una sau mai multe adrese de descărcare din pagina respectivă.">
+<!ENTITY lp.tut.seloptions "În caseta de selectare aveți mai multe moduri de a selecta fișierele pe care doriți să le descărcați:">
+<!ENTITY lp.tut.selopthand2 "You may check the links you want to download by hand.">
+<!ENTITY lp.tut.seloptfilters2 "You may use the built-in or own Filters, e.g. to download all linked images.">
+<!ENTITY lp.tut.seloptfast2 "Additionally you may type in your own filter in the Fast filtering box, for example <code>*.pdf,*.doc</code> or even use regular expressions">
+<!ENTITY lp.tut.seltypes "Caseta de selectare are două secțiuni pentru două tipuri diferite de descărcare:">
+<!ENTITY lp.tut.seltypelinks "Secțiunea „Legături”, conținând toate legăturile posibil de descărcat găsite în pagină">
+<!ENTITY lp.tut.seltypepics "Secțiunea „Imagini și fișiere multimedia”, conținând adresele tuturor imaginilor și a celorlalte fișiere multimedia afișate în pagină">
+<!ENTITY lp.tut.selgalleries "Imaginile în mărime reală sunt adesea doar legături către colecții de imagini, prin urmare, le veți găsi în secțiunea „Legături”.">
+<!ENTITY lp.tut.seldone2 "Once you selected the files to download hit either Start! to start your downloads immediately or Add paused to download later.">
+<!ENTITY lp.tut.batchestitle "<font face="Helvetica">Descărcarea loturilor de fișiere&quot;&gt;">
+<!ENTITY lp.tut.batches1 "O mulțime de utilizatorii doresc să descarce loturi de fișiere numerotate secvențial. DownThemAll! vă permite să specificați cu ușurință loturile așa cum este arătat în clipul video.">
+<!ENTITY lp.tut.batches2 "Sintaxa de bază este: <code>[început:sfârșit]</code> sau <code>[început:sfârșit:pas]</code>, unde <code>început</code> și <code>sfârșit</code> pot fi un număr sau un caracter, iar <code>pas</code> definește pasul sau rația de incrementare și este 1 dacă este omis.">
+<!ENTITY lp.tut.batches3 "De exemplu, dacă doriți să descărcați imagini de la 001 la 100, puteți scrie adresa: <code>http://example.org/[001:100].jpg</code>.">
+<!ENTITY lp.tut.batchesctx "Furthermore, the context menu of the URL field in the Add Downloads window lets you easily convert a text-selection into a batch descriptor.">
+<!ENTITY lp.tut.oneclicktitle "<font face="Helvetica">DownThemAll! OneClick&quot;&gt;">
+<!ENTITY lp.tut.oneclick1.2 "Once you made your initial download another item will be available: DownThemAll! OneClick, which you may use to download files directly using the previous settings and skipping the download options and/or selection dialogs.">
+<!ENTITY lp.tut.oneclick2 "Prin urmare OneClick vă permite să creați rapid o listă de descărcări cu o mulțime de adrese.">
+<!ENTITY lp.tut.oneclickn "După utilizarea instrumentului de ștergere a datelor personale din Firefox, facilitatea OneClick nu va mai fi disponibilă până când nu veți face o nouă descărcare obișnuită cu DownThemAll!.">
+<!ENTITY lp.tut.tabstitle "Downloading items from all tabs at once">
+<!ENTITY lp.tut.alltabs "It is possible to queue items from all tabs at once, by using the toolbar button drop-down menus.">
+<!ENTITY lp.tut.tabrestore "Only links from fully restored tabs will be available.">
+<!ENTITY lp.tb.intro "DownThemAll! vă pune la dispoziție câteva butoane în bara de unelte care vă oferă o modalitate convenabilă de a accesa facilitățile sale.">
+<!ENTITY lp.tb.install "Adaugă butoane">
+<!ENTITY lp.tb.add.title "<font face="Helvetica">Adăugarea și folosirea butoanelor din bara de unelte&quot;&gt;">
+<!ENTITY lp.tb.add.p1 "DownThemAll! pune la dispoziție patru butoane în bara de unelte pentru a face ușoare căutarea și descărcarea fișierelor:">
+<!ENTITY lp.tb.add.dta "Butonul DownThemAll!">
+<!ENTITY lp.tb.add.dtadesc "Deschide caseta DownThemAll! de selectare surse pentru fila curentă.">
+<!ENTITY lp.tb.add.tdta "Butonul OneClick!">
+<!ENTITY lp.tb.add.tdtadesc "Descarcă toate elementele din pagina curentă în funcție de ultimele preferințe și filtre utilizate.">
+<!ENTITY lp.tb.add.manager "Butonul Gestionarului DownThemAll!">
+<!ENTITY lp.tb.add.managerdesc "Deschide fereastra Gestionarului de descărcări DownThemAll!.">
+<!ENTITY lp.tb.add.selector "Butonul de selectare DownThemAll!">
+<!ENTITY lp.tb.add.selectordesc "Adaugă elemente în lista de descărcări.">
+<!ENTITY lp.tb.add.p2 "Butoanele pot fi adăugate în bara de unelte prin intermediul meniului, selectând <code>Vizualizare → Bare de unelte → Personalizează…</code>.">
+<!ENTITY lp.tb.dnd.title "Glisare și fixare">
+<!ENTITY lp.tb.dnd.p1 "Puteți glisa și fixa pe butoanele DownThemAll! sau OneClick!, orice legătură sau imagine pentru a fi descărcate.">
+<!ENTITY lp.tb.dnd.p2 "De asemenea, și fereastra gestionarului poate fi folosită pentru a fixa în ea elemente spre a fi descărcate.">
+<!ENTITY lp.tb.dnd.order "You may order your download queue with drag'n'drop. Just select some downloads and drop them at the desired position.">
+<!ENTITY lp.tb.selector.title "Utilizarea selectorului DownThemAll!">
+<!ENTITY lp.tb.selector.queueing "The DownThemAll! Selector lets you queue many downloads by simply clicking on the links or images.">
+<!ENTITY lp.tb.selector.how "To enable the Selector click the corresponding toolbar button. To disable it once you're done, simply click the button again.">
+<!ENTITY lp.pr.title "<font face="Helvetica">Politică de confidențialitate&quot;&gt;">
+<!ENTITY lp.pr.intro2 "DownThemAll respects your privacy.">
+<!ENTITY lp.pr.settings2 "You can have DownThemAll! remove all complete, canceled, and unfinished downloads from the download list after closing the window by changing the settings in the Preferences → Privacy panel.">
+<!ENTITY lp.pr.diag2 "You can enable diagnostic messages, which will be logged to both the error console and written to the dta_log.txt file, by the Preferences → Privacy panel. Diagnostic messages will likely contain sensitive information like URLs, file paths, filenames you're downloading, or even cookie information. This option is DISABLED by default to protect your privacy. If you submit a diagnostic log, you may wish to censor any sensitive information. Diagnostic logs will never get transmitted and/or published in an automated fashion.">
+<!ENTITY lp.pr.pwpbm "DownThemAll! supports the Firefox Per-Window Private Browsing Mode: When you add downloads from a Private Browsing Window, DownThemAll! will not store any information about downloaded files, download folders or used renaming masks. Please note that other data - such as newly created filters, or, of course, the actual downloads - is still written to your disk.">
+<!ENTITY lp.pr.link "Această notă este întotdeauna disponibilă în această pagină (about:DownThemAll) și este afișată și în caseta Opțiuni.">
+<!ENTITY lp.yr.usagetitle "<font face="Helvetica">Utilizare și redistribuire&quot;&gt;">
+<!ENTITY lp.yr.usage "Autorii DownThemAll! au optat pentru o licență care vă permite în mod liber să:">
+<!ENTITY lp.yr.usageuse "Folosiți DownThemAll!">
+<!ENTITY lp.yr.usagemod "Modificați DownThemAll!">
+<!ENTITY lp.yr.usagedist "Redistribuiți DownThemAll!, cu sau fără modificări">
+<!ENTITY lp.yr.usagemore "Citiți licența pentru mai multe informații.">
+<!ENTITY lp.yr.logo "Emblemă DownThemAll!: Drept de autor © 2004-2010 - Stefano Verna">
+<!ENTITY lp.languagetitle "Limbă">
+<!ENTITY lp.language.babelzilla "If you're fluent in multiple languages, please consider joining <a href='http://babelzilla.org'>babelzilla.org</a> to help translate this and many other great add-ons.">
+<!ENTITY lp.yr.licensetitle "<font face="Helvetica">Drepturi de autor și licență&quot;&gt;">
+<!ENTITY lp.yr.licensed "DownThemAll! este disponibil sub licența <a href='http://www.gnu.org/licenses/old-licenses/gpl-2.0.html'>GPL 2.0</a>. Vedeți fișierul GPL. Aceasta este valabilă pentru toate fișierele codului sursă.">
+<!ENTITY lp.yr.morelicense3 "Individual files may have additional and/or different licenses. See the corresponding repository files available from <a href='http://code.downthemall.net/repos/'>http://code.downthemall.net/repos/</a>. Most files are licensed under the GPL/LGPL-compatible MPL 2.0, or are tri-licensed under a MPL 1.1/GPL 2.0/LGPL 2.1 license. See the MPL, GPL, LGPL files respectively.">
+<!ENTITY lp.yr.gplintro "Cele mai importante secțiuni ale GPL 2.0 referitoare la descărcarea de răspundere privind garanția și potențialele efecte negative, sunt redate în continuare, în original:">
+<!ENTITY lp.yr.icons "Grafica, pictogramele și butoanele">
+<!ENTITY lp.yr.iconsbased4 "are based on the works of Mike Matas, Mark James, the Noun Project and the Tango project">
+<!ENTITY lp.yr.artwork3 "The original artwork is: Copyright © 2004-2013 by Stefano Verna, Federico Parodi and Nils Maier">
+<!ENTITY lp.yr.artworklicense "Grafica originală este sub licența:">
+<!ENTITY lp.yr.logo3 "The DownThemAll! logo design: Copyright © 2004-2013 by Stefano Verna.">
+<!ENTITY lp.yr.logopermissions "Denumirea și emblema DownThemAll! nu pot fi utilizate fără permisiune în nicio lucrare derivată, cu excepția aprecierilor și a notificărilor legate de licență.">
+<!ENTITY lp.ct.bugstitle "Raportarea problemelor și cereri de noi funcționalități">
+<!ENTITY lp.ct.bugs2 "Please report any bugs and feature requests at our <a href='https://bugs.downthemall.net/'>bug tracker</a>.">
+<!ENTITY lp.ct.contactstitle "Contact">
+<!ENTITY lp.ct.contactsfeed2 "We like to receive your feedback, suggestions and/or offers to help.">
+<!ENTITY lp.ct.contacts "Vă rugăm să vizitați <a href='http://www.downthemall.net/main/contacts/'>pagina de contact</a> (în limba engleză).">

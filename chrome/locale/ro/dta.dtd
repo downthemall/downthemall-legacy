@@ -1,0 +1,26 @@
+<!ENTITY start.label "Descarcă!">
+<!ENTITY start.key "D">
+<!ENTITY queue.label "Descarcă mai târziu">
+<!ENTITY queue.key "t">
+<!ENTITY options.label "Preferințe">
+<!ENTITY url.value "Adresă">
+<!ENTITY url.placeholder "Specificați adresa locației de descărcare">
+<!ENTITY override.filename.value "Denumire fișier">
+<!ENTITY override.filename.placeholder "Specificați o nouă denumire de fișier">
+<!ENTITY override.filename.tip "Specificați o nouă denumire de fișier sau lăsați necompletat pentru denumirea prestabilită">
+<!ENTITY directory.caption "Se salvează fișierul în:">
+<!ENTITY directory.placeholder "Specificați sau selectați un dosar">
+<!ENTITY mirrors.value "Saituri alternative:">
+<!ENTITY referrer.value "Pagină de origine:">
+<!ENTITY referrer.placeholder "Specificați adresa de origine">
+<!ENTITY referrer.tip "Specificați adresa de origine sau lăsați necompletat pentru a nu specifica nicio origine">
+<!ENTITY description.value "Descriere:">
+<!ENTITY checksum.value "Sumă de control:">
+<!ENTITY browse.tooltip "Răsfoiește…">
+<!ENTITY mirrormanager.tip "Gestionează saiturile alternative de descărcare">
+<!ENTITY mask3.label "Șablon">
+<!ENTITY mask.tip "Fișierele selectate vor fi salvate și redenumite folosind acest șablon">
+<!ENTITY mask.once.label "Se folosește șablonul doar o dată">
+<!ENTITY selectall.label "Selectează tot">
+<!ENTITY selectinv.label "Inversează selecția">
+<!ENTITY selectnone.label "Nu selecta nimic">

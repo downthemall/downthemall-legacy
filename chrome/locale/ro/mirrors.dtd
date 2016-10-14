@@ -1,0 +1,10 @@
+<!ENTITY title "DownThemAll! - Gestionare saituri alternative">
+<!ENTITY header "Gestionare saituri alternative">
+<!ENTITY byline1 "Descărcarea unui fișier poate fi făcută de la diferite adrese. Fișierul este apoi reîntregit automat.">
+<!ENTITY byline2 "Puteți adăuga și elimina după bunul plac adrese care vizează același fișier.">
+<!ENTITY byline3 "Adăugarea de adrese care vizează fișiere diferite va avea ca efect o descărcare viciată.">
+<!ENTITY addmirror.tip "Adaugă o adresă alternativă">
+<!ENTITY removemirror.tip "Elimină adresa alternativă selectată">
+<!ENTITY checkmirrors.tip "Verifică toate adresele alternative">
+<!ENTITY mirrorurl "Adresă:">
+<!ENTITY preference "Prioritate:">

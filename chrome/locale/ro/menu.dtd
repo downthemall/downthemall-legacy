@@ -1,0 +1,25 @@
+<!ENTITY dta-tbinstall "Adaugă butoane">
+<!ENTITY dta-pref.label "Preferințe">
+<!ENTITY dta-about2.label "Despre DownThemAll!">
+<!ENTITY dta-manager-button "Gestionar dTa!">
+<!ENTITY dta-manager-button.desc "Deschide gestionarul">
+<!ENTITY dta-selector-button2.label "Selector OneClick!">
+<!ENTITY dta-selector-button.desc "Adaugă elemente prin clic-stânga pe ele">
+<!ENTITY dta-tb-all.label "Toate filele">
+<!ENTITY dta-tb-single.label "Fila curentă">
+<!ENTITY dta-selection2.label "Selectare DownThemAll!">
+<!ENTITY dta-selection-turbo2.label "Selectare OneClick!">
+<!ENTITY dta-regular2.label "DownThemAll!">
+<!ENTITY dta-regular.desc "Deschide fereastra DownThemAll! din fila curentă">
+<!ENTITY dta-regular-turbo2.label "dTa! OneClick">
+<!ENTITY dta-regular-turbo.desc "Descarcă toate elementele din pagina curentă conform cu preferințele curente și ultimele filtre folosite">
+<!ENTITY dta-img-save2.label "Salvează imaginea cu DownThemAll!">
+<!ENTITY dta-img-save-turbo2.label "Salvează imaginea cu dTa! OneClick">
+<!ENTITY dta-video-save2.label "Salvează clipul video cu DownThemAll!">
+<!ENTITY dta-video-save-turbo2.label "Salvează clipul video cu dTa! OneClick">
+<!ENTITY dta-audio-save2.label "Salvează piesa audio cu DownThemAll!">
+<!ENTITY dta-audio-save-turbo2.label "Salvează piesa audio cu dTa! OneClick">
+<!ENTITY dta-link-save2.label "Salvează documentul cu DownThemAll!">
+<!ENTITY dta-link-save-turbo2.label "Salvează documentul cu dTa! OneClick">
+<!ENTITY dta-form-save2.label "Salvează formularul cu DownThemAll!">
+<!ENTITY dta-form-save-turbo2.label "Salvează documentul cu dTa! OneClick">
