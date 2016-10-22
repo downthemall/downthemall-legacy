@@ -22,7 +22,7 @@ const SCHEDULER_FAIR = 'fair';
 const SCHEDULER_RND = 'rnd';
 const SCHEDULER_LEGACY = 'legacy';
 
-let limits = {};
+let limits = new Map();
 
 const CONNECTIONS = Symbol.for("conns");
 const SPEED = Symbol.for("spd");
@@ -110,6 +110,7 @@ class Limit {
 	}
 
 	save() {
+		limits.set(this._host, this);
 		domainprefs.setHost(this._host, CONNECTIONS, this.connections);
 		domainprefs.setHost(this._host, SPEED, this.speed);
 		domainprefs.setHost(this._host, SEGMENTS, this.segments);
@@ -118,6 +119,7 @@ class Limit {
 	}
 
 	remove() {
+		limits.delete(this._host);
 		domainprefs.deleteHost(this._host, CONNECTIONS);
 		domainprefs.deleteHost(this._host, SPEED);
 		domainprefs.deleteHost(this._host, SEGMENTS);
@@ -176,7 +178,7 @@ function listLimits() {
 
 function getLimitFor(d) {
 	let host = d.urlManager.domain;
-	return limits.get(host, null);
+	return limits.get(host);
 }
 
 let globalConnections = -1;
@@ -210,6 +212,7 @@ class LegacyScheduler extends BaseScheduler {
 		this._schedule = downloads.filter(BaseScheduler._queuedFilter);
 	}
 }
+exports.LegacyScheduler = LegacyScheduler;
 
 // Fast generator: Start downloads as in queue
 class FastScheduler extends BaseScheduler {
@@ -230,8 +233,8 @@ class FastScheduler extends BaseScheduler {
 			return null;
 		}
 
-		let downloadSet = Object.create(null);
-		let i, e, d, host;
+		let downloading = new Map();
+		let i, e, d;
 
 		if (this._runCount > 50) {
 			filterInSitu(this._downloads, BaseScheduler._queuedFilter);
@@ -243,43 +246,46 @@ class FastScheduler extends BaseScheduler {
 			if (r.totalSize && r.totalSize < 1024*1024) {
 				continue;
 			}
-			host = r.urlManager.domain;
-			downloadSet[host] = ++downloadSet[host] || 1;
+			let host = r.urlManager.domain;
+			downloading.set(host, (downloading.get(host) || 0) + 1);
 		}
 
 		// calculate available slots
 		// negative means: available, else not available;
-		for (host in downloadSet) {
-			if (host in limits) {
-				i = limits[host].connections;
+		for (let [host, count] of downloading.entries()) {
+			let limit = limits.get(host);
+			if (limit) {
+				i = limit.connections;
+				log(LOG_ERROR, "fair limit for: " + host + ": " +  i);
 			}
 			else {
 				i = globalConnections;
+				log(LOG_ERROR, "fair limit for: " + host + " (global): " +  i);
 			}
 			if (i <= 0) {
 				// no limit
-				downloadSet[host] = -1;
+				i = -1;
 			}
-			else {
-				downloadSet[host] -= i;
-			}
+			downloading.set(host, count - i);
 		}
+		log(LOG_ERROR, "fair: " + Array.from(downloading.entries()));
 
 		for (i = 0, e = this._downloads.length; i < e; ++i) {
-			d = this._downloads[i];
+			let d = this._downloads[i];
 
 			if (!d || d.state !== QUEUED) {
 				continue;
 			}
-			host = d.urlManager.domain;
+			let host = d.urlManager.domain;
+			//log(LOG_ERROR, "fair check: " + host + " downloading:" + downloading.get(host, -1));
 
 			// no running downloads for this host yet
-			if (!(host in downloadSet)) {
+			if (!downloading.has(host)) {
 				this._runCount++;
 				return d;
 			}
-
-			if (downloadSet[host] < 0) {
+			// free slot
+			if (downloading.get(host) < 0) {
 				this._runCount++;
 				return d;
 			}
@@ -292,6 +298,7 @@ class FastScheduler extends BaseScheduler {
 		delete this._downloads;
 	}
 }
+exports.FastScheduler = FastScheduler;
 
 // Fair Scheduler: evenly distribute slots
 // Performs worse than FastScheduler but is more precise.
@@ -374,8 +381,9 @@ FairScheduler.SchedItem = class {
 	constructor(host) {
 		this.host = host;
 		this.limit = 0;
-		if (host in limits) {
-			this.limit = limits[host].connections;
+		let limit = limits.get(host);
+		if (limit) {
+			this.limit = limit.connections;
 		}
 		else {
 			this.limit = globalConnections;
@@ -421,6 +429,7 @@ FairScheduler.SchedItem = class {
 		delete this.downloads;
 	}
 };
+exports.FairScheduler = FairScheduler;
 
 // Fair Dir Scheduler: evenly distribute slots
 class DirScheduler extends BaseScheduler {
@@ -494,6 +503,7 @@ class DirScheduler extends BaseScheduler {
 		this._downloadSet = null;
 	}
 }
+exports.DirScheduler = DirScheduler;
 
 //Random scheduler. Does not respect limits
 class RndScheduler extends BaseScheduler {
@@ -503,6 +513,7 @@ class RndScheduler extends BaseScheduler {
 		shuffle(this._schedule);
 	}
 }
+exports.RndScheduler = RndScheduler;
 
 let Scheduler;
 function loadScheduler() {
@@ -533,8 +544,8 @@ var buckets = Object.create(null);
 var unlimitedBucket = new ByteBucket(-1, 1.0, "unlimited");
 function loadServerBuckets() {
 	for (let b in buckets) {
-		if (b in limits) {
-			buckets[b].byteRate = limits[b].speed * 1024;
+		if (limits.has(b)) {
+			buckets[b].byteRate = limits.get(b).speed * 1024;
 		}
 		else {
 			buckets[b].byteRate = -1;
@@ -549,8 +560,8 @@ function getServerBucket(d) {
 	if (host in buckets) {
 		return buckets[host];
 	}
-	if (host in limits) {
-		return (buckets[host] = new ByteBucket(limits[host].speed * 1024, 1.2, host));
+	if (limits.has(host)) {
+		return (buckets[host] = new ByteBucket(limits.get(host).speed * 1024, 1.2, host));
 	}
 	return unlimitedBucket;
 }
