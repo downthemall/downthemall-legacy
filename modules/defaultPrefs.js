@@ -64,7 +64,7 @@ pref("extensions.dta.exposeInUA", false);
 pref("extensions.dta.sparsefiles", false);
 pref("extensions.dta.autosegments", true);
 pref("extensions.dta.notification2", 2);
-pref("extensions.dta.usesysalerts", false);
+pref("extensions.dta.usesysalerts", true);
 pref("extensions.dta.seriesdigits", 3);
 pref("extensions.dta.usecleanrequests", false);
 pref("extensions.dta.showactions", true);
