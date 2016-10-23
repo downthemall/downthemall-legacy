@@ -256,11 +256,9 @@ class FastScheduler extends BaseScheduler {
 			let limit = limits.get(host);
 			if (limit) {
 				i = limit.connections;
-				log(LOG_ERROR, "fair limit for: " + host + ": " +  i);
 			}
 			else {
 				i = globalConnections;
-				log(LOG_ERROR, "fair limit for: " + host + " (global): " +  i);
 			}
 			if (i <= 0) {
 				// no limit
@@ -268,7 +266,6 @@ class FastScheduler extends BaseScheduler {
 			}
 			downloading.set(host, count - i);
 		}
-		log(LOG_ERROR, "fair: " + Array.from(downloading.entries()));
 
 		for (i = 0, e = this._downloads.length; i < e; ++i) {
 			let d = this._downloads[i];
