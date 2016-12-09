@@ -531,7 +531,7 @@ var Dialog = {
 
 		try {
 			let down = dbItem.item;
-			let d = new QueueItem();
+			let d = new QueueItem(Dialog);
 			d.dbId = dbItem.id;
 			let state = Dialog_loadDownloads_get(down, "state");
 			if (state) {
@@ -1469,62 +1469,47 @@ var Metalinker = {
 };
 requireJoined(Metalinker, "support/metalinker");
 
-function QueueItem() {
-	this.visitors = new VisitorManager();
+class QueueItem {
+	constructor(dialog) {
+		this.dialog = dialog;
 
-	this.chunks = [];
-	this.speeds = new SpeedStats(SPEED_COUNT);
-	this.rebuildDestination_renamer = createRenamer(this);
-}
+		this.visitors = new VisitorManager();
+		this.chunks = [];
+		this.speeds = new SpeedStats(SPEED_COUNT);
+		this.rebuildDestination_renamer = createRenamer(this);
+	}
 
-QueueItem.prototype = {
-	state: QUEUED,
-	_setStateInternal: function(nv) {
-		Object.defineProperty(this, "state", {value: nv, configurable: true, enumerable: true});
-	},
-	setState: function(nv) {
-		if (this.state === nv) {
-			return nv;
-		}
-		if (this.state === RUNNING) {
-			// remove ourself from inprogresslist
-			Dialog.wasStopped(this);
-			// kill the bucket via it's setter
-			this.bucket = null;
-		}
-		else if (this.state === COMPLETE) {
-			--Dialog.completed;
-		}
-		else if (this.state === FINISHING) {
-			--Dialog.finishing;
-		}
-		this.speed = '';
-		this._setStateInternal(nv);
-		if (this.state === RUNNING) {
-			// set up the bucket
-			this._bucket = new ByteBucket(this.speedLimit, 1.2, "download");
-		}
-		else if (this.state === FINISHING) {
-			++Dialog.finishing;
-			if (!this.totalSize) {
-				// We are done now, just set indeterminate size downloads to what we actually downloaded
-				this.refreshPartialSize();
-				this.totalSize = this.partialSize;
-			}
-		}
-		else if (this.state === COMPLETE) {
-			++Dialog.completed;
-		}
-		Dialog.signal(this);
-		this.invalidate();
-		Tree.refreshTools();
-		return nv;
-	},
+	get maskURL() {
+		return this.urlManager.usableURL;
+	}
 
-	_bucket: null,
+	get maskCURL() {
+		return Utils.getCURL(this.maskURL);
+	}
+
+	get maskURLPath() {
+		return this.urlManager.usableURLPath;
+	}
+
+	get maskReferrerURL() {
+		return this.referrerUrlManager.usableURL;
+	}
+
+	get maskReferrerURLPath() {
+		return this.referrerUrlManager.usableURLPath;
+	}
+
+	get maskReferrerCURL() {
+		return Utils.getCURL(this.maskReferrerURL);
+	}
+
+	get autoRetrying() {
+		return !!this._autoRetryTime;
+	}
+
 	get bucket() {
 		return this._bucket;
-	},
+	}
 	set bucket(nv) {
 		if (nv !== null) {
 			throw new Exception("Bucket is only nullable");
@@ -1532,12 +1517,11 @@ QueueItem.prototype = {
 		if (this._bucket) {
 			this._bucket = null;
 		}
-	},
+	}
 
-	_speedLimit: -1,
 	get speedLimit() {
 		return this._speedLimit;
-	},
+	}
 	set speedLimit(nv) {
 		nv = Math.max(nv, -1);
 		if (this._speedLimit === nv) {
@@ -1548,20 +1532,11 @@ QueueItem.prototype = {
 			this._bucket.byteRate = this.speedLimit;
 		}
 		this.save();
-	},
-	otherBytes: 0,
+	}
 
-	postData: null,
-
-	fromMetalink: false,
-	bNum: 0,
-	iNum: 0,
-
-	_fileName: null,
-	fileNameFromUser: false,
 	get fileName() {
 		return this._fileName;
-	},
+	}
 	set fileName(nv) {
 		if (this._fileName === nv || this.fileNameFromUser) {
 			return nv;
@@ -1572,36 +1547,8 @@ QueueItem.prototype = {
 		this.rebuildDestination();
 		this.invalidate(0);
 		return nv;
-	},
-	setUserFileName: function(name) {
-		try {
-			Tree.beginUpdate();
-			this.fileNameFromUser = false;
-			this.fileName = name;
-			this.fileNameFromUser = true;
-			this.save();
-		}
-		finally {
-			let dummy = this.iconProp; // set up initial icon to avoid display problems
-			Tree.invalidate();
-			Tree.endUpdate();
-		}
-	},
-	shortenName: function() {
-		let fn = this.destinationName;
-		let ext = Utils.getExtension(fn);
-		if (ext) {
-			fn = fn.substring(0, fn.length - ext.length - 1);
-		}
-		let nn = fn.substr(0, Math.min(200, Math.max(fn.length - 25, 10)));
-		if (nn === fn) {
-			return;
-		}
-		if (ext) {
-			nn += "." + ext;
-		}
-		this.destinationName = nn;
-	},
+	}
+
 	get fileNameAndExtension() {
 		if (!this._fileNameAndExtension) {
 			let fn = this.fileName;
@@ -1630,13 +1577,15 @@ QueueItem.prototype = {
 			this._fileNameAndExtension = {name: fn, extension: ext };
 		}
 		return this._fileNameAndExtension;
-	},
+	}
+
 	get referrerUrlManager() {
 		if (this.referrer && !this._referrerUrlManager) {
 			this._referrerUrlManager = new UrlManager([this.referrer]);
 		}
 		return this._referrerUrlManager;
-	},
+	}
+
 	get referrerFileNameAndExtension() {
 		if (!this.referrerUrlManager) {
 			return null;
@@ -1653,11 +1602,11 @@ QueueItem.prototype = {
 			this._referrerFileNameAndExtension = {name: fn, extension: ext};
 		}
 		return this._referrerFileNameAndExtension;
-	},
-	_description: null,
+	}
+
 	get description() {
 		return this._description;
-	},
+	}
 	set description(nv) {
 		if (nv === this._description) {
 			return nv;
@@ -1666,11 +1615,11 @@ QueueItem.prototype = {
 		this.rebuildDestination();
 		this.invalidate(0);
 		return nv;
-	},
-	_title: '',
+	}
+
 	get title() {
 		return this._title;
-	},
+	}
 	set title(nv) {
 		if (nv === this._title) {
 			return this._title;
@@ -1679,11 +1628,11 @@ QueueItem.prototype = {
 		this.rebuildDestination();
 		this.invalidate(0);
 		return this._title;
-	},
-	_pathName: null,
+	}
+
 	get pathName() {
 		return this._pathName;
-	},
+	}
 	set pathName(nv) {
 		nv = nv.toString();
 		if (this._pathName === nv) {
@@ -1693,12 +1642,11 @@ QueueItem.prototype = {
 		this.rebuildDestination();
 		this.invalidate(0);
 		return nv;
-	},
+	}
 
-	_mask: null,
 	get mask() {
 		return this._mask;
-	},
+	}
 	set mask(nv) {
 		if (this._mask === nv) {
 			return nv;
@@ -1707,14 +1655,11 @@ QueueItem.prototype = {
 		this.rebuildDestination();
 		this.invalidate(7);
 		return nv;
-	},
+	}
 
-	_destinationName: null,
-	destinationNameOverride: null,
-	_destinationNameFull: null,
 	get destinationName() {
 		return this._destinationNameFull;
-	},
+	}
 	set destinationName(nv) {
 		if (this.destinationNameOverride === nv) {
 			return this._destinationNameFull;
@@ -1723,28 +1668,25 @@ QueueItem.prototype = {
 		this.rebuildDestination();
 		this.invalidate(0);
 		return this._destinationNameFull;
-	},
+	}
 
-	_destinationFile: null,
 	get destinationFile() {
 		if (!this._destinationFile) {
 			this.rebuildDestination();
 		}
 		return this._destinationFile;
-	},
+	}
 
-	_destinationLocalFile: null,
 	get destinationLocalFile() {
 		if (!this._destinationLocalFile) {
 			this.rebuildDestination();
 		}
 		return this._destinationLocalFile;
-	},
+	}
 
-	_conflicts: 0,
 	get conflicts() {
 		return this._conflicts;
-	},
+	}
 	set conflicts(nv) {
 		if (this._conflicts === nv) {
 			return nv;
@@ -1753,8 +1695,8 @@ QueueItem.prototype = {
 		this.rebuildDestination();
 		this.invalidate(0);
 		return nv;
-	},
-	_tmpFile: null,
+	}
+
 	get tmpFile() {
 		if (!this._tmpFile) {
 			var dest = Prefs.tempLocation ?
@@ -1768,11 +1710,11 @@ QueueItem.prototype = {
 			this._tmpFile = dest;
 		}
 		return this._tmpFile;
-	},
-	_hashCollection: null,
+	}
+
 	get hashCollection() {
 		return this._hashCollection;
-	},
+	}
 	set hashCollection(nv) {
 		if (nv && !(nv instanceof DTA.HashCollection)) {
 			throw new Exception("Not a hash collection");
@@ -1781,19 +1723,241 @@ QueueItem.prototype = {
 		this._prettyHash = this._hashCollection ?
 			_('prettyhash', [this._hashCollection.full.type, this._hashCollection.full.sum]) :
 			TextCache_NAS;
-	},
-	_prettyHash: null,
+	}
+
 	get prettyHash() {
 		return this._prettyHash;
-	},
+	}
 
-	is: function(state) {
+	get contentType() {
+		return this._contentType;
+	}
+	set contentType(nv) {
+		if (nv === this._contentType) {
+			return;
+		}
+		this._contentType = nv;
+		delete this._fileNameAndExtension;
+	}
+
+	get totalSize() {
+	 	return this._totalSize;
+	}
+	set totalSize(nv) {
+		if (nv >= 0 && !isNaN(nv)) {
+			this._totalSize = Math.floor(nv);
+		}
+		this.invalidate(3);
+		this.prealloc();
+	}
+
+	get startDate() {
+		return this._startDate || (this.startDate = new Date());
+	}
+	set startDate(nv) {
+		this._startDate = nv;
+	}
+
+	get canResumeLater() {
+		return this.resumable && !this.isPrivate;
+	}
+
+	get activeChunks() {
+		return this._activeChunks;
+	}
+	set activeChunks(nv) {
+		nv = Math.max(0, nv);
+		if (!nv && this.state === RUNNING) {
+			log(LOG_INFO, `active chunks set to zero while running: ${nv} ${this._activeChunks}`);
+		}
+		this._activeChunks = nv;
+		this.invalidate(6);
+		return this._activeChunks;
+	}
+
+	get maxChunks() {
+		if (!this.urlManager) {
+			return Prefs.maxChunks;
+		}
+		if (!this._maxChunks) {
+			let limit = Limits.getLimitFor(this);
+			this._maxChunks = (limit ? limit.segments : 0) || Prefs.maxChunks;
+		}
+		return this._maxChunks;
+	}
+	set maxChunks(nv) {
+		this._maxChunks = nv;
+		if (this._maxChunks < this._activeChunks) {
+			let running = this.chunks.filter(function(c) { return c.running; });
+			while (running.length && this._maxChunks < running.length) {
+				let c = running.pop();
+				if (c.remainder < 10240) {
+					continue;
+				}
+				c.cancelChunk();
+			}
+		}
+		else if (this._maxChunks > this._activeChunks && this.state === RUNNING) {
+			this.resumeDownload();
+
+		}
+		this.invalidate(6);
+		log(LOG_DEBUG, "mc set to " + nv);
+		return this._maxChunks;
+	}
+
+	get iconProp() {
+		if (!this._icon) {
+			let icon = FileExts.getAtom(this.destinationName, 'metalink' in this).toString();
+			this._icon = identity((this.isPrivate ? "iconic private file " : "iconic file ") + icon);
+		}
+		return this._icon;
+	}
+
+	get largeIcon() {
+		return getLargeIcon(this.destinationName, 'metalink' in this);
+	}
+
+	get dimensionString() {
+		if (this.partialSize <= 0) {
+			return TextCache_UNKNOWN;
+		}
+		else if (this.totalSize <= 0) {
+			return _('transfered', [Utils.formatBytes(this.partialSize), TextCache_NAS]);
+		}
+		else if (this.state === COMPLETE || this.state === FINISHING) {
+			return Utils.formatBytes(this.totalSize);
+		}
+		return _('transfered', [Utils.formatBytes(this.partialSize), Utils.formatBytes(this.totalSize)]);
+	}
+
+	get status() {
+		if (this.dialog.offline && this.isOf(QUEUED | PAUSED)) {
+			return TextCache_OFFLINE;
+		}
+		return this._status + (this.autoRetrying ? ' *' : '');
+	}
+
+	set status(nv) {
+		if (nv !== this._status) {
+			this._status = nv;
+			this.invalidate();
+		}
+		return this._status;
+	}
+
+	get parts() {
+		if (this.maxChunks) {
+			return (this.activeChunks) + '/' + this.maxChunks;
+		}
+		return '';
+	}
+
+	get percent() {
+		const state = this.state;
+		if (!this.totalSize && state === RUNNING) {
+			return TextCache_NAS;
+		}
+		else if (!this.totalSize) {
+			return "0%";
+		}
+		else if (state === COMPLETE) {
+			return "100%";
+		}
+		return this.progress + "%";
+	}
+
+	get destinationPath() {
+		return this._destinationPath;
+	}
+
+	get isCritical() {
+		return this._criticals !== 0;
+	}
+
+	_setStateInternal(nv) {
+		Object.defineProperty(this, "state", {value: nv, configurable: true, enumerable: true});
+	}
+
+	setState(nv) {
+		if (this.state === nv) {
+			return nv;
+		}
+		if (this.state === RUNNING) {
+			// remove ourself from inprogresslist
+			this.dialog.wasStopped(this);
+			// kill the bucket via it's setter
+			this.bucket = null;
+		}
+		else if (this.state === COMPLETE) {
+			--this.dialog.completed;
+		}
+		else if (this.state === FINISHING) {
+			--this.dialog.finishing;
+		}
+		this.speed = '';
+		this._setStateInternal(nv);
+		if (this.state === RUNNING) {
+			// set up the bucket
+			this._bucket = new ByteBucket(this.speedLimit, 1.2, "download");
+		}
+		else if (this.state === FINISHING) {
+			++this.dialog.finishing;
+			if (!this.totalSize) {
+				// We are done now, just set indeterminate size downloads to what we actually downloaded
+				this.refreshPartialSize();
+				this.totalSize = this.partialSize;
+			}
+		}
+		else if (this.state === COMPLETE) {
+			++this.dialog.completed;
+		}
+		this.dialog.signal(this);
+		this.invalidate();
+		Tree.refreshTools();
+		return nv;
+	}
+
+	setUserFileName(name) {
+		try {
+			Tree.beginUpdate();
+			this.fileNameFromUser = false;
+			this.fileName = name;
+			this.fileNameFromUser = true;
+			this.save();
+		}
+		finally {
+			let dummy = this.iconProp; // set up initial icon to avoid display problems
+			Tree.invalidate();
+			Tree.endUpdate();
+		}
+	}
+
+	shortenName() {
+		let fn = this.destinationName;
+		let ext = Utils.getExtension(fn);
+		if (ext) {
+			fn = fn.substring(0, fn.length - ext.length - 1);
+		}
+		let nn = fn.substr(0, Math.min(200, Math.max(fn.length - 25, 10)));
+		if (nn === fn) {
+			return;
+		}
+		if (ext) {
+			nn += "." + ext;
+		}
+		this.destinationName = nn;
+	}
+
+	is(state) {
 		return this.state === state;
-	},
-	isOf: function(states) {
+	}
+
+	isOf(states) {
 		return (this.state & states) !== 0;
-	},
-	save: function() {
+	}
+
+	save() {
 		if (this.deleting) {
 			return false;
 		}
@@ -1815,167 +1979,18 @@ QueueItem.prototype = {
 		}
 		this.dbId = QueueStore.queueDownload(JSON.stringify(this), this.position);
 		return true;
-	},
-	remove: function() {
+	}
+
+	remove() {
 		QueueStore.deleteDownload(this.dbId);
 		delete this.dbId;
-	},
-	position: -1,
-	_contentType: "",
-	get contentType() {
-		return this._contentType;
-	},
-	set contentType(nv) {
-		if (nv === this._contentType) {
-			return;
-		}
-		this._contentType = nv;
-		delete this._fileNameAndExtension;
-	},
-	visitors: null,
-	relaxSize: false,
-	_totalSize: 0,
-	get totalSize() { return this._totalSize; },
-	set totalSize(nv) {
-		if (nv >= 0 && !isNaN(nv)) {
-			this._totalSize = Math.floor(nv);
-		}
-		this.invalidate(3);
-		this.prealloc();
-	},
-	partialSize: 0,
-	progress: 0,
-	mustGetInfo: false,
+	}
 
-	get startDate() {
-		return this._startDate || (this.startDate = new Date());
-	},
-	set startDate(nv) {
-		this._startDate = nv;
-	},
-
-	compression: null,
-
-	resumable: true,
-	started: false,
-
-	get canResumeLater() {
-		return this.resumable && !this.isPrivate;
-	},
-
-	_activeChunks: 0,
-	get activeChunks() {
-		return this._activeChunks;
-	},
-	set activeChunks(nv) {
-		nv = Math.max(0, nv);
-		if (!nv && this.state === RUNNING) {
-			log(LOG_INFO, `active chunks set to zero while running: ${nv} ${this._activeChunks}`);
-		}
-		this._activeChunks = nv;
-		this.invalidate(6);
-		return this._activeChunks;
-	},
-	_maxChunks: 0,
-	get maxChunks() {
-		if (!this.urlManager) {
-			return Prefs.maxChunks;
-		}
-		if (!this._maxChunks) {
-			let limit = Limits.getLimitFor(this);
-			this._maxChunks = (limit ? limit.segments : 0) || Prefs.maxChunks;
-		}
-		return this._maxChunks;
-	},
-	set maxChunks(nv) {
-		this._maxChunks = nv;
-		if (this._maxChunks < this._activeChunks) {
-			let running = this.chunks.filter(function(c) { return c.running; });
-			while (running.length && this._maxChunks < running.length) {
-				let c = running.pop();
-				if (c.remainder < 10240) {
-					continue;
-				}
-				c.cancelChunk();
-			}
-		}
-		else if (this._maxChunks > this._activeChunks && this.state === RUNNING) {
-			this.resumeDownload();
-
-		}
-		this.invalidate(6);
-		log(LOG_DEBUG, "mc set to " + nv);
-		return this._maxChunks;
-	},
-	timeLastProgress: 0,
-	timeStart: 0,
-
-	_icon: null,
-	get iconProp() {
-		if (!this._icon) {
-			let icon = FileExts.getAtom(this.destinationName, 'metalink' in this).toString();
-			this._icon = identity((this.isPrivate ? "iconic private file " : "iconic file ") + icon);
-		}
-		return this._icon;
-	},
-	get largeIcon() {
-		return getLargeIcon(this.destinationName, 'metalink' in this);
-	},
-	get dimensionString() {
-		if (this.partialSize <= 0) {
-			return TextCache_UNKNOWN;
-		}
-		else if (this.totalSize <= 0) {
-			return _('transfered', [Utils.formatBytes(this.partialSize), TextCache_NAS]);
-		}
-		else if (this.state === COMPLETE || this.state === FINISHING) {
-			return Utils.formatBytes(this.totalSize);
-		}
-		return _('transfered', [Utils.formatBytes(this.partialSize), Utils.formatBytes(this.totalSize)]);
-	},
-	_status : '',
-	get status() {
-		if (Dialog.offline && this.isOf(QUEUED | PAUSED)) {
-			return TextCache_OFFLINE;
-		}
-		return this._status + (this.autoRetrying ? ' *' : '');
-	},
-	set status(nv) {
-		if (nv !== this._status) {
-			this._status = nv;
-			this.invalidate();
-		}
-		return this._status;
-	},
-	get parts() {
-		if (this.maxChunks) {
-			return (this.activeChunks) + '/' + this.maxChunks;
-		}
-		return '';
-	},
-	get percent() {
-		const state = this.state;
-		if (!this.totalSize && state === RUNNING) {
-			return TextCache_NAS;
-		}
-		else if (!this.totalSize) {
-			return "0%";
-		}
-		else if (state === COMPLETE) {
-			return "100%";
-		}
-		return this.progress + "%";
-	},
-	_destinationPath: '',
-	get destinationPath() {
-		return this._destinationPath;
-	},
-
-	invalidate: function(cell) {
+	invalidate(cell) {
 		Tree.invalidate(this, cell);
-	},
+	}
 
-	safeRetry: function(resumable) {
+	safeRetry(resumable) {
 		this.cancel().then(() => {
 			// reset flags
 			this.progress = this.totalSize = this.partialSize = 0;
@@ -1990,11 +2005,11 @@ QueueItem.prototype = {
 			this.visitors = new VisitorManager();
 			this.resumable = resumable !== false;
 			this.setState(QUEUED);
-			Dialog.run(this);
+			this.dialog.run(this);
 		});
-	},
+	}
 
-	refreshPartialSize: function(){
+	refreshPartialSize() {
 		let size = 0;
 		for (let i = 0, e = this.chunks.length; i < e; ++i) {
 			size += this.chunks[i].written;
@@ -2014,9 +2029,9 @@ QueueItem.prototype = {
 				this.progress = 100;
 			}
 		}
-	},
+	}
 
-	pause: function(){
+	pause() {
 		this.setState(PAUSED);
 		if (this.chunks) {
 			for (let c of this.chunks) {
@@ -2028,8 +2043,9 @@ QueueItem.prototype = {
 		this.activeChunks = 0;
 		this.speeds.clear();
 		this.otherBytes = 0;
-	},
-	moveCompleted: async function() {
+	}
+
+	async moveCompleted() {
 		if (this.state === CANCELED) {
 			throw Error("Cannot move incomplete file");
 		}
@@ -2065,16 +2081,18 @@ QueueItem.prototype = {
 			ConflictManager.unpin(pinned);
 		}
 		return false;
-	},
-	handleMetalink: function() {
+	}
+
+	handleMetalink() {
 		try {
 			Metalinker.handleDownload(this);
 		}
 		catch (ex) {
 			log(LOG_ERROR, "handleMetalink", ex);
 		}
-	},
-	verifyHash: async function() {
+	}
+
+	async verifyHash() {
 		let oldStatus = this.status;
 		this.status = TextCache_VERIFYING;
 		let mismatches = await Verificator.verify(
@@ -2095,8 +2113,9 @@ QueueItem.prototype = {
 		}
 		this.status = oldStatus;
 		return true;
-	},
-	verifyHashError: async function(mismatches) {
+	}
+
+	async verifyHashError(mismatches) {
 		async function deleteFile(file) {
 			try {
 				await OS.File.remove(file.path);
@@ -2174,11 +2193,13 @@ QueueItem.prototype = {
 				return false;
 		}
 		return true;
-	},
-	customFinishEvent: function() {
+	}
+
+	customFinishEvent() {
 		new CustomAction(this, Prefs.finishEvent);
-	},
-	setAttributes: async function() {
+	}
+
+	async setAttributes() {
 		if (Prefs.setTime) {
 			// XXX: async API <https://bugzilla.mozilla.org/show_bug.cgi?id=924916>
 			try {
@@ -2215,26 +2236,26 @@ QueueItem.prototype = {
 			this.totalSize = this.partialSize = 0;
 		}
 		return true;
-	},
-	closeChunks: async function() {
+	}
+
+	async closeChunks() {
 		if (!this.chunks) {
 			return;
 		}
 		for (let c of this.chunks) {
 			await c.close();
 		}
-	},
-	_criticals: 0,
-	get isCritical() {
-		return this._criticals !== 0;
-	},
-	critical: function() {
+	}
+
+	critical() {
 		this._criticals++;
-	},
-	uncritical: function() {
+	}
+
+	uncritical() {
 		this._criticals = Math.max(0, this._criticals - 1);
-	},
-	finishDownload: function(exception) {
+	}
+
+	finishDownload(exception) {
 		if (this._finishDownloadTask) {
 			return this._finishDownloadTask;
 		}
@@ -2242,7 +2263,7 @@ QueueItem.prototype = {
 
 		// Last speed update
 		this.refreshPartialSize();
-		Dialog._sum += this.speeds.add(this.partialSize + this.otherBytes, Utils.getTimestamp());
+		this.dialog._sum += this.speeds.add(this.partialSize + this.otherBytes, Utils.getTimestamp());
 		if (!this.partialSize) {
 			log(LOG_ERROR, "INVALID SIZE!!!!!");
 			this.fail(_("accesserror"), _("accesserror.long"), _("accesserror"));
@@ -2250,8 +2271,9 @@ QueueItem.prototype = {
 		}
 
 		return this._finishDownloadTask = this._runFinishDownloadTask();
-	},
-	_runFinishDownloadTask: async function() {
+	}
+
+	async _runFinishDownloadTask() {
 		try {
 			this.setState(FINISHING);
 			this.status = TextCache_FINISHING;
@@ -2286,26 +2308,9 @@ QueueItem.prototype = {
 		finally {
 			delete this._finishDownloadTask;
 		}
-	},
-	get maskURL() {
-		return this.urlManager.usableURL;
-	},
-	get maskCURL() {
-		return Utils.getCURL(this.maskURL);
-	},
-	get maskURLPath() {
-		return this.urlManager.usableURLPath;
-	},
-	get maskReferrerURL() {
-		return this.referrerUrlManager.usableURL;
-	},
-	get maskReferrerURLPath() {
-		return this.referrerUrlManager.usableURLPath;
-	},
-	get maskReferrerCURL() {
-		return Utils.getCURL(this.maskReferrerURL);
-	},
-	rebuildDestination: function() {
+	}
+
+	rebuildDestination() {
 		try {
 			let mask = Utils.removeFinalSlash(Utils.normalizeSlashes(Utils.removeFinalChar(
 					this.rebuildDestination_renamer(this.mask), "."
@@ -2349,14 +2354,18 @@ QueueItem.prototype = {
 			let dummy = this.iconProp; // set up initial icon to avoid display problems
 			FileExts.add();
 		}
-	},
-	checkConflicts: function() {
+	}
+
+	checkConflicts() {
 		return ConflictManager.check(this);
-	},
-	resolveConflicts: function() {
+	}
+
+	resolveConflicts() {
 		return ConflictManager.resolve(this);
-	},
-	fail: function(title, msg, state) {
+
+	}
+
+	fail(title, msg, state) {
 		log(LOG_INFO, "failDownload invoked");
 
 		this.cancel(state);
@@ -2373,9 +2382,9 @@ QueueItem.prototype = {
 				window.alert(msg);
 				break;
 		}
-	},
+	}
 
-	cancel: function(message) {
+	cancel(message) {
 		try {
 			const state = this.state;
 			if (state === RUNNING) {
@@ -2396,8 +2405,9 @@ QueueItem.prototype = {
 		catch(ex) {
 			log(LOG_ERROR, "cancel():", ex);
 		}
-	},
-	_cancelClose: async function(message) {
+	}
+
+	async _cancelClose(message) {
 		try {
 			await this.closeChunks();
 			if (this._preallocTask) {
@@ -2406,7 +2416,7 @@ QueueItem.prototype = {
 			log(LOG_INFO, this.fileName + ": canceled");
 
 			this.shutdown();
-			this.removeTmpFile();
+			await this.removeTmpFile();
 
 			// gc
 			if (this.deleting) {
@@ -2432,9 +2442,9 @@ QueueItem.prototype = {
 		catch (ex) {
 			log(LOG_ERROR, "cancel() Task", ex);
 		}
-	},
+	}
 
-	cleanup: async function() {
+	async cleanup() {
 		if (this.chunks) {
 			await this.closeChunks();
 		}
@@ -2447,8 +2457,9 @@ QueueItem.prototype = {
 		delete this._destinationLocalFile;
 		delete this._tmpFile;
 		delete this.rebuildDestination_renamer;
-	},
-	prealloc: function() {
+	}
+
+	prealloc() {
 		let file = this.tmpFile;
 
 		if (this.state !== RUNNING) {
@@ -2465,8 +2476,9 @@ QueueItem.prototype = {
 		}
 
 		this._preallocTask = this._preallocInternal(file);
-	},
-	_preallocInternal: async function(file) {
+	}
+
+	async _preallocInternal(file) {
 		try {
 			try {
 				await Utils.makeDir(file.parent, Prefs.dirPermissions);
@@ -2504,50 +2516,41 @@ QueueItem.prototype = {
 			this._preallocTask = null;
 			this.maybeResumeDownload();
 		}
-	},
+	}
 
-	shutdown: function() {
-	},
+	shutdown() { }
 
-	removeTmpFile: function() {
+	async removeTmpFile() {
 		let tmpFile = this._tmpFile;
 		delete this._tmpFile;
 		if (!tmpFile) {
 			return;
 		}
-		this._runRemoveTmpFile(tmpFile);
-	},
-	_runRemoveTmpFile: async function(tmpfile) {
 		try {
-			await OS.File.remove(tmpfile.path);
+			await OS.File.remove(tmpFile.path);
 		}
 		catch (ex if ex.becauseNoSuchFile) {
 			// no op
 		}
 		catch (ex) {
-			log(LOG_ERROR, "failed to remove tmpfile: " + tmpfile.path, ex);
+			log(LOG_ERROR, "failed to remove tmpfile: " + tmpFile.path, ex);
 		}
-	},
+	}
 
-	sessionConnections: 0,
-	_autoRetries: 0,
-	_autoRetryTime: 0,
-	get autoRetrying() {
-		return !!this._autoRetryTime;
-	},
-	pauseAndRetry: function() {
+	pauseAndRetry() {
 		let retry = this.state === RUNNING;
 		this.pause();
 		this.resumable = true;
 
 		if (retry && Prefs.autoRetryInterval && !(Prefs.maxAutoRetries && Prefs.maxAutoRetries <= this._autoRetries)) {
-			Dialog.markAutoRetry(this);
+			this.dialog.markAutoRetry(this);
 			this._autoRetryTime = Utils.getTimestamp();
 			log(LOG_INFO, "marked auto-retry: " + this);
 		}
 		this.save();
-	},
-	autoRetry: function() {
+	}
+
+	autoRetry() {
 		if (!this.autoRetrying || Utils.getTimestamp() - (Prefs.autoRetryInterval * 1000) < this._autoRetryTime) {
 			return false;
 		}
@@ -2557,23 +2560,26 @@ QueueItem.prototype = {
 		this.queue();
 		log(LOG_DEBUG, "Requeued due to auto-retry: " + this);
 		return true;
-	},
-	clearAutoRetry: function() {
+	}
+	clearAutoRetry() {
 		this._autoRetryTime = 0;
 		this._autoRetries = 0;
-	},
-	queue: function() {
+	}
+
+	queue() {
 		this._autoRetryTime = 0;
 		this.setState(QUEUED);
 		this.status = TextCache_QUEUED;
-	},
-	maybeResumeDownload: function() {
+	}
+
+	maybeResumeDownload() {
 		if (this.state !== RUNNING) {
 			return;
 		}
 		this.resumeDownload();
-	},
-	resumeDownload: function() {
+	}
+
+	resumeDownload() {
 		log(LOG_DEBUG, "resumeDownload: " + this);
 
 		// merge finished chunks together, so that the scoreboard does not bloat
@@ -2587,7 +2593,7 @@ QueueItem.prototype = {
 		}
 
 		try {
-			if (Dialog.offline || this.maxChunks <= this.activeChunks) {
+			if (this.dialog.offline || this.maxChunks <= this.activeChunks) {
 				return false;
 			}
 
@@ -2662,8 +2668,9 @@ QueueItem.prototype = {
 			log(LOG_ERROR, "resumeDownload():", ex, true);
 		}
 		return false;
-	},
-	replaceMirrors: function(mirrors) {
+	}
+
+	replaceMirrors(mirrors) {
 		let restart = this.urlManager.length < 3;
 		this.urlManager.initByArray(mirrors);
 		if (restart && this.resumable && this.state === RUNNING && this.maxChunks > 2) {
@@ -2675,8 +2682,9 @@ QueueItem.prototype = {
 		}
 		this.invalidate();
 		this.save();
-	},
-	dumpScoreboard: function() {
+	}
+
+	dumpScoreboard() {
 		if (!log.enabled) {
 			return;
 		}
@@ -2686,11 +2694,13 @@ QueueItem.prototype = {
 			scoreboard += i + ": " + c + "\n";
 		}
 		log(LOG_DEBUG, "scoreboard\n" + scoreboard);
-	},
-	toString: function() {
+	}
+
+	toString() {
 		return this.urlManager.usable;
-	},
-	toJSON: function() {
+	}
+
+	toJSON() {
 		let rv = Object.create(null);
 		let p = Object.getPrototypeOf(this);
 		for (let u of Dialog_serialize_props) {
@@ -2739,7 +2749,60 @@ QueueItem.prototype = {
 		}
 		return rv;
 	}
-};
+}
+Object.assign(QueueItem.prototype, {
+	state: QUEUED,
+	position: -1,
+
+	_contentType: "",
+	_description: null,
+	_hashCollection: null,
+	_mask: null,
+	_pathName: null,
+	_prettyHash: null,
+	_status : '',
+	_title: '',
+	bNum: 0,
+	compression: null,
+	fromMetalink: false,
+	iNum: 0,
+	postData: null,
+	visitors: null,
+
+	_destinationFile: null,
+	_destinationLocalFile: null,
+	_destinationName: null,
+	_destinationNameFull: null,
+	_destinationPath: '',
+	_fileName: null,
+	_tmpFile: null,
+	destinationNameOverride: null,
+	fileNameFromUser: false,
+
+	_totalSize: 0,
+	otherBytes: 0,
+	partialSize: 0,
+	progress: 0,
+	relaxSize: false,
+
+	_activeChunks: 0,
+	_maxChunks: 0,
+	timeLastProgress: 0,
+	timeStart: 0,
+
+	_bucket: null,
+	_icon: null,
+
+	_autoRetries: 0,
+	_autoRetryTime: 0,
+	_conflicts: 0,
+	_criticals: 0,
+	_speedLimit: -1,
+	mustGetInfo: false,
+	resumable: true,
+	sessionConnections: 0,
+	started: false,
+});
 
 XPCOMUtils.defineLazyGetter(QueueItem.prototype, 'AuthPrompts', function() {
 	const {LoggedPrompter} = require("support/loggedprompter");
@@ -2810,7 +2873,7 @@ var startDownloads = (function() {
 
 		let addItem = function(e) {
 			try {
-				let qi = new QueueItem();
+				let qi = new QueueItem(Dialog);
 				let lnk = e.url;
 				if (typeof lnk === 'string') {
 					qi.urlManager = new UrlManager([new DTA.URL(Services.io.newURI(lnk, null, null))]);
