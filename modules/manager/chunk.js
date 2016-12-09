@@ -11,7 +11,6 @@ const {GlobalBucket} = require("./globalbucket");
 const {TimerManager} = require("support/timers");
 const Limits = require("support/serverlimits");
 const {getTimestamp, formatNumber, makeDir, randint} = require("utils");
-const {Task} = requireJSM("resource://gre/modules/Task.jsm");
 const {memoryReporter} = require("./memoryreporter");
 
 const Timers = new TimerManager();
@@ -442,13 +441,10 @@ class Chunk {
 			written: this.safeBytes
 			};
 	}
-}
-
-Object.assign(Chunk.prototype, {
-	_openAsync: Task.async(function*(file, pos) {
+	async _openAsync(file, pos) {
 		try {
 			try {
-				yield makeDir(file.parent, Prefs.dirPermissions, true);
+				await makeDir(file.parent, Prefs.dirPermissions, true);
 			}
 			catch (ex if ex.becauseExists) {
 				// no op
@@ -494,17 +490,17 @@ Object.assign(Chunk.prototype, {
 			memoryReporter.registerChunk(this);
 			delete this._openPromise;
 		}
-	}),
-	_closeAsync: Task.async(function*() {
+	}
+	async _closeAsync() {
 		try {
 			if (this._openPromise) {
-				yield this._openPromise;
+				await this._openPromise;
 			}
 			// drain the overflowPipe, if any
 			if (this._overflowPipe && !this.errored) {
 				log(LOG_DEBUG, "draining overflow");
 				try {
-					yield asyncCopy(this._overflowPipe.inputStream, this._outStream, false);
+					await asyncCopy(this._overflowPipe.inputStream, this._outStream, false);
 				}
 				catch (status) {
 					this.download.writeFailed(status);
@@ -537,7 +533,7 @@ Object.assign(Chunk.prototype, {
 			// but still need to wait for the copy into the file
 			if (this._copier) {
 				try {
-					yield this._copier;
+					await this._copier;
 				}
 				catch (ex) {
 					// ignore here!
@@ -580,7 +576,7 @@ Object.assign(Chunk.prototype, {
 			delete this.download;
 			delete this._closing;
 		}
-	}),
-});
+	}
+}
 
 exports.Chunk = Chunk;

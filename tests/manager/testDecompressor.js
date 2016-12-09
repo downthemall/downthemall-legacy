@@ -1,14 +1,14 @@
 "use strict";
 /* jshint browser:true */
 /* globals module, test, asyncTest, checkExports, QUnit, equal */
-/* globals Task, getRelURI, console, FileUtils */
+/* globals getRelURI, console, FileUtils */
 module("manager/decompressor.js");
 
 test("exports", function() {
 	checkExports("manager/decompressor", ["Decompressor"]);
 });
 
-asyncTest("decompress something", Task.async(function*() {
+asyncTest("decompress something", async function() {
 	function get(base) {
 		return new Promise((res, rej) => {
 			let content = new XMLHttpRequest();
@@ -29,9 +29,9 @@ asyncTest("decompress something", Task.async(function*() {
 		let out = FileUtils.getFile("TmpD", ["dta-test-uncompressed"]);
 
 
-		let content = yield get(base);
+		let content = await get(base);
 		content = new Uint8Array(content.response);
-		yield OS.File.writeAtomic(file.path, content);
+		await OS.File.writeAtomic(file.path, content);
 
 		let download = {
 			destinationLocalFile: out,
@@ -42,7 +42,7 @@ asyncTest("decompress something", Task.async(function*() {
 			}
 		};
 		const {Decompressor} = require("manager/decompressor");
-		let res = yield new Promise((res, rej) => {
+		let res = await new Promise((res, rej) => {
 			new Decompressor(download, res);
 		});
 		equal(!!res, false);
@@ -57,4 +57,4 @@ asyncTest("decompress something", Task.async(function*() {
 	finally {
 		QUnit.start();
 	}
-}));
+});

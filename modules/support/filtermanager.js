@@ -20,7 +20,6 @@ const Preferences = require("preferences");
 const RegExpMerger = require("./regexpmerger");
 const {mapInSitu} = require("utils");
 const {OS} = requireJSM("resource://gre/modules/osfile.jsm");
-const {Task} = requireJSM("resource://gre/modules/Task.jsm");
 const {DeferredSave} = requireJSM("resource://gre/modules/DeferredSave.jsm");
 
 const nsITimer = Ci.nsITimer;
@@ -278,7 +277,7 @@ class Filter {
 }
 
 class FilterEnumerator {
-  constructor(filters) {
+	constructor(filters) {
 		this._filters = filters;
 		this._idx = 0;
 	}
@@ -362,7 +361,7 @@ class FilterManagerImpl {
 		require("./observers").notify(this, TOPIC_FILTERSCHANGED, null);
 	}
 
-	_migrateFromPrefs(pending) {
+	async _migrateFromPrefs(pending) {
 		log(LOG_DEBUG, "migrating from prefs");
 
 		let rv = {};
@@ -398,18 +397,16 @@ class FilterManagerImpl {
 			}
 		}
 		if (pending && kill.size) {
-			Task.spawn((function*() {
-				try {
-					yield this._save();
-					for (let i of kill) {
-						log(LOG_DEBUG, "killing " + i);
-						Preferences.resetBranch(i);
-					}
+			try {
+				await this._save();
+				for (let i of kill) {
+					log(LOG_DEBUG, "killing " + i);
+					Preferences.resetBranch(i);
 				}
-				catch (ex) {
-					log(LOG_ERROR, "failed to reset prefs", ex);
-				}
-			}).bind(this));
+			}
+			catch (ex) {
+				log(LOG_ERROR, "failed to reset prefs", ex);
+			}
 		}
 		this._save();
 		return rv;
@@ -527,43 +524,38 @@ class FilterManagerImpl {
 		callback();
 	}
 
-	toJSON() {
-		return this._filters;
-	}
-};
-Object.assign(FilterManagerImpl.prototype, {
-	LINK_FILTER: LINK_FILTER,
-	IMAGE_FILTER: IMAGE_FILTER,
-	_save: Task.async(function*() {
+	async _save() {
 		try {
 			try {
-				yield OS.File.makeDir(this._file.parent.path, {unixMode: 0o775, ignoreExisting: true});
+				await OS.File.makeDir(this._file.parent.path, {unixMode: 0o775, ignoreExisting: true});
 			}
 			catch (ex if ex.becauseExists) {
 				// no op;
 			}
-			yield this._saver.saveChanges();
+			await this._saver.saveChanges();
 		}
 		catch (ex) {
 			log(LOG_ERROR, "failed to save filters", ex);
 		}
-	}),
-	save: Task.async(function*() {
+	}
+
+	async save() {
 		try {
-			yield this._save();
+			await this._save();
 			this.reload();
 		}
 		catch (ex) {
 			log(LOG_ERROR, "failed to save filters", ex);
 		}
-	}),
-	_reloadAsync: Task.async(function*() {
+	}
+
+	async _reloadAsync() {
 		log(LOG_DEBUG, "reload commencing");
 		try {
 			try {
 				let decoder = new TextDecoder();
 				if (!this.defFilters) {
-					yield new Promise(function(resolve, reject) {
+					await new Promise(function(resolve, reject) {
 						let x = new XMLHttpRequest();
 						this._filters = {};
 						this._all = [];
@@ -591,7 +583,7 @@ Object.assign(FilterManagerImpl.prototype, {
 
 				let filters = {};
 				try {
-					filters = JSON.parse(decoder.decode(yield OS.File.read(this._file.path)));
+					filters = JSON.parse(decoder.decode(await OS.File.read(this._file.path)));
 					if (!filters) {
 						throw new Error ("No filters where loaded");
 					}
@@ -645,7 +637,15 @@ Object.assign(FilterManagerImpl.prototype, {
 		finally {
 			delete this._pending;
 		}
-	}),
+	}
+
+	toJSON() {
+		return this._filters;
+	}
+};
+Object.assign(FilterManagerImpl.prototype, {
+	LINK_FILTER: LINK_FILTER,
+	IMAGE_FILTER: IMAGE_FILTER,
 });
 
 exports.FilterManager = new FilterManagerImpl();

@@ -666,23 +666,23 @@ exports.normalizeMetaPrefs = function(urls) {
 
 const makeDirCache = new LRUMap(10);
 
-exports.makeDir = function*(dir, perms, force) {
+exports.makeDir = async function(dir, perms, force) {
 	if (!force && makeDirCache.has(dir.path)) {
 		return;
 	}
 	try {
-		yield OS.File.makeDir(dir.path, {unixMode: perms});
+		await OS.File.makeDir(dir.path, {unixMode: perms});
 		makeDirCache.set(dir.path, perms);
 	}
 	catch (ex if ex.becauseExists) {
 		// no op
 	}
 	catch (ex if ex.becauseNoSuchFile) {
-		yield exports.makeDir(dir.parent, perms);
-		yield exports.makeDir(dir, perms);
+		await exports.makeDir(dir.parent, perms);
+		await exports.makeDir(dir, perms);
 	}
 	catch (ex if ex.winLastError === 3) {
-		yield exports.makeDir(dir.parent, perms);
-		yield exports.makeDir(dir, perms);
+		await exports.makeDir(dir.parent, perms);
+		await exports.makeDir(dir, perms);
 	}
 };

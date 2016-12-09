@@ -9,15 +9,14 @@ const {getTextLinks} = require("support/textlinks");
 const Version = require("version");
 const {NS_DTA, NS_METALINKER3, NS_METALINK_RFC5854} = require("support/metalinker");
 const {filterInSitu} = require("utils");
-const {Task} = requireJSM("resource://gre/modules/Task.jsm");
 
 const XPathResult = Ci.nsIDOMXPathResult;
 
-exports.parseTextFile = Task.async(function*(aFile) {
+exports.parseTextFile = async function parseTextFile(aFile) {
 	log(LOG_INFO, "Parsing text file: " + aFile.spec);
 
-	let req = yield fetch(Services.io.newFileURI(aFile).spec);
-	req = yield req.text();
+	let req = await fetch(Services.io.newFileURI(aFile).spec);
+	req = await req.text();
 	log(LOG_ERROR, req);
 	
 	let links = [];
@@ -34,7 +33,7 @@ exports.parseTextFile = Task.async(function*(aFile) {
 	return filterInSitu(links, function(e) {
 		return (e = e.url.spec) && !((e in this) || (this[e] = null));
 	}, {});
-});
+};
 
 exports.exportToTextFile = function exportToTextFile(aDownloads, aFile, aPermissions) {
 	let fs = new Instances.FileOutputStream(aFile, 0x02 | 0x08 | 0x20, aPermissions, 0);

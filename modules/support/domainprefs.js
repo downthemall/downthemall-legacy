@@ -7,7 +7,6 @@ const DOMAINS_FILE = "domain-prefs.json";
 
 const {notifyLocal} = require("./observers");
 const {symbolize} = require("./stringfuncs");
-const {Task} = requireJSM("resource://gre/modules/Task.jsm");
 const {DeferredSave} = requireJSM("resource://gre/modules/DeferredSave.jsm");
 
 const storedDomains = new Map();
@@ -52,12 +51,10 @@ class Saver extends DeferredSave {
 		}
 		return JSON.stringify(rv);
 	}
-}
-Object.assign(Saver.prototype, {
-	_loadAsync: Task.async(function*() {
+	async _loadAsync() {
 		try {
-			let req = yield fetch(Services.io.newFileURI(new Instances.LocalFile(this.file)).spec);
-			let json = yield req.json();
+			let req = await fetch(Services.io.newFileURI(new Instances.LocalFile(this.file)).spec);
+			let json = await req.json();
 			for (let [domain, prefs] of json) {
 				domain = Symbol.for(domain);
 				for (let [pref, value] of prefs) {
@@ -73,8 +70,9 @@ Object.assign(Saver.prototype, {
 		catch (ex) {
 			this.saveChanges();
 		}
-	}),
-});
+	}
+}
+
 let saver = new Saver();
 unload(function() {
 	if (saver) {

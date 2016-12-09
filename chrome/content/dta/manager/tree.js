@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
-/* global $, $e, $$, _, Utils, Timers, FilterManager, getIcon, Preferences, Task, OS */
+/* global $, $e, $$, _, Utils, Timers, FilterManager, getIcon, Preferences, OS */
 /* global mapInSitu, filterInSitu, mapFilterInSitu, filterMapInSitu */
 /* global DTA, Dialog, QueueItem, Prefs, QueueStore, Prompts, ImportExport, Metalinker */
 /* global asyncMoveFile, showPreferences, Tooltip, CoThreadListWalker */
@@ -13,14 +13,14 @@
 
 XPCOMUtils.defineLazyGetter(window, "ImportExport", () => require("manager/imex"));
 
-function FileDataProvider(download, file) {
-	this._download = download;
-	this._file = file;
-	this._checkFile = this._checkFile.bind(this);
-};
-FileDataProvider.prototype = {
-	_checks: 0,
-	QueryInterface: QI([Ci.nsIFlavorDataProvider]),
+class FileDataProvider {
+	constructor(download, file) {
+		this._download = download;
+		this._file = file;
+		this._checks = 0;
+		this._checkFile = this._checkFile.bind(this);
+		this.QueryInterface = QI([Ci.nsIFlavorDataProvider]);
+	}
 	get file() {
 		if (this._timer) {
 			Timers.killTimer(this._timer);
@@ -29,10 +29,10 @@ FileDataProvider.prototype = {
 		this._checks = 0;
 		this._timer = Timers.createOneshot(500, this.checkFile.bind(this));
 		return this._file;
-	},
-	checkFile: Task.async(function*() {
+	}
+	async checkFile() {
 		delete this._timer;
-		let exists = yield OS.File.exists(this._file.path);
+		let exists = await OS.File.exists(this._file.path);
 		if (!exists) {
 			Tree.remove(this._download);
 			return;
@@ -40,12 +40,12 @@ FileDataProvider.prototype = {
 		if (++this._checks < 10) {
 			this._timer = Timers.createOneshot(5000, this.checkFile.bind(this));
 		}
-	}),
-	getFlavorData: function(dataTransfer, flavor, data, dataLen) {
+	}
+	getFlavorData(dataTransfer, flavor, data, dataLen) {
 		data.value = this.file;
 		dataLen.value = 1;
 	}
-};
+}
 
 
 var Tree = {
@@ -527,14 +527,14 @@ var Tree = {
 
 		this._moveToNewLocation(d, from, to);
 	},
-	_moveToNewLocation: Task.async(function*(download, from, to) {
+	_moveToNewLocation: async function(download, from, to) {
 		try {
-			if (!(yield OS.File.exists(from.path))) {
+			if (!(await OS.File.exists(from.path))) {
 				download.setUserFileName(to.leafName);
 				log(LOG_DEBUG, "gone");
 				return; // gone already
 			}
-			if ((yield OS.File.exists(to.path))) {
+			if ((await OS.File.exists(to.path))) {
 				Prompts.alert(window, _("rename.title"), _("rename.alreadythere", [from.leafName, to.path]));
 				log(LOG_DEBUG, "exists");
 				return;
@@ -542,7 +542,7 @@ var Tree = {
 
 			log(LOG_DEBUG, "move " + from.path + " to " + to.path);
 			// need to move
-			yield OS.File.move(from.path, to.path);
+			await OS.File.move(from.path, to.path);
 			log(LOG_DEBUG, "move complete " + from.path + " to " + to.path);
 
 			download.setUserFileName(to.leafName);
@@ -551,7 +551,7 @@ var Tree = {
 			log(LOG_DEBUG, "move failed " + from.path + " to " + to.path, ex);
 			Prompts.alert(window, _("rename.title"), _("rename.failedtomove", [from.path, to.path]));
 		}
-	}),
+	},
 
 	isSorted: function() { return true; },
 	isContainer: function(idx) { return false; },
@@ -988,7 +988,7 @@ var Tree = {
 			this._removeJump(filterInSitu(downloads, e => e.filteredPosition >= 0).length, last);
 		}
 	},
-	_removeByState: Task.async(function*(state, onlyGone) {
+	_removeByState: async function(state, onlyGone) {
 		this.beginUpdate();
 		try {
 			QueueStore.beginUpdate();
@@ -997,7 +997,7 @@ var Tree = {
 				if (d.state !== state) {
 					continue;
 				}
-				if (onlyGone && (yield OS.File.exists(d.destinationLocalFile.path))) {
+				if (onlyGone && (await OS.File.exists(d.destinationLocalFile.path))) {
 					continue;
 				}
 				removing.push(d);
@@ -1011,7 +1011,7 @@ var Tree = {
 			this.invalidate();
 			this.endUpdate();
 		}
-	}),
+	},
 	removeCompleted: function() {
 		if (Prefs.confirmRemoveCompleted) {
 			let res = Prompts.confirm(
@@ -1266,7 +1266,7 @@ var Tree = {
 		}
 	},
 	import: function() {
-		const processResponse = Task.async(function*(fp, rv) {
+		const processResponse = async function(fp, rv) {
 			if (rv !== Ci.nsIFilePicker.returnOK) {
 				return;
 			}
@@ -1275,7 +1275,7 @@ var Tree = {
 					Metalinker.handleFile(fp.file);
 					return;
 				}
-				let lnks = yield ImportExport.parseTextFile(fp.file);
+				let lnks = await ImportExport.parseTextFile(fp.file);
 				if (lnks.length) {
 					DTA.saveLinkArray(window, lnks, []);
 				}
@@ -1284,7 +1284,7 @@ var Tree = {
 				log(LOG_ERROR, "Cannot import downloads (processResponse)", ex);
 				Prompts.alert(window, _('import.title'), _('importfailed'));
 			}
-		});
+		};
 		try {
 			let fp = new Instances.FilePicker(window, _('import.title'), Ci.nsIFilePicker.modeOpen);
 			fp.appendFilters(Ci.nsIFilePicker.filterText);
@@ -1442,11 +1442,11 @@ var Tree = {
 			log(LOG_ERROR, "rt", ex);
 		}
 	},
-	_refreshToolsAsync: Task.async(function*(states, cur) {
+	_refreshToolsAsync: async function(states, cur) {
 		try {
 			states.curFile = (cur && cur.state === COMPLETE &&
-												(yield OS.File.exists(cur.destinationLocalFile.path)));
-			states.curFolder = (cur && (yield OS.File.exists(
+												(await OS.File.exists(cur.destinationLocalFile.path)));
+			states.curFolder = (cur && (await OS.File.exists(
 				new Instances.LocalFile(cur.destinationPath).path)));
 			for (let i = 0, e = this._refreshTools_items_deferred.length; i < e; ++i) {
 				let items = this._refreshTools_items_deferred[i];
@@ -1460,7 +1460,7 @@ var Tree = {
 		catch (tex) {
 			log(LOG_ERROR, "rt (task)", tex);
 		}
-	}),
+	},
 	savePositions: function() {
 		let saveArray = [];
 		for (let i = 0, e = this._downloads.length; i < e; ++i) {
@@ -1872,7 +1872,7 @@ var FileHandling = {
 			}
 		}
 	},
-	deleteFile: Task.async(function*() {
+	deleteFile: async function() {
 		try {
 			let list = [];
 			for (let d of this._uniqueList()) {
@@ -1894,7 +1894,7 @@ var FileHandling = {
 			}
 			for (let d of list) {
 				try {
-					yield OS.File.remove(d.destinationLocalFile.path);
+					await OS.File.remove(d.destinationLocalFile.path);
 				}
 				catch (ex) {
 					// no-op
@@ -1905,5 +1905,5 @@ var FileHandling = {
 		catch (ex) {
 			log(LOG_ERROR, "deleteFile", ex);
 		}
-	})
+	}
 };

@@ -31,7 +31,6 @@ var {Connection} = require("manager/connection");
 var {createRenamer} = require("manager/renamer");
 var {memoize, identity} = require("support/memoize");
 var {moveFile} = require("support/movefile");
-var {Task} = requireJSM("resource://gre/modules/Task.jsm");
 
 // Use the main OS.File here!
 var {OS} = requireJSM("resource://gre/modules/osfile.jsm");
@@ -76,15 +75,15 @@ function timeout(secs) {
 
 function _moveFile(destination, self) {
 	let remakeDir = false;
-	let move = function*() {
+	let move = async function() {
 		for (let x = 0; x < 10; ++x) {
 			if (remakeDir) {
-				yield Utils.makeDir(destination, Prefs.dirPermissions, true);
+				await Utils.makeDir(destination, Prefs.dirPermissions, true);
 			}
 			let df = destination.clone();
 			df.append(self.destinationName);
 			try {
-				yield moveFile(self.tmpFile.path, df.path, self.shouldOverwrite);
+				await moveFile(self.tmpFile.path, df.path, self.shouldOverwrite);
 				return;
 			}
 			catch (ex) {
@@ -109,13 +108,13 @@ function _moveFile(destination, self) {
 					remakeDir = true;
 				}
 				log(LOG_ERROR, ex);
-				yield timeout(x * 500);
+				await timeout(x * 500);
 			}
 		}
 		log(LOG_ERROR, "shit hit the fan!");
 		throw new Exception("Failed to move file");
 	};
-	return Task.spawn(move);
+	return move();
 };
 
 function dieEarly() {
@@ -2026,24 +2025,24 @@ QueueItem.prototype = {
 		this.speeds.clear();
 		this.otherBytes = 0;
 	},
-	moveCompleted: function*() {
+	moveCompleted: async function() {
 		if (this.state === CANCELED) {
 			throw Error("Cannot move incomplete file");
 		}
 		this.status = TextCache_MOVING;
 
-		let pinned = (yield this.resolveConflicts());
+		let pinned = (await this.resolveConflicts());
 		if (!pinned) {
 			return;
 		}
 		try {
 			let destination = new Instances.LocalFile(this.destinationPath);
-			yield Utils.makeDir(destination, Prefs.dirPermissions);
+			await Utils.makeDir(destination, Prefs.dirPermissions);
 			log(LOG_INFO, this.fileName + ": Move " + this.tmpFile.path + " to " + this.destinationFile);
 			// move file
 			if (this.compression) {
 				this.status = TextCache_DECOMPRESSING;
-				yield new Promise(function(resolve, reject) {
+				await new Promise(function(resolve, reject) {
 					new Decompressor(this, function(ex) {
 						if (ex) {
 							reject(ex);
@@ -2055,7 +2054,7 @@ QueueItem.prototype = {
 				}.bind(this));
 				return true;
 			}
-			yield _moveFile(destination, this);
+			await _moveFile(destination, this);
 			return true;
 		}
 		finally {
@@ -2071,16 +2070,16 @@ QueueItem.prototype = {
 			log(LOG_ERROR, "handleMetalink", ex);
 		}
 	},
-	verifyHash: Task.async(function*() {
+	verifyHash: async function() {
 		let oldStatus = this.status;
 		this.status = TextCache_VERIFYING;
-		let mismatches = yield Verificator.verify(
-			(yield OS.File.exists(this.tmpFile.path)) ? this.tmpFile.path : this.destinationFile,
+		let mismatches = await Verificator.verify(
+			(await OS.File.exists(this.tmpFile.path)) ? this.tmpFile.path : this.destinationFile,
 			this.hashCollection,
-			(function(progress) {
+			progress => {
 				this.partialSize = progress;
 				this.invalidate();
-			}).bind(this));
+			});
 		if (!mismatches) {
 			log(LOG_ERROR, "hash not computed");
 			Prompts.alert(window, _('error', ["Metalink"]), _('verificationfailed', [this.destinationFile]));
@@ -2088,15 +2087,15 @@ QueueItem.prototype = {
 		}
 		else if (mismatches.length) {
 			log(LOG_ERROR, "Mismatches: " + mismatches.toSource());
-			return (yield this.verifyHashError(mismatches));
+			return (await this.verifyHashError(mismatches));
 		}
 		this.status = oldStatus;
 		return true;
-	}),
-	verifyHashError: Task.async(function*(mismatches) {
-		function* deleteFile(file) {
+	},
+	verifyHashError: async function(mismatches) {
+		async function deleteFile(file) {
 			try {
-				yield OS.File.remove(file.path);
+				await OS.File.remove(file.path);
 			}
 			catch (ex if ex.becauseNoSuchFile) {
 				// no op
@@ -2132,7 +2131,7 @@ QueueItem.prototype = {
 		let file = this.destinationLocalFile;
 		filterInSitu(mismatches, e => e.start !== e.end);
 
-		if (mismatches.length && (yield OS.File.exists(this.tmpFile.path))) {
+		if (mismatches.length && (await OS.File.exists(this.tmpFile.path))) {
 			// partials
 			let act = Prompts.confirm(
 				window,
@@ -2143,11 +2142,11 @@ QueueItem.prototype = {
 				_('keep'));
 			switch (act) {
 				case 0:
-					yield deleteFile(file);
+					await deleteFile(file);
 					recoverPartials(this, mismatches);
 					return false;
 				case 1:
-					yield deleteFile(file);
+					await deleteFile(file);
 					this.cancel();
 					return false;
 			}
@@ -2162,20 +2161,20 @@ QueueItem.prototype = {
 			_('keep'));
 		switch (act) {
 			case 0:
-				yield deleteFile();
+				await deleteFile();
 				this.safeRetry();
 				return false;
 			case 1:
-				yield deleteFile();
+				await deleteFile();
 				this.cancel();
 				return false;
 		}
 		return true;
-	}),
+	},
 	customFinishEvent: function() {
 		new CustomAction(this, Prefs.finishEvent);
 	},
-	setAttributes: function*() {
+	setAttributes: async function() {
 		if (Prefs.setTime) {
 			// XXX: async API <https://bugzilla.mozilla.org/show_bug.cgi?id=924916>
 			try {
@@ -2205,7 +2204,7 @@ QueueItem.prototype = {
 			file = this.destinationLocalFile;
 		}
 		try {
-			this.totalSize = this.partialSize = (yield OS.File.stat(file.path)).size;
+			this.totalSize = this.partialSize = (await OS.File.stat(file.path)).size;
 		}
 		catch (ex) {
 			log(LOG_ERROR, "failed to get filesize for " + file.path, ex);
@@ -2213,12 +2212,12 @@ QueueItem.prototype = {
 		}
 		return true;
 	},
-	closeChunks: function*() {
+	closeChunks: async function() {
 		if (!this.chunks) {
 			return;
 		}
 		for (let c of this.chunks) {
-			yield c.close();
+			await c.close();
 		}
 	},
 	_criticals: 0,
@@ -2248,23 +2247,23 @@ QueueItem.prototype = {
 
 		return this._finishDownloadTask = this._runFinishDownloadTask();
 	},
-	_runFinishDownloadTask: Task.async(function*() {
+	_runFinishDownloadTask: async function() {
 		try {
 			this.setState(FINISHING);
 			this.status = TextCache_FINISHING;
-			yield this.closeChunks();
-			if (this.hashCollection && !(yield this.verifyHash())) {
+			await this.closeChunks();
+			if (this.hashCollection && !(await this.verifyHash())) {
 				return;
 			}
 			if ("isMetalink" in this) {
 				this.handleMetalink();
 				return;
 			}
-			if (!(yield this.moveCompleted())) {
+			if (!(await this.moveCompleted())) {
 				log(LOG_DEBUG, "moveCompleted scheduled!");
 				return;
 			}
-			yield this.setAttributes();
+			await this.setAttributes();
 			if (Prefs.finishEvent) {
 				this.customFinishEvent();
 			}
@@ -2283,7 +2282,7 @@ QueueItem.prototype = {
 		finally {
 			delete this._finishDownloadTask;
 		}
-	}),
+	},
 	get maskURL() {
 		return this.urlManager.usableURL;
 	},
@@ -2394,11 +2393,11 @@ QueueItem.prototype = {
 			log(LOG_ERROR, "cancel():", ex);
 		}
 	},
-	_cancelClose: Task.async(function*(message) {
+	_cancelClose: async function(message) {
 		try {
-			yield this.closeChunks();
+			await this.closeChunks();
 			if (this._preallocTask) {
-				yield this._preallocTask;
+				await this._preallocTask;
 			}
 			log(LOG_INFO, this.fileName + ": canceled");
 
@@ -2429,11 +2428,11 @@ QueueItem.prototype = {
 		catch (ex) {
 			log(LOG_ERROR, "cancel() Task", ex);
 		}
-	}),
+	},
 
-	cleanup: Task.async(function*() {
+	cleanup: async function() {
 		if (this.chunks) {
-			yield this.closeChunks();
+			await this.closeChunks();
 		}
 		delete this.visitors;
 		delete this.chunks;
@@ -2444,7 +2443,7 @@ QueueItem.prototype = {
 		delete this._destinationLocalFile;
 		delete this._tmpFile;
 		delete this.rebuildDestination_renamer;
-	}),
+	},
 	prealloc: function() {
 		let file = this.tmpFile;
 
@@ -2463,16 +2462,16 @@ QueueItem.prototype = {
 
 		this._preallocTask = this._preallocInternal(file);
 	},
-	_preallocInternal: Task.async(function*(file) {
+	_preallocInternal: async function(file) {
 		try {
 			try {
-				yield Utils.makeDir(file.parent, Prefs.dirPermissions);
+				await Utils.makeDir(file.parent, Prefs.dirPermissions);
 			}
 			catch (ex if ex.becauseExists) {
 				// no op
 			}
 			try {
-				if (this.totalSize === (yield OS.File.stat(file.path)).size) {
+				if (this.totalSize === (await OS.File.stat(file.path)).size) {
 					log(LOG_INFO, "pa: already allocated");
 					return;
 				}
@@ -2487,7 +2486,7 @@ QueueItem.prototype = {
 				Prefs.sparseFiles
 				);
 			if (pa) {
-				yield pa;
+				await pa;
 				log(LOG_INFO, "pa: done");
 			}
 			else {
@@ -2501,7 +2500,7 @@ QueueItem.prototype = {
 			this._preallocTask = null;
 			this.maybeResumeDownload();
 		}
-	}),
+	},
 
 	shutdown: function() {
 	},
@@ -2514,9 +2513,9 @@ QueueItem.prototype = {
 		}
 		this._runRemoveTmpFile(tmpFile);
 	},
-	_runRemoveTmpFile: Task.async(function*(tmpfile) {
+	_runRemoveTmpFile: async function(tmpfile) {
 		try {
-			yield OS.File.remove(tmpfile.path);
+			await OS.File.remove(tmpfile.path);
 		}
 		catch (ex if ex.becauseNoSuchFile) {
 			// no op
@@ -2524,7 +2523,7 @@ QueueItem.prototype = {
 		catch (ex) {
 			log(LOG_ERROR, "failed to remove tmpfile: " + tmpfile.path, ex);
 		}
-	}),
+	},
 
 	sessionConnections: 0,
 	_autoRetries: 0,
@@ -2743,17 +2742,19 @@ XPCOMUtils.defineLazyGetter(QueueItem.prototype, 'AuthPrompts', function() {
 	return new LoggedPrompter(window);
 });
 
-var ConflictManager = {
-	_items: new Map(),
-	_queue: [],
-	_pinned: new Map(),
-	resolve: function(download) {
+var ConflictManager = new class {
+	constructor() {
+		this._items = new Map();
+		this._queue =  [];
+		this._pinned = new Map();
+	}
+	resolve(download) {
 		return this._resolve(download, true);
-	},
-	check: function(download) {
+	}
+	check(download) {
 		return this._resolve(download, false);
-	},
-	_resolve: function(download, pinned) {
+	}
+	_resolve(download, pinned) {
 		log(LOG_DEBUG, "ConflictManager: Resolving " + download);
 		let data = this._items.get(download);
 		if (data) {
@@ -2772,15 +2773,15 @@ var ConflictManager = {
 		log(LOG_DEBUG, "ConflictManager: Resolving new " + data);
 		this._processNext();
 		return data.promise;
-	},
-	pin: function(name, unique) {
+	}
+	pin(name, unique) {
 		let count = (this._pinned.get(name) || 0) + 1;
 		if (unique && count > 1) {
 			throw new Error("Invalid pin; not unique");
 		}
 		this._pinned.set(name, count);
-	},
-	unpin: function(name) {
+	}
+	unpin(name) {
 		let count = this._pinned.get(name);
 		if (!isFinite(count)) {
 			log(LOG_ERROR, "ConflictManager: trying to unpin a name that does not exist");
@@ -2792,8 +2793,8 @@ var ConflictManager = {
 			return;
 		}
 		this._pinned.set(name, count); // store new count
-	},
-	_processNext: function() {
+	}
+	_processNext() {
 		log(LOG_DEBUG, "ConflictManager: Resolving next");
 		if (this._processing) {
 			log(LOG_DEBUG, "ConflictManager: Resolving rescheduling");
@@ -2808,10 +2809,10 @@ var ConflictManager = {
 
 		this._processing = true;
 		this._runNext(download, data);
-	},
-	_runNext: Task.async(function*(download, data) {
+	}
+	async _runNext(download, data) {
 		try {
-			data.resolve(yield this._processOne(download, data));
+			data.resolve(await this._processOne(download, data));
 		}
 		catch (ex) {
 			log(LOG_ERROR, "ConflictManager: Failed to resolve", ex);
@@ -2821,14 +2822,14 @@ var ConflictManager = {
 			this._processing = false;
 			setTimeoutOnlyFun(this._processNext.bind(this), 0);
 		}
-	}),
-	_findUnique: function*(newDest, basename, conflicts) {
+	}
+	async _findUnique(newDest, basename, conflicts) {
 		// first try to find a "free" name by just incrementing the counter
 		for (;conflicts <= 10; ++conflicts) {
 			newDest.leafName = Utils.formatConflictName(basename, conflicts);
 			let exists = this._pinned.has(newDest.path);
 			if (!exists) {
-				exists = yield OS.File.exists(newDest.path);
+				exists = await OS.File.exists(newDest.path);
 				// recheck
 				exists = exists || this._pinned.has(newDest.path);
 			}
@@ -2842,7 +2843,7 @@ var ConflictManager = {
 			newDest.leafName = Utils.formatConflictName(basename, conflicts);
 			let exists = this._pinned.has(newDest.path);
 			if (!exists) {
-				exists = yield OS.File.exists(newDest.path);
+				exists = await OS.File.exists(newDest.path);
 				// recheck
 				exists = exists || this._pinned.has(newDest.path);
 			}
@@ -2859,7 +2860,7 @@ var ConflictManager = {
 			newDest.leafName = Utils.formatConflictName(basename, conflicts);
 			let exists = this._pinned.has(newDest.path);
 			if (!exists) {
-				exists = yield OS.File.exists(newDest.path);
+				exists = await OS.File.exists(newDest.path);
 				// recheck
 				exists = exists || this._pinned.has(newDest.path);
 			}
@@ -2871,13 +2872,13 @@ var ConflictManager = {
 			}
 		}
 		return high;
-	},
-	_processOne: function*(download, data) {
+	}
+	async _processOne(download, data) {
 		log(LOG_DEBUG, "ConflictManager: Starting conflict resolution for " + download);
 		let dest = download.destinationLocalFile;
 		let exists = this._pinned.has(dest.path);
 		if (!exists) {
-			exists = yield OS.File.exists(dest.path);
+			exists = await OS.File.exists(dest.path);
 			// recheck
 			exists = exists || this._pinned.has(dest.path);
 		}
@@ -2914,7 +2915,7 @@ var ConflictManager = {
 				dialog.resolve = resolve;
 				dialog.reject = reject;
 			});
-			conflicts = yield this._findUnique(newDest, basename, conflicts);
+			conflicts = await this._findUnique(newDest, basename, conflicts);
 			let options = {
 				url: Utils.cropCenter(download.urlManager.usable, 45),
 				fn: Utils.cropCenter(download.destinationLocalFile.leafName, 45),
@@ -2927,7 +2928,7 @@ var ConflictManager = {
 				options, dialog
 				);
 			let ctype = 0;
-			[cr, ctype] = yield dialog.promise;
+			[cr, ctype] = await dialog.promise;
 
 			if (ctype === 1) {
 				this._sessionSetting = cr;
@@ -2947,7 +2948,7 @@ var ConflictManager = {
 					// Check will be performed once we pin
 					return;
 				}
-				conflicts = yield this._findUnique(newDest, basename, conflicts);
+				conflicts = await this._findUnique(newDest, basename, conflicts);
 				let pinned = null;
 				if (data.pinned) {
 					download.conflicts = conflicts;
@@ -2972,7 +2973,7 @@ var ConflictManager = {
 				return false;
 		}
 	}
-};
+}();
 
 function CustomAction(download, command) {
 	try {

@@ -12,8 +12,6 @@ const REGEXP_SWF = /\.swf\b/i;
 const REGEXP_CT = /\b(flv|ogg|ogm|avi|divx|mp4v|webm)\b/i;
 const REGEXP_STARTPARAM = /start=\d+&?/;
 
-const {Task} = requireJSM("resource://gre/modules/Task.jsm");
-
 const {
 	registerPrivatePurger,
 	unregisterPrivatePurger,
@@ -60,15 +58,19 @@ class ContextLRUMap {
 function ContentHandlingImpl() {
 	this._init();
 }
-ContentHandlingImpl.prototype = {
-	classDescription: "DownThemAll! ContentHandling",
-	classID: Components.ID("366982b8-9db9-4383-aae7-dbc2f40ba6f6"),
-	contractID: "@downthemall.net/content/redirects;1",
-	xpcom_categories: ["net-channel-event-sinks"],
+exports.ContentHandling = new class {
+	constructor() {
+		this.classDescription = "DownThemAll! ContentHandling";
+		this.classID = Components.ID("366982b8-9db9-4383-aae7-dbc2f40ba6f6");
+		this.contractID = "@downthemall.net/content/redirects;1";
+		this.xpcom_categories = ["net-channel-event-sinks"];
+		this.QueryInterface = QI([
+			Ci.nsIObserver,
+			Ci.nsIURIContentListener,
+			Ci.nsIFactory,
+			Ci.nsIChannelEventSink]
+		);
 
-	QueryInterface: QI([Ci.nsIObserver, Ci.nsIURIContentListener, Ci.nsIFactory, Ci.nsIChannelEventSink]),
-
-	_init: function ct__init() {
 		obs.add(this, "http-on-modify-request");
 
 		require("components").registerComponents([this], true);
@@ -93,9 +95,9 @@ ContentHandlingImpl.prototype = {
 			this.globalMM.removeDelayedFrameScript(fs);
 		});
 		unload(this._uninit.bind(this));
-	},
+	}
 
-	_uninit: function ct__uninit() {
+	_uninit() {
 		Services.prefs.removeObserver('extensions.dta.listsniffedvideos', this);
 		if (this.sniffVideos) {
 			this.sniffVideos = false;
@@ -103,16 +105,16 @@ ContentHandlingImpl.prototype = {
 		}
 		unregisterPrivatePurger(this.boundPurge);
 		obs.remove(this, 'http-on-modify-request');
-	},
-	registerHttpObservers: function ct_registerHttpObservers() {
+	}
+	registerHttpObservers() {
 		obs.add(this, 'http-on-examine-response');
 		obs.add(this, 'http-on-examine-cached-response');
-	},
-	unregisterHttpObservers: function ct_unregisterHttpObservers() {
+	}
+	unregisterHttpObservers() {
 		obs.remove(this, 'http-on-examine-response');
 		obs.remove(this, 'http-on-examine-cached-response');
-	},
-	observe: function ct_observe(subject, topic, data) {
+	}
+	observe(subject, topic, data) {
 		switch(topic) {
 		case 'http-on-modify-request':
 			this.observeRequest(subject, topic, data);
@@ -140,8 +142,8 @@ ContentHandlingImpl.prototype = {
 			}
 			break;
 		}
-	},
-	observeRequest: function ct_observeRequest(channel, topic, data) {
+	}
+	observeRequest(channel, topic, data) {
 		if (
 			!(channel instanceof Ci.nsIHttpChannel) ||
 			!(channel instanceof Ci.nsIUploadChannel)) {
@@ -185,8 +187,8 @@ ContentHandlingImpl.prototype = {
 		catch (ex) {
 			log(LOG_ERROR, "observe request", ex);
 		}
-	},
-	observeResponse: function ct_observeResponse(channel, topic, data) {
+	}
+	observeResponse(channel, topic, data) {
 		if (!this.sniffVideos || !(channel instanceof Ci.nsIHttpChannel)) {
 			return;
 		}
@@ -212,8 +214,8 @@ ContentHandlingImpl.prototype = {
 		catch (ex) {
 			log(LOG_ERROR, "observe response", ex);
 		}
-	},
-	_observeResponseAsync: Task.async(function*(channel) {
+	}
+	async _observeResponseAsync(channel) {
 		let uri = null;
 		let lc = null;
 		if (channel instanceof Ci.nsIInterfaceRequestor) {
@@ -244,7 +246,7 @@ ContentHandlingImpl.prototype = {
 					try {
 						let tfe = lc.topFrameElement;
 						let mm = tfe.messageManager;
-						let wnd = yield new Promise((resolve, reject) => {
+						let wnd = await new Promise((resolve, reject) => {
 							let topic = `DTA::getURI:${this.getUriJob++}`;
 							mm.addMessageListener(topic, function load(m) {
 								mm.removeMessageListener(topic, load);
@@ -295,20 +297,20 @@ ContentHandlingImpl.prototype = {
 			return;
 		}
 		this._registerVideo(uri, channel.URI, isChannelPrivate(channel));
-	}),
+	}
 
-	_sniffVideos: false,
 	get sniffVideos() {
 		return this._sniffVideos;
-	},
+	}
 	set sniffVideos(nv) {
 		this._sniffVideos = nv;
 		if (!nv) {
 			this._videos.clear();
 		}
 		return nv;
-	},
-	_registerVideo: function(uri, vid, isPrivate) {
+	}
+
+	_registerVideo(uri, vid, isPrivate) {
 		// sanitize vid and remove the start param
 		vid = vid.clone();
 		if (vid instanceof Ci.nsIURL) {
@@ -323,23 +325,23 @@ ContentHandlingImpl.prototype = {
 			nv.push(vid);
 			this._videos.set(uri, nv, isPrivate);
 		}
-	},
+	}
 
-	getPostDataFor: function(uri, isPrivate) {
+	getPostDataFor(uri, isPrivate) {
 		if (uri instanceof Ci.nsIURI) {
 			uri = uri.spec;
 		}
 		return this._data.get(uri, isPrivate) || "";
-	},
-	getSniffedVideosFor: function(uri, isPrivate) {
+	}
+	getSniffedVideosFor(uri, isPrivate) {
 		if (uri instanceof Ci.nsIURI) {
 			uri = uri.spec;
 		}
 		return (this._videos.get(uri, isPrivate) || []).map(a => a.clone());
-	},
+	}
 
 	// nsIChannelEventSink
-	asyncOnChannelRedirect: function(oldChannel, newChannel, flags, callback) {
+	asyncOnChannelRedirect(oldChannel, newChannel, flags, callback) {
 		try {
 			this.onChannelRedirect(oldChannel, newChannel, flags);
 		}
@@ -347,16 +349,16 @@ ContentHandlingImpl.prototype = {
 			log(LOG_ERROR, "asyncOnChannelRedirect", ex);
 		}
 		callback.onRedirectVerifyCallback(0);
-	},
-	onChannelRedirect: function(oldChannel, newChannel, flags) {
+	}
+	onChannelRedirect(oldChannel, newChannel, flags) {
 		let oldURI = oldChannel.URI.spec;
 		let newURI = newChannel.URI.spec;
 		let isPrivate = isChannelPrivate(oldChannel);
 		oldURI = this._revRedirects.get(oldURI, isPrivate) || oldURI;
 		this._redirects.set(oldURI, newURI, isPrivate);
 		this._revRedirects.set(newURI, oldURI, isPrivate);
-	},
-	getRedirect: function(uri, isPrivate) {
+	}
+	getRedirect(uri, isPrivate) {
 		let rv = this._revRedirects.get(uri.spec, isPrivate);
 		if (!rv) {
 			return uri;
@@ -367,21 +369,20 @@ ContentHandlingImpl.prototype = {
 		catch (ex) {
 			return uri;
 		}
-	},
-	clear: function() {
+	}
+	clear() {
 		this._data = new ContextLRUMap(5);
 		this._videos = new ContextLRUMap(20);
 		this._redirects = new ContextLRUMap(20);
 		this._revRedirects = new ContextLRUMap(100);
-	},
-	purge: function() {
+	}
+	purge() {
 		this._data.clearPrivate();
 		this._videos.clearPrivate();
 		this._redirects.clearPrivate();
 		this._revRedirects.clearPrivate();
 		log(LOG_DEBUG, "purged private data");
 	}
-};
+}();
 
-exports.ContentHandling = new ContentHandlingImpl();
 Object.freeze(exports);

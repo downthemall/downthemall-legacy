@@ -10,7 +10,6 @@ const {ByteBucket} = require("./bytebucket");
 const {filterInSitu, shuffle} = require("utils");
 const obs = require("./observers");
 const domainprefs = require("./domainprefs");
-const {Task} = requireJSM("resource://gre/modules/Task.jsm");
 
 const TOPIC = 'DTA:serverlimits-changed';
 const PREFS = 'extensions.dta.serverlimit.';
@@ -132,8 +131,8 @@ class Limit {
 	}
 }
 
-const loadLimits = Task.async(function* loadLimits() {
-	yield domainprefs.load();
+const loadLimits = async function loadLimits() {
+	await domainprefs.load();
 	limits = new Map();
 	let dp = Array.from(domainprefs.enumHosts()).filter(h => domainprefs.getHost(h, CONNECTIONS));
 	let hosts = Prefs.getChildren(LIMITS_PREF).map(e => e.substr(LIMITS_PREF.length));
@@ -153,7 +152,7 @@ const loadLimits = Task.async(function* loadLimits() {
 		}
 	}
 	obs.notify(null, TOPIC, null);
-});
+};
 
 function getEffectiveHost(url) {
 	try {

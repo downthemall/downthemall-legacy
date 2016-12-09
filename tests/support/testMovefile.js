@@ -1,7 +1,6 @@
 "use strict";
 /* jshint browser:true */
 /* globals module, test, asyncTest, expect, checkExports, QUnit, equal, strictEqual, deepEqual, arrayEqual, ok, throws*/
-/* globals Task */
 module("support/movefile.js");
 
 test("exports", function() {
@@ -10,22 +9,22 @@ test("exports", function() {
 
 // jshint -W083
 for (var i = 0; i < require("support/moveFile").maxWorkers * 2; ++i) {
-	asyncTest("movefile OK (" + i + ")", Task.async(function*() {
+	asyncTest("movefile OK (" + i + ")", async function() {
 		const {OS} = requireJSM("resource://gre/modules/osfile.jsm");
 		const {moveFile} = require("support/movefile");
 		var tmpDir = OS.Constants.Path.tmpDir;
 		var path = OS.Path.join(tmpDir, "dta.tmp");
 		var path2 = OS.Path.join(tmpDir, "dta2.tmp");
-		yield OS.File.writeAtomic(path, new Uint8Array(1));
+		await OS.File.writeAtomic(path, new Uint8Array(1));
 		try {
-			yield moveFile(path, path2);
-			yield OS.File.remove(path2);
+			await moveFile(path, path2);
+			await OS.File.remove(path2);
 			ok(true, "move worked");
 		}
 		catch (ex) {
 			ok(false, ex.message || ex.toString());
 			try {
-				yield OS.File.remove(path);
+				await OS.File.remove(path);
 			}
 			catch (ex) {
 				// ignore
@@ -34,25 +33,25 @@ for (var i = 0; i < require("support/moveFile").maxWorkers * 2; ++i) {
 		finally {
 			QUnit.start();
 		}
-	}));
+	});
 
-	asyncTest("movefile FAIL (" + i + ")", Task.async(function*() {
+	asyncTest("movefile FAIL (" + i + ")", async function() {
 		const {OS} = requireJSM("resource://gre/modules/osfile.jsm");
 		const {moveFile} = require("support/movefile");
 		var tmpDir = OS.Constants.Path.tmpDir;
 		var path = OS.Path.join(tmpDir, "dta.tmp");
 		var path2 = OS.Path.join(tmpDir, "doesnotexist", "dta.tmp");
-		yield OS.File.writeAtomic(path, new Uint8Array(1));
+		await OS.File.writeAtomic(path, new Uint8Array(1));
 		try {
-			yield moveFile(path, path2);
-			yield OS.File.remove(path2);
+			await moveFile(path, path2);
+			await OS.File.remove(path2);
 			ok(false, "move worked, but shouldn't have");
 		}
 		catch (ex) {
 			ok(true, ex.message || ex.toString());
 			ok(ex.unixErrno || ex.winLastError, ex.unixErrno + " " + ex.winLastError);
 			try {
-				yield OS.File.remove(path);
+				await OS.File.remove(path);
 			}
 			catch (ex) {
 				// ignore
@@ -61,5 +60,5 @@ for (var i = 0; i < require("support/moveFile").maxWorkers * 2; ++i) {
 		finally {
 			QUnit.start();
 		}
-	}));
+	});
 }

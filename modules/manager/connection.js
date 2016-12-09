@@ -19,7 +19,6 @@ const {modifyURL, modifyHttp} = require("support/requestmanipulation");
 const Preferences = require("preferences");
 const DomainPrefs = require("support/domainprefs");
 const {ProxyManager} = require("support/proxyprovider");
-const {Task} = requireJSM("resource://gre/modules/Task.jsm");
 
 const {
 	getUsableFileName,
@@ -158,16 +157,16 @@ Connection.prototype = {
 
 	cantCount: false,
 
-	open: Task.async(function*() {
+	open: async function() {
 		try {
-			yield this.c.open();
+			await this.c.open();
 			this._chan.asyncOpen(this, null);
 			log(LOG_INFO, `chunk ${this.c} ${this.isInfoGetter ? "InfoGetter" : "Regular"} is now open!`);
 		}
 		catch (ex) {
 			this.writeoFailed(ex);
 		}
-	}),
+	},
 
 	prepareChannel: function(chan) {
 		let d = this.d;
@@ -1110,7 +1109,7 @@ Connection.prototype = {
 			return;
 		}
 	},
-	onStopRequest: Task.async(function*(aRequest, aContext, aStatusCode) {
+	onStopRequest: async function(aRequest, aContext, aStatusCode) {
 		try {
 			log(LOG_INFO, 'StopRequest');
 		}
@@ -1126,7 +1125,7 @@ Connection.prototype = {
 		}
 		try {
 			try {
-				yield c.close();
+				await c.close();
 			}
 			finally {
 				if (d) {
@@ -1264,7 +1263,7 @@ Connection.prototype = {
 			delete this.c;
 			delete this._chan;
 		}
-	}),
+	},
 
 	// nsIProgressEventSink
 	onProgress: function(aRequest, aContext, aProgress, aProgressMax) {
