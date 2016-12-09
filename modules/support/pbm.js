@@ -19,9 +19,13 @@ let isChannelPrivate = function() { return false; };
 try {
 	let {PrivateBrowsingUtils} = requireJSM("resource://gre/modules/PrivateBrowsingUtils.jsm");
 	if ("isWindowPrivate" in PrivateBrowsingUtils) {
+		let iwp = PrivateBrowsingUtils.isWindowPrivate.bind(PrivateBrowsingUtils);
+		if ("isContentWindowPrivate" in PrivateBrowsingUtils) {
+			iwp = PrivateBrowsingUtils.isContentWindowPrivate.bind(PrivateBrowsingUtils);
+		}
 		isWindowPrivate = function(window) {
 			try {
-				return PrivateBrowsingUtils.isWindowPrivate(window);
+				return iwp(window);
 			}
 			catch (ex) {
 				log(LOG_ERROR, "isWindowPrivate call failed, defaulting to false", ex);
