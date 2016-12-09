@@ -127,6 +127,36 @@ window.addEventListener("unload", dieEarly, false);
 
 var Timers = new TimerManager();
 
+function _downloadChunk(download, chunk, header) {
+	chunk.download = new Connection(download, chunk, header || download.mustGetInfo);
+	chunk.running = true;
+	download.mustGetInfo = false;
+	download.setState(RUNNING);
+	log(LOG_DEBUG, "started: " + chunk);
+	++download.activeChunks;
+	++download.sessionConnections;
+}
+function downloadNewChunk(download, start, end, header) {
+	let chunk = new Chunk(download, start, end);
+	download.chunks.push(chunk);
+	download.chunks.sort(function(a,b) { return a.start - b.start; });
+	_downloadChunk(download, chunk, header);
+}
+function downloadOldChunk(download, chunk, header) {
+	if (chunk.wasOpened) {
+		let idx = download.chunks.indexOf(chunk);
+		if (idx < 0) {
+			throw Error("Invalid chunk");
+		}
+		let newChunk = new Chunk(download, chunk.start, chunk.end, chunk.safeBytes);
+		download.chunks[idx] = newChunk;
+		_downloadChunk(download, newChunk, header);
+	}
+	else {
+		_downloadChunk(download, chunk, header);
+	}
+}
+
 var Dialog_loadDownloads_props =
 	['contentType', 'conflicts', 'postData', 'destinationName', 'resumable', 'compression',
 		'fromMetalink', 'speedLimit', "cleanRequest"];
@@ -2541,47 +2571,16 @@ QueueItem.prototype = {
 	},
 	resumeDownload: function() {
 		log(LOG_DEBUG, "resumeDownload: " + this);
-		function cleanChunks(d) {
-			// merge finished chunks together, so that the scoreboard does not bloat
-			// that much
-			for (let i = d.chunks.length - 2; i > -1; --i) {
-				let c1 = d.chunks[i], c2 = d.chunks[i + 1];
-				if (c1.complete && c2.complete && !c1.buffered && !c2.buffered) {
-					c1.merge(c2);
-					d.chunks.splice(i + 1, 1);
-				}
-			}
-		}
-		function _downloadChunk(download, chunk, header) {
-			chunk.download = new Connection(download, chunk, header || download.mustGetInfo);
-			chunk.running = true;
-			download.mustGetInfo = false;
-			download.setState(RUNNING);
-			log(LOG_DEBUG, "started: " + chunk);
-			++download.activeChunks;
-			++download.sessionConnections;
-		}
-		function downloadNewChunk(download, start, end, header) {
-			let chunk = new Chunk(download, start, end);
-			download.chunks.push(chunk);
-			download.chunks.sort(function(a,b) { return a.start - b.start; });
-			_downloadChunk(download, chunk, header);
-		}
-		function downloadOldChunk(download, chunk, header) {
-			if (chunk.wasOpened) {
-				let idx = download.chunks.indexOf(chunk);
-				if (idx < 0) {
-					throw Error("Invalid chunk");
-				}
-				let newChunk = new Chunk(download, chunk.start, chunk.end, chunk.safeBytes);
-				download.chunks[idx] = newChunk;
-			}
-			else {
-				_downloadChunk(download, chunk, header);
-			}
-		}
 
-		cleanChunks(this);
+		// merge finished chunks together, so that the scoreboard does not bloat
+		// that much
+		for (let i = this.chunks.length - 2; i > -1; --i) {
+			let c1 = this.chunks[i], c2 = this.chunks[i + 1];
+			if (c1.complete && c2.complete && !c1.buffered && !c2.buffered) {
+				c1.merge(c2);
+				this.chunks.splice(i + 1, 1);
+			}
+		}
 
 		try {
 			if (Dialog.offline || this.maxChunks <= this.activeChunks) {
