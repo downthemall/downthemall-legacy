@@ -90,6 +90,7 @@ function _moveFile(destination, self) {
 			catch (ex) {
 				if (isOSError(ex, "EEXIST", "ERROR_ALREADY_EXISTS") && !self.shouldOverwrite) {
 					self.conflicts += 1;
+					x--;
 					continue;
 				}
 				if (isOSError(ex, "ENAMETOOLONG", "ERROR_PATH_NOT_FOUND")) {
@@ -2822,7 +2823,8 @@ var ConflictManager = {
 		}
 	}),
 	_findUnique: function*(newDest, basename, conflicts) {
-		for (;; ++conflicts) {
+		// first try to find a "free" name by just incrementing the counter
+		for (;conflicts <= 10; ++conflicts) {
 			newDest.leafName = Utils.formatConflictName(basename, conflicts);
 			let exists = this._pinned.has(newDest.path);
 			if (!exists) {
@@ -2834,6 +2836,41 @@ var ConflictManager = {
 				return conflicts;
 			}
 		}
+		// alright that did not work, now lets find the bounds
+		let low = conflicts - 1;
+		for (conflicts += 300;; conflicts += 1000) {
+			newDest.leafName = Utils.formatConflictName(basename, conflicts);
+			let exists = this._pinned.has(newDest.path);
+			if (!exists) {
+				exists = yield OS.File.exists(newDest.path);
+				// recheck
+				exists = exists || this._pinned.has(newDest.path);
+			}
+			if (!exists) {
+				break;
+			}
+			low = conflicts;
+		}
+		let high = conflicts;
+		// and do a binary search
+		// There might be "gaps" still, but that's a tradeoff we're willing to make
+		while (low !== high) {
+			conflicts = (low + high) >>> 1;
+			newDest.leafName = Utils.formatConflictName(basename, conflicts);
+			let exists = this._pinned.has(newDest.path);
+			if (!exists) {
+				exists = yield OS.File.exists(newDest.path);
+				// recheck
+				exists = exists || this._pinned.has(newDest.path);
+			}
+			if (!exists) {
+				high = conflicts;
+			}
+			else {
+				low = conflicts + 1;
+			}
+		}
+		return high;
 	},
 	_processOne: function*(download, data) {
 		log(LOG_DEBUG, "ConflictManager: Starting conflict resolution for " + download);
