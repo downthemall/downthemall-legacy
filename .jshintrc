@@ -43,7 +43,7 @@
     "XPCOMUtils": false, "Services": false, "Instances": false, "LRUMap": false, "QI": false,
     "lazy": false, "lazyProto": false, "weak": false,
     "log": false, "LOG_ERROR": false, "LOG_INFO": false, "LOG_DEBUG": false,
-    "require": false, "requireJoined": false, "requireJSM": false, "unload": false, "exports": true
+    "require": false, "requireJoined": false, "requireJSM": false, "unload": false, "exports": true, "module": true
   },
   "exported": [ "exports" ]
 }
