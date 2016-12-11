@@ -5,7 +5,7 @@
 /* global _, DTA, $, $$, Utils, Preferences, getDefaultDownloadsDirectory, unloadWindow */
 /* global $e, mapInSitu, filterMapInSitu, filterInSitu, mapFilterInSitu, setTimeoutOnlyFun */
 /* global toURI, toURL, showPreferences, openUrl, getLargeIcon */
-/* global Tree, Prefs, ConflictManager */
+/* global TreeManager, Prefs, ConflictManager */
 /* global QUEUED, PAUSED, CANCELED, FINISHING, COMPLETE, RUNNING, SPEED_COUNT, REFRESH_FREQ, MIN_CHUNK_SIZE */
 /* jshint strict:true, globalstrict:true, browser:true, latedef:false */
 
@@ -175,6 +175,7 @@ var Dialog_serialize_props =
 	['fileName', 'fileNameFromUser', 'postData', 'description', 'title', 'resumable', 'mask', 'pathName',
 		'compression', 'contentType', 'conflicts', 'fromMetalink', 'speedLimit', "relaxSize", "cleanRequest"];
 
+var Tree;
 var Dialog = {
 	_observes: [
 		'quit-application-requested',
@@ -309,7 +310,7 @@ var Dialog = {
 		}, false);
 
 		let tree = $("downloads");
-		Tree.init(tree);
+		Tree = new TreeManager(tree);
 		addEventListener("unload", function unloadUnlink() {
 			removeEventListener("unload", unloadUnlink, false);
 			Tree.unlink();
