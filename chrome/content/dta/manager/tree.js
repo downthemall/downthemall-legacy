@@ -1383,6 +1383,9 @@ var Tree = {
 		this._refreshTools_items.forEach(function(e) { e.items = $.apply(null, e.items); });
 		this._refreshTools_items_deferred.forEach(function(e) { e.items = $.apply(null, e.items); });
 	},
+	_stateIs: function(s) {
+		return this.state & s;
+	},
 	refreshTools: function(d) {
 		if (this._updating || (d && ('position' in d) && !this.selection.isSelected(d.position))) {
 			return;
@@ -1405,7 +1408,7 @@ var Tree = {
 			let states = {
 				state: 0,
 				resumable: false,
-				is: function(s) { return this.state & s; },
+				is: this._stateIs,
 				isOf: QueueItem.prototype.isOf,
 				count: this.selection.count,
 				rows: this.rowCount,
@@ -1444,16 +1447,31 @@ var Tree = {
 	},
 	_refreshToolsAsync: async function(states, cur) {
 		try {
-			states.curFile = (cur && cur.state === COMPLETE &&
-												(await OS.File.exists(cur.destinationLocalFile.path)));
-			states.curFolder = (cur && (await OS.File.exists(
-				new Instances.LocalFile(cur.destinationPath).path)));
-			for (let i = 0, e = this._refreshTools_items_deferred.length; i < e; ++i) {
-				let items = this._refreshTools_items_deferred[i];
+			if (!cur || cur.state !== COMPLETE) {
+				states.curFile = states.curFolder = false;
+				this._refreshLastDest = null;
+			}
+			else if (this._refreshLastDest === cur.destinationLocalFile.path) {
+				states.curFile = this._refreshLastDestExists;
+				states.curFolder = this._refreshLastDestPathExists;
+			}
+			else {
+				this._refreshLastDest = cur.destinationLocalFile.path;
+				states.curFile = this._refreshLastDestExists = await OS.File.exists(
+					this._refreshLastDest);
+				if (states.curFile) {
+					states.curFolder = this._refreshLastDestPathExists = true;
+				}
+				else {
+					states.curFolder = this._refreshLastDestPathExists = await OS.File.exists(
+						new Instances.LocalFile(cur.destinationPath).path);
+				}
+			}
+			for (let items of this._refreshTools_items_deferred) {
 				let disabled = items.f(states) ? "false" : "true";
 				items = items.items;
-				for (let ii = 0, ee = items.length; ii < ee; ++ii) {
-					items[ii].setAttribute("disabled", disabled);
+				for (let item of items) {
+					item.setAttribute("disabled", disabled);
 				}
 			}
 		}

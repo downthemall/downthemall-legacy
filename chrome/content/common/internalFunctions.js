@@ -227,7 +227,8 @@ var Utils = {
 		const sunits = units;
 		const nunits = sunits.length;
 		const s = scale;
-		return function(val, decimalPlace) {
+		const {memoize} = require("support/memoize");
+		return memoize(function(val, decimalPlace) {
 			var rv = val;
 			if (!isFinite(rv)) {
 				return 'NaN';
@@ -239,7 +240,7 @@ var Utils = {
 			const unit = sunits[i];
 			decimalPlace = arguments.length > 1 ? decimalPlace : unit[1];
 			return _(unit[0], [rv.toFixed(decimalPlace)], unit[2] && Math.floor(rv));
-		};
+		}, 50);
 	}
 	Utils.formatBytes = createFormatter(
 		[['sizeB.2', 0, true], ['sizeKB', 1], ['sizeMB', 2], ['sizeGB', 2], ['sizeTB', 3]],

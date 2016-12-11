@@ -46,11 +46,14 @@ XPCOMUtils.defineLazyGetter(window, "ConflictManager", () => {
 		window, Utils.formatConflictName.bind(Utils), Prefs, _);
 });
 
+let speedElems;
+
 /* global TextCache_PAUSED, TextCache_QUEUED, TextCache_COMPLETE, TextCache_CANCELED, TextCache_NAS */
 /* global TextCache_UNKNOWN, TextCache_OFFLINE, TextCache_TIMEOUT, TextCache_STARTING, TextCache_DECOMPRESSING */
 /* global TextCache_VERIFYING, TextCache_MOVING, TextCache_FINISHING */
 addEventListener("load", function load_textCache() {
 	removeEventListener("load", load_textCache, false);
+	speedElems = $('listSpeeds', 'perDownloadSpeedLimitList');
 	const texts = ['paused', 'queued', 'complete', 'canceled', 'nas', 'unknown',
 		'offline', 'timeout', 'starting', 'decompressing', 'verifying', 'moving',
 		'finishing',
@@ -552,7 +555,7 @@ var Dialog = {
 			}
 
 			// only access the setter of the last so that we don't generate stuff trice.
-			d._pathName = identity(Dialog_loadDownloads_get(down, "pathName"));
+			d._pathName = identity(Utils.addFinalSlash(Dialog_loadDownloads_get(down, "pathName")));
 			d._description = identity(Dialog_loadDownloads_get(down, "description"));
 			d._title = identity(Dialog_loadDownloads_get(down, "title"));
 			d._mask = identity(Dialog_loadDownloads_get(down, "mask"));
@@ -833,7 +836,7 @@ var Dialog = {
 			this._speeds.add(this._sum, now);
 			let speed = Utils.formatSpeed(this._speeds.avg);
 			this._maxObservedSpeed = Math.max(this._speeds.avg || this._maxObservedSpeed, this._maxObservedSpeed);
-			for (let e of $('listSpeeds', 'perDownloadSpeedLimitList')) {
+			for (let e of speedElems) {
 				try {
 					e.hint = this._maxObservedSpeed;
 					hintChunkBufferSize(this._maxObservedSpeed);
@@ -993,6 +996,10 @@ var Dialog = {
 		Tree.box.invalidate();
 	},
 
+	_filterAutoRetrying(d) {
+		return d => !d.autoRetry();
+	},
+
 	process: function() {
 		try {
 			Prefs.refreshConnPrefs(this._running);
@@ -1020,7 +1027,7 @@ var Dialog = {
 
 			if (!this.offline && !this._mustReload) {
 				if (Prefs.autoRetryInterval) {
-					filterInSitu(this._autoRetrying, d => !d.autoRetry());
+					filterInSitu(this._autoRetrying, this._filterAutoRetrying);
 				}
 				this.startNext();
 			}
@@ -1638,7 +1645,7 @@ var QueueItem = class QueueItem {
 		if (this._pathName === nv) {
 			return nv;
 		}
-		this._pathName = identity(nv);
+		this._pathName = identity(Utils.addFinalSlash(nv));
 		this.rebuildDestination();
 		this.invalidate(0);
 		return nv;
@@ -2317,7 +2324,7 @@ var QueueItem = class QueueItem {
 			let mask = Utils.removeFinalSlash(Utils.normalizeSlashes(Utils.removeFinalChar(
 					this.rebuildDestination_renamer(this.mask), "."
 					)));
-			let file = new Instances.LocalFile(Utils.addFinalSlash(this.pathName));
+			let file = new Instances.LocalFile(this.pathName);
 			if (!~mask.indexOf(Utils.SYSTEMSLASH)) {
 				file.append(Utils.removeBadChars(mask).trim());
 			}
