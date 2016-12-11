@@ -1469,7 +1469,7 @@ var Metalinker = {
 };
 requireJoined(Metalinker, "support/metalinker");
 
-class QueueItem {
+var QueueItem = class QueueItem {
 	constructor(dialog) {
 		this.dialog = dialog;
 
@@ -2749,7 +2749,7 @@ class QueueItem {
 		}
 		return rv;
 	}
-}
+};
 Object.assign(QueueItem.prototype, {
 	state: QUEUED,
 	position: -1,
