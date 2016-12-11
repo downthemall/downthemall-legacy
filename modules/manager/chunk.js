@@ -115,6 +115,10 @@ class Chunk {
 		log(LOG_INFO, "chunk created: " + this);
 	}
 
+	clone() {
+		return new Chunk(this._parent, this.start, this.end, this.safeBytes);
+	}
+
 	get starter() {
 		return this.end <= 0;
 	}

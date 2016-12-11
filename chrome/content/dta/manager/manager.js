@@ -152,7 +152,7 @@ function downloadOldChunk(download, chunk, header) {
 		if (idx < 0) {
 			throw Error("Invalid chunk");
 		}
-		let newChunk = new Chunk(download, chunk.start, chunk.end, chunk.safeBytes);
+		let newChunk = chunk.clone();
 		download.chunks[idx] = newChunk;
 		_downloadChunk(download, newChunk, header);
 	}
@@ -2242,8 +2242,10 @@ var QueueItem = class QueueItem {
 		if (!this.chunks) {
 			return;
 		}
-		for (let c of this.chunks) {
+		for (let i = 0; i < this.chunks.length; ++i) {
+			let c = this.chunks[i];
 			await c.close();
+			this.chunks[i] = c.clone();
 		}
 	}
 
