@@ -3,7 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
-const {cropCenter} = require("utils");
+const {cropCenter} = require("support/stringfuncs");
 const {defer} = require("support/defer");
 const Preferences = require("preferences");
 
