@@ -64,18 +64,18 @@ var getFavIcon = (function() {
  * @return Either the element when there was just one parameter, or an array of
  *         elements.
  */
-function $() {
-	if (arguments.length === 1) {
-		return document.getElementById(arguments[0]);
+function $(...args) {
+	if (args.length === 1) {
+		return document.getElementById(args[0]);
 	}
 	let elements = [];
-	for (let i = 0, e = arguments.length; i < e; ++i) {
-		let element = document.getElementById(arguments[i]);
+	for (let i = 0, e = args.length; i < e; ++i) {
+		let element = document.getElementById(args[i]);
 		if (element) {
 			elements.push(element);
 		}
 		else {
-			log(LOG_ERROR, "requested a non-existing element: " + arguments[i]);
+			log(LOG_ERROR, "requested a non-existing element: " + args[i]);
 		}
 	}
 	return elements;
@@ -206,7 +206,7 @@ var Utils = {
 		if (!isFinite(aNumber)) {
 			return 'NaN';
 		}
-		return _('sizeKB', [aNumber.toFixed(arguments.length > 1 ? decimalPlace : 1)]);
+		return _('sizeKB', [aNumber.toFixed(decimalPlace || 1)]);
 	},
 
 	formatConflictName: function(basename, conflicts) {
@@ -238,7 +238,7 @@ var Utils = {
 				rv /= 1024;
 			}
 			const unit = sunits[i];
-			decimalPlace = arguments.length > 1 ? decimalPlace : unit[1];
+			decimalPlace = isFinite(decimalPlace) ? decimalPlace : unit[1];
 			return _(unit[0], [rv.toFixed(decimalPlace)], unit[2] && Math.floor(rv));
 		}, 50);
 	}
@@ -267,11 +267,11 @@ requireJoined(Utils, "support/stringfuncs");
  */
 XPCOMUtils.defineLazyGetter(window, "_", function() {
 	let bundles = new Utils.StringBundles(document);
-	return function() {
-		if (arguments.length === 1) {
-			return bundles.getString(arguments[0]);
+	return function(...args) {
+		if (args.length === 1) {
+			return bundles.getString(args[0]);
 		}
-		return bundles.getFormattedString.apply(bundles, arguments);
+		return bundles.getFormattedString(...args);
 	};
 });
 

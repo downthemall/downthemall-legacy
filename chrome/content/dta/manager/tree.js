@@ -1379,9 +1379,15 @@ var Tree = {
 		{items: ["cmdOpenFolder", "folder"], f: function(d) { return !!d.curFolder; }},
 	],
 	_refreshTools_init: function() {
-		this._refreshTools_item.forEach(function(e) { e.item = $(e.item); });
-		this._refreshTools_items.forEach(function(e) { e.items = $.apply(null, e.items); });
-		this._refreshTools_items_deferred.forEach(function(e) { e.items = $.apply(null, e.items); });
+		this._refreshTools_item.forEach(function(e) {
+			e.item = $(e.item);
+		});
+		this._refreshTools_items.forEach(function(e) {
+			e.items = $(...e.items);
+		});
+		this._refreshTools_items_deferred.forEach(function(e) {
+			e.items = $(...e.items);
+		});
 	},
 	_stateIs: function(s) {
 		return this.state & s;

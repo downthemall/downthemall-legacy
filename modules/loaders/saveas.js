@@ -16,13 +16,13 @@ lazy(this, "isWindowPrivate", () => require("support/pbm").isWindowPrivate);
  * Loader
  */
 function load(window, document) {
-	function $() {
-		if (arguments.length === 1) {
-			return document.getElementById(arguments[0]);
+	function $(...args) {
+		if (args.length === 1) {
+			return document.getElementById(args[0]);
 		}
 		let elements = [];
-		for (let i = 0, e = arguments.length; i < e; ++i) {
-			let id = arguments[i];
+		for (let i = 0, e = args.length; i < e; ++i) {
+			let id = args[i];
 			let element = document.getElementById(id);
 			if (element) {
 				elements.push(element);
@@ -142,7 +142,7 @@ function load(window, document) {
 				value: function(...args) {
 					log(LOG_DEBUG, "initDialog called");
 					try {
-						return dialog.initDialog.apply(dialog, args);
+						return dialog.initDialog(...args);
 					}
 					finally {
 						revertUI();

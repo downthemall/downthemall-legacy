@@ -8,10 +8,10 @@ class Manipulator {
 		this._m = new Map();
 	}
 
-	register(id, matcher) {
+	register(id, matcher, ...args) {
 		this._m.set(id, {
 				matcher: matcher,
-				funcs: Array.slice(arguments, 2)
+				funcs: args,
 		});
 	}
 
@@ -38,7 +38,7 @@ class Manipulator {
 
 function defineManipulator(m, sp) {
 	const _m = new Manipulator();
-	exports['register' + m] = function() { _m.register.apply(_m, arguments); };
+	exports['register' + m] = function(...args) { _m.register(...args); };
 	exports['unregister' + m] = function(id) { _m.unregister(id); };
 	exports['modify' + m] = function(context) { return _m.modify(context, sp(context)); };
 }

@@ -118,14 +118,14 @@ exports.memoize = function memoize(func, limit, num_args) {
 		};
 
 	default:
-		return function() {
-			var key = JSON.stringify(arguments);
+		return function(...args) {
+			var key = JSON.stringify(args);
 
 			if (cache.has(key)) {
 				return cache.get(key);
 			}
 
-			var result = func.apply(null, arguments);
+			var result = func(...args);
 			cache.set(key, result);
 			if (keylist.push(key) > limit) {
 				cache.delete(keylist.shift());

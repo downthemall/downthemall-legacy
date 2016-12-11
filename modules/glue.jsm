@@ -275,7 +275,7 @@ this.LRUMap = LRUMap;
 	var _unloaders = [];
 	let _runUnloader = function _runUnloader(fn, args) {
 		try {
-			fn.apply(null, args);
+			fn(...args);
 		}
 		catch (ex) {
 			try {
@@ -356,8 +356,8 @@ this.LRUMap = LRUMap;
 			throw new Error("unloader is not a function");
 		}
 		_unloaders.push(fn);
-		return function() {
-			_runUnloader(fn, arguments);
+		return function(...args) {
+			_runUnloader(fn, args);
 			_unloaders = _unloaders.filter(c => c !== fn);
 		};
 	};

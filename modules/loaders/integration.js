@@ -122,28 +122,28 @@ function getSniffedInfoFromLocation(l) {
  */
 exports.load = function load(window, outerEvent) {
 	let document = window.document;
-	let setTimeoutOnlyFun = function(c) {
+	let setTimeoutOnlyFun = function(c, ...args) {
 		if (typeof(c) !== "function") {
 			throw new Error("do not call me with a string!");
 		}
-		return window.setTimeout.apply(window, arguments);
+		return window.setTimeout.call(window, c, ...args);
 	};
-	let setIntervalOnlyFun = function(c) {
+	let setIntervalOnlyFun = function(c, ...args) {
 		if (typeof(c) !== "function") {
 			throw new Error("do not call me with a string!");
 		}
-		return window.setInterval.apply(window, arguments);
+		return window.setInterval(c, ...args);
 	};
 	let clearInterval = window.clearInterval;
 	let gBrowser = window.gBrowser;
 
-	function $() {
-		if (arguments.length === 1) {
-			return document.getElementById(arguments[0]);
+	function $(...args) {
+		if (args.length === 1) {
+			return document.getElementById(args[0]);
 		}
 		let elements = [];
-		for (let i = 0, e = arguments.length; i < e; ++i) {
-			let id = arguments[i];
+		for (let i = 0, e = args.length; i < e; ++i) {
+			let id = args[i];
 			let element = document.getElementById(id);
 			if (element) {
 				elements.push(element);
@@ -1021,10 +1021,10 @@ exports.load = function load(window, outerEvent) {
 		});
 	}
 
-	function $t() {
+	function $t(...args) {
 		let rv = [];
-		for (let i = 0, e = arguments.length; i < e; ++i) {
-			let id = arguments[i];
+		for (let i = 0, e = args.length; i < e; ++i) {
+			let id = args[i];
 			let element = document.getElementById(id);
 			if (element) {
 					rv.push(element);

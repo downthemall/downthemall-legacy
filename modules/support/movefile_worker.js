@@ -6,9 +6,9 @@
 
 importScripts("resource://gre/modules/osfile.jsm");
 
-const log = function log() {
+const log = function log(...args) {
 	postMessage({
-		log: Array.slice(arguments).toString()
+		log: args.toString()
 	});
 };
 

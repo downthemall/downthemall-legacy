@@ -45,17 +45,17 @@ exports.newUUIDString = function newUUIDString() {
  * @param stop Stop value (exclusive)
  * @param step Optional. Step value (default: 1/-1)
  */
-exports.range = function* range() {
-	if (!arguments.length) {
+exports.range = function* range(...args) {
+	if (!args.length) {
 		throw Components.results.NS_ERROR_INVALID_ARG;
 	}
-	let start = 0, stop = parseInt(arguments[0], 10), step;
-	if (arguments.length >= 2) {
+	let start = 0, stop = parseInt(args[0], 10), step;
+	if (args.length >= 2) {
 		start = stop;
-		stop = parseInt(arguments[1], 10);
+		stop = parseInt(args[1], 10);
 	}
-	if (arguments.length >= 3) {
-		step = parseInt(arguments[2], 10);
+	if (args.length >= 3) {
+		step = parseInt(args[2], 10);
 	}
 	else {
 		step = stop - start > 0 ? 1 : -1;
@@ -337,8 +337,8 @@ exports.SimpleIterator = Object.freeze(SimpleIterator);
  * regular JS properties.
  * @param properties (nsIProperties) initial properties
  */
-function Properties() {
-	for (let p of Array.slice(arguments)) {
+function Properties(...args) {
+	for (let p of args) {
 		this._parse(p);
 	}
 }

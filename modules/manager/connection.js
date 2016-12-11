@@ -39,11 +39,11 @@ function canPrivate(chan) {
 
 const _ = (function(global) {
 	let bundles = new StringBundles(["chrome://dta/locale/manager.properties"]);
-	return function() {
-		if (arguments.length === 1) {
-			return bundles.getString(arguments[0]);
+	return function(...args) {
+		if (args.length === 1) {
+			return bundles.getString(args[0]);
 		}
-		return bundles.getFormattedString.apply(bundles, arguments);
+		return bundles.getFormattedString(...args);
 	};
 })(this);
 

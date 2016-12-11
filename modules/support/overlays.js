@@ -10,12 +10,11 @@ const obs = require("./observers");
  * Specialized unloader that will trigger whenever either the window gets
  * unloaded or the add-on is shut down
  */
-exports.unloadWindow = function unloadWindow(window, fn) {
-	let args = arguments;
+exports.unloadWindow = function unloadWindow(window, fn, ...args) {
 	let handler = unload(function() {
 		window.removeEventListener('unload', handler, false);
 		try {
-			fn.apply(null, args);
+			fn(...args);
 		}
 		catch (ex) {
 			log(LOG_ERROR, "failed to run window unloader", ex);
