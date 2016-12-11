@@ -54,9 +54,9 @@
 
 		<command id="cmdGetInfo" oncommand="Tree.showInfo();" />
 
-		<command id="cmdLaunch" oncommand="FileHandling.openFile();" />
-		<command id="cmdDelete" oncommand="FileHandling.deleteFile();" />
-		<command id="cmdOpenFolder" oncommand="FileHandling.openFolder();" />
+		<command id="cmdLaunch" oncommand="Tree.openFile();" />
+		<command id="cmdDelete" oncommand="Tree.deleteFile();" />
+		<command id="cmdOpenFolder" oncommand="Tree.openFolder();" />
 		<command id="cmdRename" oncommand="Tree.startRename()"/>
 
 		<command id="cmdResume" oncommand="Tree.resume();" />

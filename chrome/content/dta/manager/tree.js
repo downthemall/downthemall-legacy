@@ -71,10 +71,10 @@ class TreeManager {
 
 		let dtree = $('downloadList');
 		dtree.addEventListener('dragstart', event => this.onDragStart(event), false);
-		dtree.addEventListener('dblclick', function(event) {
+		dtree.addEventListener('dblclick', (event) => {
 			event.preventDefault();
 			event.stopPropagation();
-			FileHandling.openFile();
+			this.openFile();
 		}, false);
 
 		$("matcher").addEventListener("command", event => this.handleMatcherPopup(event), true);
