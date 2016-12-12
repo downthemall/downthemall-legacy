@@ -1645,23 +1645,26 @@ class TreeManager {
 	}
 
 	updateSelected(fn, ctx) {
+		this.beginUpdate();
+		QueueStore.beginUpdate();
 		try {
-			this.beginUpdate();
-			QueueStore.beginUpdate();
-			new CoThreadListWalker(
-				fn,
-				this.getSelected(),
-				0,
-				ctx
-			).start((function() {
-				QueueStore.endUpdate();
-				this.invalidate();
-				this.endUpdate();
-			}).bind(this));
+			for (let i of this.getSelected()) {
+				try {
+					fn.call(ctx, i);
+				}
+				catch (ex) {
+					log(LOG_ERROR, "Updating an item failed!");
+				}
+			}
 		}
 		catch (ex) {
 			log(LOG_ERROR, "function threw during _gen", ex);
 			throw ex;
+		}
+		finally {
+			QueueStore.endUpdate();
+			this.invalidate();
+			this.endUpdate();
 		}
 	}
 
