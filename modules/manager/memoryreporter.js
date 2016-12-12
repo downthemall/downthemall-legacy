@@ -19,6 +19,7 @@ class MemoryReporter {
 		};
 		this._calc();
 		this.memoryPressure = 0;
+		this.timer = null;
 		return Object.seal(this);
 	}
 
@@ -137,7 +138,7 @@ class MemoryReporter {
 		} catch (ex) {}
 		if (this.timer) {
 			clearTimeout(this.timer);
-			delete this.timer;
+			this.timer = null;
 		}
 	}
 	observe(s, topic, data) {
@@ -166,7 +167,7 @@ class MemoryReporter {
 			return;
 		}
 		this.timer = setTimeout(() => {
-			delete this.timer;
+			this.timer = null;
 			this.decrementPressure();
 		}, 100);
 	}
