@@ -1152,7 +1152,7 @@ class TreeManager {
 	}
 
 	_pause_item(d) {
-		if (d.isOf(QUEUED | PAUSED) || (d.state === RUNNING && d.resumable)) {
+		if (d.isOf(QUEUED | PAUSED | CANCELED) || (d.state === RUNNING && d.resumable)) {
 			d.pause();
 			d.clearAutoRetry();
 			d.status = TextCache_PAUSED;
@@ -2033,17 +2033,33 @@ Object.assign(TreeManager.prototype, {
 	_cpprop_iconicinprogress: "iconic progress inprogress",
 	_cpprop_iconicicanceled: "iconic progress canceled",
 	_refreshTools_item: [
-		{item: 'cmdResume', f: function(d) { return d.isOf(PAUSED | QUEUED | CANCELED); }},
-		{item: 'cmdPause', f: function(d) { return (d.isOf(RUNNING) && d.resumable) || d.isOf(QUEUED | PAUSED); }},
-		{item: 'cmdCancel', f: function(d) { return d.isOf(PAUSED | RUNNING | QUEUED | COMPLETE); }},
+		{item: 'cmdResume', f: function(d) {
+			return d.isOf(PAUSED | QUEUED | CANCELED);
+		}},
+		{item: 'cmdPause', f: function(d) {
+			return (d.isOf(RUNNING) && d.resumable) || d.isOf(QUEUED | PAUSED | CANCELED);
+		}},
+		{item: 'cmdCancel', f: function(d) {
+			return d.isOf(PAUSED | RUNNING | QUEUED | COMPLETE);
+		}},
 
-		{item: 'cmdMoveUp', f: function(d) { return !this.filtered && d.min > 0; }},
-		{item: 'cmdMoveTop', f: function(d) { return d.minId > 0; }},
-		{item: 'cmdMoveDown', f: function(d) { return !this.filtered && d.max !== d.rows - 1; }},
-		{item: 'cmdMoveBottom', f: function(d) { return d.maxId !== this._downloads.length - 1; }}
+		{item: 'cmdMoveUp', f: function(d) {
+			return !this.filtered && d.min > 0;
+		}},
+		{item: 'cmdMoveTop', f: function(d) {
+			return d.minId > 0;
+		}},
+		{item: 'cmdMoveDown', f: function(d) {
+			return !this.filtered && d.max !== d.rows - 1;
+		}},
+		{item: 'cmdMoveBottom', f: function(d) {
+			return d.maxId !== this._downloads.length - 1;
+		}}
 	],
 	_refreshTools_items: [
-		{items: ["cmdDelete", "delete"], f: function(d) { return d.state === COMPLETE; }},
+		{items: ["cmdDelete", "delete"], f: function(d) {
+			return d.state === COMPLETE;
+		}},
 
 		{items: ['cmdRemoveSelected', 'cmdExport', 'cmdGetInfo', 'perDownloadSpeedLimit'],
 			f: function(d) { return !!d.count; }},
@@ -2053,8 +2069,12 @@ Object.assign(TreeManager.prototype, {
 			f: function(d) { return d.isOf(QUEUED | RUNNING | PAUSED | CANCELED); }},
 	],
 	_refreshTools_items_deferred: [
-		{items: ['cmdLaunch', "launch"], f: function(d) { return !!d.curFile; }},
-		{items: ["cmdOpenFolder", "folder"], f: function(d) { return !!d.curFolder; }},
+		{items: ['cmdLaunch', "launch"], f: function(d) {
+			return !!d.curFile;
+		}},
+		{items: ["cmdOpenFolder", "folder"], f: function(d) {
+			return !!d.curFolder;
+		}},
 	],
 });
 requireJoined(TreeManager.prototype, "manager/matcher");
