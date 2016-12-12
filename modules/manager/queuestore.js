@@ -285,40 +285,37 @@ const QueueStore = {
 			stmt.finalize();
 		}
 	},
-	loadItems: function(callback, ctx) {
-		function Item(row) {
-			this.id = row.getResultByIndex(0);
-			this.item = JSON.parse(row.getResultByIndex(1));
-			this.pos = row.getResultByIndex(2);
-		}
-
-		ctx = ctx || null;
-		let stmt;
-		try {
-			stmt = _connection.createAsyncStatement(STMT_SELECT);
-		}
-		catch (ex) {
-			log(LOG_ERROR, "SQLite", _connection.lastErrorString);
-			callback.call(ctx, null);
-		}
-		let rows = [];
-		stmt.executeAsync({
-			handleResult: function(aResult) {
-				for (let row = aResult.getNextRow(); row; row = aResult.getNextRow()) {
-					rows.push(new Item(row));
+	loadItems: function() {
+		return new Promise((resolve, reject) => {
+			let stmt = _connection.createAsyncStatement(STMT_SELECT);
+			let rows = [];
+			stmt.executeAsync({
+				handleResult: function(aResult) {
+					for (let row = aResult.getNextRow(); row; row = aResult.getNextRow()) {
+						rows.push({
+							id: row.getResultByIndex(0),
+							item: JSON.parse(row.getResultByIndex(1)),
+							pos: row.getResultByIndex(2),
+						});
+					}
+				},
+				handleError: function(aError) {
+					log(LOG_ERROR, 'failed load queue file', aError);
+					reject(aError);
+				},
+				handleCompletion: function(aReason) {
+					try {
+						stmt.finalize();
+						let count = rows.length;
+						rows.forEach(e => e.count = count);
+						log(LOG_DEBUG, "All your callback are belong to us");
+						resolve(rows);
+					}
+					catch (ex) {
+						reject(ex);
+					}
 				}
-			},
-			handleError: function(aError) {
-				log(LOG_ERROR, 'failed load queue file', aError);
-				callback.call(ctx, null);
-			},
-			handleCompletion: function(aReason) {
-				stmt.finalize();
-				let count = rows.length;
-				rows.forEach(e => e.count = count);
-				log(LOG_DEBUG, "All your callback are belong to us");
-				callback.call(ctx, rows);
-			}
+			});
 		});
 	},
 	flush: function() {

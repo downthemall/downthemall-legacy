@@ -491,7 +491,7 @@ var Dialog = {
 		$('listSpeeds').limit -= 102400;
 		this.changeSpeedLimit();
 	},
-	_loadDownloads: function() {
+	_loadDownloads: async function() {
 		this._loading = $('loading');
 		if (!this._loading) {
 			this._loading = {};
@@ -502,25 +502,53 @@ var Dialog = {
 		log(LOG_INFO, "loading of the queue started!");
 		GlobalProgress.reset();
 		GlobalProgress.pause();
-		QueueStore.loadItems(function(result) {
-			if (!result || !result.length) {
-				log(LOG_DEBUG, "The cake is a lie");
-				this._loadDownloads_finish();
-				return;
+		try {
+			let result = await QueueStore.loadItems();
+			if (result && result.length) {
+				log(LOG_INFO, "Result has arrived: " + result.length);
+				await new Promise((resolve, reject) => {
+					let loader = new CoThreadListWalker(
+						this._loadDownloads_item,
+						result,
+						-1,
+						this
+					);
+					loader.start(resolve);
+				});
 			}
-			log(LOG_INFO, "Result has arrived: " + result.length);
-			this._loader = new CoThreadListWalker(
-				this._loadDownloads_item,
-				result,
-				-1,
-				this
-			);
-			let self = this;
-			this._loader.start(function() {
-				result = null;
-				self._loadDownloads_finish();
-			});
-		}, this);
+			log(LOG_INFO, "Result was processed");
+		}
+		catch (ex) {
+			log(LOG_ERROR, "Failed to load QueueStore items", ex);
+		}
+
+		Tree.savePositions();
+		Tree.invalidate();
+		Tree.doFilter();
+		Tree.endUpdate();
+
+		if (this._brokenDownloads.length) {
+			QueueStore.beginUpdate();
+			try {
+				for (let id of this._brokenDownloads) {
+					QueueStore.deleteDownload(id);
+					log(LOG_ERROR, "Removed broken download #" + id);
+				}
+			}
+			catch (ex) {
+				log(LOG_ERROR, "failed to remove broken downloads", ex);
+			}
+			QueueStore.endUpdate();
+		}
+		delete this._brokenDownloads;
+		delete this._loading;
+
+		GlobalProgress.reset();
+		this.statusText.hidden = false;
+
+		this._updTimer = Timers.createRepeating(REFRESH_FREQ, this.process, this, true);
+		this.refresh();
+		this.start();
 	},
 	_loadDownloads_item: function(dbItem, idx) {
 		if (!idx) {
@@ -649,38 +677,6 @@ var Dialog = {
 		}
 		return true;
 	},
-	_loadDownloads_finish: function() {
-		log(LOG_INFO, "Result was processed");
-		delete this._loader;
-		Tree.savePositions();
-		Tree.invalidate();
-		Tree.doFilter();
-		Tree.endUpdate();
-
-		if (this._brokenDownloads.length) {
-			QueueStore.beginUpdate();
-			try {
-				for (let id of this._brokenDownloads) {
-					QueueStore.deleteDownload(id);
-					log(LOG_ERROR, "Removed broken download #" + id);
-				}
-			}
-			catch (ex) {
-				log(LOG_ERROR, "failed to remove broken downloads", ex);
-			}
-			QueueStore.endUpdate();
-		}
-		delete this._brokenDownloads;
-		delete this._loading;
-
-		GlobalProgress.reset();
-		this.statusText.hidden = false;
-
-		this._updTimer = Timers.createRepeating(REFRESH_FREQ, this.process, this, true);
-		this.refresh();
-		this.start();
-	},
-
 	openAdd: function() {
 		window.openDialog(
 			'chrome://dta/content/dta/addurl.xul',
@@ -1368,9 +1364,6 @@ var Dialog = {
 		Limits.killServerBuckets();
 
 		Timers.killAllTimers();
-		if (this._loader) {
-			this._loader.cancel();
-		}
 		Prefs.shutdown();
 		try {
 			this._cleanTmpDir();
