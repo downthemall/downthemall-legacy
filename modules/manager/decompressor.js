@@ -7,10 +7,8 @@ const BUFFER_SIZE = 5 * 1024 * 1024;
 const FREQ = 250;
 
 const DTA = require("api");
-const {TimerManager} = require("support/timers");
+const {setInterval, clearInterval} = require("support/defer");
 const Prefs = require("preferences");
-
-const Timers = new TimerManager();
 
 class Decompressor {
 	constructor(download, callback) {
@@ -65,10 +63,10 @@ class Decompressor {
 		throw Cr.NS_ERROR_NO_INTERFACE;
 	}
 	onStartRequest(r, c) {
-		this._timer = Timers.createRepeating(FREQ, this.download.invalidate, this.download);
+		this._timer = setInterval(() => this.download.invalidate(), FREQ);
 	}
 	onStopRequest(request, c) {
-		Timers.killTimer(this._timer);
+		clearInterval(this._timer);
 		// important, or else we don't write out the last buffer and truncate too early. :p
 		this.outStream.flush();
 		try {

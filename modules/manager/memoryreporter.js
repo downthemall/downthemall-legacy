@@ -5,10 +5,8 @@
 
 /* global BUFFER_SIZE, MAX_PENDING_SIZE */
 requireJoined(this, "constants");
-const {TimerManager} = require("support/timers");
+const {setTimeout, clearTimeout} = require("support/defer");
 const pressure = require("support/memorypressure");
-
-const Timers = new TimerManager();
 
 class MemoryReporter {
 	constructor() {
@@ -137,7 +135,10 @@ class MemoryReporter {
 				Services.memrm.unregisterReporter(this);
 			}
 		} catch (ex) {}
-		Timers.killAllTimers();
+		if (this.timer) {
+			clearTimeout(this.timer);
+			delete this.timer;
+		}
 	}
 	observe(s, topic, data) {
 		if (topic === "memory-pressure") {
@@ -161,7 +162,13 @@ class MemoryReporter {
 		this.schedulePressureDecrement();
 	}
 	schedulePressureDecrement() {
-		Timers.createOneshot(100, this.decrementPressure, this);
+		if (this.timer) {
+			return;
+		}
+		this.timer = setTimeout(() => {
+			delete this.timer;
+			this.decrementPressure();
+		}, 100);
 	}
 };
 Object.seal(MemoryReporter.prototype);

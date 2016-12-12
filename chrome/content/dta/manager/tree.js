@@ -2,13 +2,13 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
-/* global $, $e, $$, _, Utils, Timers, FilterManager, getIcon, Preferences, OS */
+/* global $, $e, $$, _, Utils, FilterManager, getIcon, Preferences, OS */
 /* global mapInSitu, filterInSitu, mapFilterInSitu, filterMapInSitu */
 /* global DTA, Dialog,  QueueItem, Prefs, QueueStore, Prompts, ImportExport, Metalinker */
 /* global asyncMoveFile, showPreferences, Tooltip, CoThreadListWalker */
 /* global COMPLETE, CANCELED, RUNNING, PAUSED, QUEUED, FINISHING */
 /* global TextCache_PAUSED */
-/* global FileExts */
+/* global FileExts, setTimeoutOnlyFun */
 /* jshint strict:true, globalstrict:true, browser:true, latedef:false */
 
 XPCOMUtils.defineLazyGetter(window, "ImportExport", () => require("manager/imex"));
@@ -24,11 +24,11 @@ class FileDataProvider {
 	}
 	get file() {
 		if (this._timer) {
-			Timers.killTimer(this._timer);
+			clearTimeout(this._timer);
 			delete this._timer;
 		}
 		this._checks = 0;
-		this._timer = Timers.createOneshot(500, this.checkFile.bind(this));
+		this._timer = setTimeoutOnlyFun(() => this.checkFile(), 500);
 		return this._file;
 	}
 	async checkFile() {
@@ -39,7 +39,7 @@ class FileDataProvider {
 			return;
 		}
 		if (++this._checks < 10) {
-			this._timer = Timers.createOneshot(5000, this.checkFile.bind(this));
+			this._timer = setTimeoutOnlyFun(() => this.checkFile(), 5000);
 		}
 	}
 	getFlavorData(dataTransfer, flavor, data, dataLen) {
@@ -712,12 +712,12 @@ class TreeManager {
 			return;
 		}
 		if (this._changeTimer) {
-			Timers.killTimer(this._changeTimer);
+			clearTimeout(this._changeTimer);
 		}
-		this._changeTimer = Timers.createOneshot(100, function() {
+		this._changeTimer = setTimeoutOnlyFun(() => {
 			this._changeTimer = null;
 			this.refreshTools();
-		}, this);
+		}, 100);
 	}
 
 	onDragStart(event) {

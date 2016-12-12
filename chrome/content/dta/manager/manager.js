@@ -15,7 +15,6 @@ var {ByteBucket} = require("support/bytebucket");
 var {GlobalBucket} = require("manager/globalbucket");
 var {defer} = require("support/defer");
 var PrivateBrowsing = require("support/pbm");
-var {TimerManager} = require("support/timers");
 var {ContentHandling} = require("support/contenthandling");
 var GlobalProgress = new (require("manager/globalprogress").GlobalProgress)(window);
 var RequestManipulation = require("support/requestmanipulation");
@@ -131,8 +130,6 @@ function dieEarly() {
 	window.dispatchEvent(evt);
 }
 window.addEventListener("unload", dieEarly, false);
-
-var Timers = new TimerManager();
 
 function _downloadChunk(download, chunk, header) {
 	chunk.download = new Connection(download, chunk, header || download.mustGetInfo);
@@ -546,7 +543,7 @@ var Dialog = {
 		GlobalProgress.reset();
 		this.statusText.hidden = false;
 
-		this._updTimer = Timers.createRepeating(REFRESH_FREQ, this.process, this, true);
+		this._timerProcess = setInterval(() => this.process(), REFRESH_FREQ);
 		this.refresh();
 		this.start();
 	},
@@ -713,8 +710,8 @@ var Dialog = {
 				this.run(d);
 			}
 		}
-		Timers.createRepeating(200, this.refreshWritten, this, true);
-		Timers.createRepeating(10000, this.saveRunning, this);
+		this._timerWritten = setInterval(() => this.refreshWritten(), 200);
+		this._timerSave = setInterval(() => this.saveRunning(), 10000);
 
 		$('loadingbox').parentNode.removeChild($('loadingbox'));
 		window.removeEventListener("unload", dieEarly, false);
@@ -1285,9 +1282,9 @@ var Dialog = {
 
 		// stop everything!
 		// enumerate everything we'll have to wait for!
-		if (this._updTimer) {
-			Timers.killTimer(this._updTimer);
-			delete this._updTimer;
+		if (this._timerProcess) {
+			clearInterval(this._timerProcess);
+			delete this._timerProcess;
 		}
 
 		let chunks = 0;
@@ -1320,7 +1317,7 @@ var Dialog = {
 		if (chunks || finishing) {
 			if (!this._forceClose && this._safeCloseAttempts < 20) {
 				++this._safeCloseAttempts;
-				Timers.createOneshot(250, () => this.shutdown(callback), this);
+				setTimeoutOnlyFun(() => this.shutdown(callback), 250);
 				return false;
 			}
 			log(LOG_ERROR, "Going down even if queue was not probably closed yet!");
@@ -1363,7 +1360,9 @@ var Dialog = {
 	unload: function() {
 		Limits.killServerBuckets();
 
-		Timers.killAllTimers();
+		clearInterval(this._timerRunning);
+		clearInterval(this._timerSave);
+		clearInterval(this._timerProcess);
 		Prefs.shutdown();
 		try {
 			this._cleanTmpDir();
@@ -1926,9 +1925,9 @@ var QueueItem = class QueueItem {
 			this.fileName = name;
 			this.fileNameFromUser = true;
 			this.save();
+			let dummy = this.iconProp; // set up initial icon to avoid display problems
 		}
 		finally {
-			let dummy = this.iconProp; // set up initial icon to avoid display problems
 			Tree.invalidate();
 			Tree.endUpdate();
 		}

@@ -4,7 +4,7 @@
 "use strict";
 
 const {Atoms} = require("./atoms");
-const Timers = new (require("./timers").TimerManager)();
+const {setTimeout} = new require("./defer");
 const {getIcon} = require("./icons");
 const {getExtension} = require("./stringfuncs");
 const {identity} = require("./memoize");
@@ -43,14 +43,16 @@ treechildren::-moz-tree-image(iconic,${entry.toString()}) {
 }`;
 			this._toadd.push(rule);
 			if (!this._timer) {
-				this._timer = Timers.createOneshot(0, () => this.add(true));
+				this._timer = setTimeout(() => {
+					delete this._timer;
+					this.add(true);
+				}, 0);
 			}
 			this._entries.set(ext, entry);
 		}
 		return this._atoms.getAtom(entry);
 	}
 	add(invalidate) {
-		this._timer = null;
 		if (!this._toadd.length) {
 			return;
 		}

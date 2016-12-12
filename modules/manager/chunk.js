@@ -8,12 +8,10 @@ requireJoined(this, "constants");
 const Prefs = require("preferences");
 const {ByteBucketTee} = require("support/bytebucket");
 const {GlobalBucket} = require("./globalbucket");
-const {TimerManager} = require("support/timers");
 const Limits = require("support/serverlimits");
 const {getTimestamp, formatNumber, makeDir, randint} = require("utils");
 const {memoryReporter} = require("./memoryreporter");
-
-const Timers = new TimerManager();
+const {setTimeout} = require("support/defer");
 
 const _thread = (function() {
 	// Use a dedicated thread, so that we have serialized writes.
@@ -392,10 +390,10 @@ class Chunk {
 		if (this._schedTimer) {
 			return;
 		}
-		this._schedTimer = Timers.createOneshot(randint(0, 150), function() {
+		this._schedTimer = setTimeout(() => {
 			delete this._schedTimer;
 			this.run();
-		}, this);
+		}, randint(0, 150));
 	}
 
 	run() {

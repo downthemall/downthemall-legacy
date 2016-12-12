@@ -11,7 +11,7 @@ const DB_VERSION = 2;
 
 const STMT_SELECT = 'SELECT uuid, item, pos FROM queue ORDER BY pos';
 
-const Timers = new (require("support/timers").TimerManager)();
+const {setTimeout} = require("support/defer");
 const obs = require("support/observers");
 
 let _connection = null;
@@ -193,7 +193,7 @@ const QueueStore = {
 
 		if (!_timer) {
 			// delay up to 5000 msecs
-			_timer = Timers.createOneshot(5000, this._saveDownloadQueue, this);
+			_timer = setTimeout(() => this.saveDownloadQueue(), 5000);
 		}
 	},
 	_saveDownloadQueue: function() {
