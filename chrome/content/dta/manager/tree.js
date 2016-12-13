@@ -19,7 +19,6 @@ class FileDataProvider {
 		this._download = download;
 		this._file = file;
 		this._checks = 0;
-		this._checkFile = this._checkFile.bind(this);
 		this.QueryInterface = QI([Ci.nsIFlavorDataProvider]);
 	}
 	get file() {
