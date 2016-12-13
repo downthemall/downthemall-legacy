@@ -1443,6 +1443,12 @@ class TreeManager {
 						items[ii].setAttribute("disabled", "true");
 					}
 				}
+				for (let i = 0, e = this._refreshTools_items_deferred.length; i < e; ++i) {
+					let items = this._refreshTools_items[i].items;
+					for (let ii = 0, ee = items.length; ii < ee; ++ii) {
+						items[ii].setAttribute("disabled", "true");
+					}
+				}
 				return;
 			}
 
