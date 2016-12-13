@@ -1038,7 +1038,6 @@ class TreeManager {
 			this.invalidate();
 			this.doFilter();
 			this.endUpdate();
-			this.fireChangeEvent();
 		}
 		if (performJump) {
 			this._removeJump(filterInSitu(downloads, e => e.filteredPosition >= 0).length, last);
@@ -1544,7 +1543,7 @@ class TreeManager {
 		if (!d) {
 			FileExts.add();
 			this._box.invalidate();
-			this.refreshTools(this);
+			this.fireChangeEvent();
 			return;
 		}
 
