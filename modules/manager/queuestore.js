@@ -193,7 +193,7 @@ const QueueStore = {
 
 		if (!_timer) {
 			// delay up to 5000 msecs
-			_timer = setTimeout(() => this.saveDownloadQueue(), 5000);
+			_timer = setTimeout(() => this._saveDownloadQueue(), 5000);
 		}
 	},
 	_saveDownloadQueue: function() {
