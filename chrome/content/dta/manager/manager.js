@@ -991,7 +991,7 @@ var Dialog = {
 	},
 
 	_filterAutoRetrying(d) {
-		return d => !d.autoRetry();
+		return !d.autoRetry();
 	},
 
 	process: function() {
