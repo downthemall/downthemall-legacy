@@ -2051,13 +2051,13 @@ Object.assign(TreeManager.prototype, {
 			return !this.filtered && d.min > 0;
 		}},
 		{item: 'cmdMoveTop', f: function(d) {
-			return d.minId > 0;
+			return true;
 		}},
 		{item: 'cmdMoveDown', f: function(d) {
 			return !this.filtered && d.max !== d.rows - 1;
 		}},
 		{item: 'cmdMoveBottom', f: function(d) {
-			return d.maxId !== this._downloads.length - 1;
+			return true;
 		}}
 	],
 	_refreshTools_items: [
