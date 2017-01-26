@@ -1,0 +1,101 @@
+<!-- LOCALIZATION NOTE (fulltranslation): Your credit and language combined -->
+<!-- LOCALIZATION NOTE (language): Your language in your language -->
+<!ENTITY lp.localedir "ltr">
+<!-- To test this out, open chrome://dta/content/about/index.xml in your browser with dTa! installed -->
+<!ENTITY language "日本語">
+<!-- LOCALIZATION NOTE (lp.localedir): UI text direction, either ltr (left-to-right) or rtl (right-to-left); other values not possible -->
+<!ENTITY transAuthor "norah, HirekatsuOishi, takinoshita, yasushi, mar">
+<!-- LOCALIZATION NOTE (lp.tb.install): Text for the toolbar install button -->
+<!ENTITY fulltranslation "日本語版作成者: <a href='http://norahmodel.exblog.jp/'>norah</a>">
+<!ENTITY amo.summary2 "あなたのブラウザーにダウンロードの管理と最適化を組み込みます！">
+<!ENTITY amo.description.intro "DownThemAll! はダウンロードマネージャーからダウンロードを制御できます: アクセラレーションを使用した 4 倍速のダウンロードや、ダウンロードの一時停止と再開ができます。">
+<!ENTITY amo.description.feat2 "DownThemAll は簡単に扱えるだけでなく、高速で頼りになるダウンローダーです! ウェブページに含まれるリンクや画像をすべてダウンロードできます: カスタマイズ機能を使用してあなたが必要とするものだけをダウンロードすることもできます。また、ダウンロード速度やサーバーへの同時接続数等も制御できます。メタリンクやミラーリングを使用すると異なるサーバーから同時にファイルをダウンロードできます。">
+<!ENTITY amo.description.free2 "DownThemAll はオープンソースのフリーウェアです。アドウェアもスパイウェアも追跡もありません。しかも無料で使い続けることができます！">
+<!ENTITY amo.description.more "その他の詳細な情報は <a href='http://www.downthemall.net/howto/features/'>ホームページ</a> をご覧ください。">
+<!ENTITY lp.title "DownThemAll! について">
+<!ENTITY lp.welcome "DownThemAll! のご使用ありがとうございます">
+<!ENTITY lp.info "DownThemAll! の使い方、プライバシーとあなたの権利について、ビデオで学んでください">
+<!ENTITY lp.moreinfo "その他の詳しい情報は <a href='http://www.downthemall.net/howto/features/'>機能紹介のページ</a> をご覧ください。">
+<!ENTITY lp.gettingstarted "スタートガイド">
+<!ENTITY lp.toolbar "ツールバーボタン">
+<!ENTITY lp.privacy "プライバシー">
+<!ENTITY lp.yourrights "あなたの権利について">
+<!ENTITY lp.contact "連絡先">
+<!ENTITY lp.pleasenote "お読みください:">
+<!ENTITY lp.donate2 "開発への協力と貢献をご検討ください">
+<!ENTITY lp.tut.firsttitle "はじめてのダウンロード">
+<!ENTITY lp.tut.fd2 "dTa でファイルをダウンロードするのは簡単なだけでなくパワフルです。ファイルを保存する際に表示されるダイアログに DownThemAll! でダウンロードする項目が表示されます。この項目を選択してダウンロードの保存先を指定すれば、すぐにダウンロードを開始できますし、後でダウンロードすることもできます。">
+<!ENTITY lp.tut.selecttitle "選択ウィンドウを使う">
+<!ENTITY lp.tut.selintro "ウェブページ上で右クリックし、コンテキストメニューに表示される [DownThemAll!] を選択すると、DownThemAll! の選択ウィンドウが表示され、ダウンロードしたいリンクを選択するだけでダウンロードが開始されます。">
+<!ENTITY lp.tut.seloptions "選択ウィンドウには、ダウンロードするファイルを選択する様々な方法が用意されています:">
+<!ENTITY lp.tut.selopthand2 "ダウンロードしたいアイテムにチェックを入れます。">
+<!ENTITY lp.tut.seloptfilters2 "例えば画像のみダウンロードなど、組み込みのフィルターを使用できます。">
+<!ENTITY lp.tut.seloptfast2 "カスタマイズしたフィルターを使用できます。フィルタリングボックスに <code>*.pdf,*.doc</code> や正規表現などを入力して独自のダウンロードフィルターを使用できます。">
+<!ENTITY lp.tut.seltypes "選択ウィンドウには、異なるダウンロードモードのタブがあります:">
+<!ENTITY lp.tut.seltypelinks "[リンク] タブには、ページ内のすべてのダウンロード可能なリンクが表示されます">
+<!ENTITY lp.tut.seltypepics "[画像とメディア] タブには、ページ内のすべての画像とその他のメディアファイルが表示されます">
+<!ENTITY lp.tut.selgalleries "フルサイズの画像は表示中のページではなく、ページのリンク先に保存されていることがあります。そのような画像をダウンロードする場合は [リンク] タブを使用してください">
+<!ENTITY lp.tut.seldone2 "ダウンロードするファイルを選択したら、[開始] か [後でダウンロード] ボタンをクリックしてダウンロードを開始します。">
+<!ENTITY lp.tut.batchestitle "バッチダウンロード">
+<!ENTITY lp.tut.batches1 "連番のファイルを一度にダウンロードしたいと思いませんか？ ビデオを見て DownThemAll! でバッチダウンロードをしてみましょう。">
+<!ENTITY lp.tut.batches2 "基本的な構文: <code>[start:end]</code> か <code>[start:end:step]</code> の形式で記述します。 <code>start</code> と <code>end</code> には数字を記入してください。 <code>step</code> にはカウント間隔を記入します(省略した場合は自動的に 1 ずつ増やします)。">
+<!ENTITY lp.tut.batches3 "例えば、001 から 100 までの連番で構成された画像ファイルをダウンロードしたい場合は次のように記述します: <code>http://example.org/[001:100].jpg</code>">
+<!ENTITY lp.tut.batchesctx "さらに、ダウンロード追加ウィンドウ内の URL フィールドのコンテキストメニューから、選択したテキストを簡単にバッチ規則に変換できます。">
+<!ENTITY lp.tut.oneclicktitle "DownThemAll! OneClick">
+<!ENTITY lp.tut.oneclick1.2 "ダウンロードで使用した設定を繰り返し利用できます: DownThemAll! OneClick を使用すると、前回の設定をダウンロードに適用してファイルの保存先などの設定画面をスキップできます。">
+<!ENTITY lp.tut.oneclick2 "OneClick を使用すると、多くのリンクを素早くダウンロード待ちのリストに追加できます。">
+<!ENTITY lp.tut.oneclickn "Firefox のプライベートデータの消去機能を使用すると、通常の DownThemAll! によるダウンロードを開始するまで OneClick 機能は使用できなくなります。">
+<!ENTITY lp.tut.tabstitle "すべてのタブのアイテムを一度にダウンロード">
+<!ENTITY lp.tut.alltabs "ツールバーボタンのドロップダウンメニューから、すべてのタブのアイテムを一度にダウンロード待ちのリストに追加できます。">
+<!ENTITY lp.tut.tabrestore "完全に復元されたタブからのリンクのみが利用可能になります。">
+<!ENTITY lp.tb.intro "DownThemAll! は、DownThemAll! の機能にアクセスできる便利なツールバーボタンを提供しています。">
+<!-- LOCALIZATION NOTE (transAuthor): Your credit; or leave as dTa Team if you don't want credit -->
+<!ENTITY lp.tb.install "ツールバーボタンを追加">
+<!ENTITY lp.tb.add.title "ツールバーにボタンを追加して使用する方法">
+<!ENTITY lp.tb.add.p1 "DownThemAll! にはダウンロードをより簡単にするために、ツールバー用のボタンが4つ用意されています">
+<!ENTITY lp.tb.add.dta "DownThemAll! ボタン">
+<!ENTITY lp.tb.add.dtadesc "表示中のタブから DownThemAll! でダウンロードするための選択ウィンドウが開きます。">
+<!ENTITY lp.tb.add.tdta "OneClick! ボタン">
+<!ENTITY lp.tb.add.tdtadesc "最後に使用した設定とフィルターを使用して、表示中のタブ内にあるすべてのアイテムをダウンロードします。">
+<!ENTITY lp.tb.add.manager "DownThemAll! マネージャーボタン">
+<!ENTITY lp.tb.add.managerdesc "マネージャー画面を開きます。">
+<!ENTITY lp.tb.add.selector "DownThemAll! セレクターボタン">
+<!ENTITY lp.tb.add.selectordesc "ダウンロードしたいアイテムをクリックで追加できます。">
+<!ENTITY lp.tb.add.p2 "ツールバーにボタンを追加するには <code>[表示] → [ツールバー] → [カスタマイズ]</code> を選択してください。">
+<!ENTITY lp.tb.dnd.title "ドラッグアンドドロップ">
+<!ENTITY lp.tb.dnd.p1 "リンクや画像を DownThemAll! か OneClick! ボタンにドラッグアンドドロップする事でダウンロードを開始出来ます。">
+<!ENTITY lp.tb.dnd.p2 "またダウンロードしたいリンクや画像などをマネージャー画面にドロップする事でもダウンロードできます。">
+<!ENTITY lp.tb.dnd.order "ダウンロードの順番をドラッグアンドドロップで変更する事ができます。選択したダウンロードを移動したい位置にドロップしてください。">
+<!ENTITY lp.tb.selector.title "DownThemAll! セレクターの使用">
+<!ENTITY lp.tb.selector.queueing "DownThemAll!! セレクターにより、リンクや画像をクリックするだけで多くのダウンロードをダウンロード待ちリストに追加できます。">
+<!ENTITY lp.tb.selector.how "セレクターを有効にするには、ツールバーボタンをクリックしてください。ボタンを再びクリックすると無効になります。">
+<!ENTITY lp.pr.title "プライバシー通知">
+<!ENTITY lp.pr.intro2 "DownThemAｌｌ はユーザーのプライバシーを尊重します。">
+<!ENTITY lp.pr.settings2 "DownThemAll!! は、プライバシーパネルの設定を変更してウィンドウを閉じた後でも、すべての完了、中止、未完了のダウンロードをダウンロードリストから削除できます。">
+<!ENTITY lp.pr.diag2 "診断メッセージを有効にすると、エラーコンソールと dta_log.txt ファイルの両方にエラーを記録できます。これはプライバシーパネルの設定から変更できます。診断メッセージには、ダウンロードしたファイルの URL やパス、ファイル名などの個人情報や Cookie 情報が含まれます。このオプションは、ユーザーのプライバシーを保護するため既定で無効化されています。診断ログを送信する場合、取り扱いに注意が必要な情報を調べたいでしょう。診断ログは自動的に送信または公開されることはありません。">
+<!ENTITY lp.pr.pwpbm "DownThemAll!　は Firefox のプライベートブラウジングモードをサポートしています: あなたがプライベートブラウジングモード中にダウンロードを行うと DownThemAll! はダウンロードしたファイルや保存先のフォルダに使用したファイル名規則などの情報を記憶しません。しかし新しく作成されたフィルターやダウンロードされた実際のファイルはハードディスクに保存される点に注意してください。">
+<!ENTITY lp.pr.link "このメッセージはいつでも表示できます。このページのアドレスを入力するか (about:downthemall) DownThemAll! の設定ウィンドウ内にある [プライバシーについて] のリンクをクリックしてください">
+<!ENTITY lp.yr.usagetitle "使用と再配布">
+<!ENTITY lp.yr.usage "あなたは DownThemAll! の使用許諾により、以下の事を自由に無償でできます:">
+<!ENTITY lp.yr.usageuse "DownThemAll! を使用すること">
+<!ENTITY lp.yr.usagemod "DownThemAll! を変更すること">
+<!ENTITY lp.yr.usagedist "変更の有無に関わらず DownThemAll! を再配布すること">
+<!ENTITY lp.yr.usagemore "さらに詳しい情報はライセンスをご覧ください。">
+<!ENTITY lp.yr.logo "ロゴには詐欺から私たちの評判を守るため、制限されたライセンスが適用されます。これは、DownThemAll!! の変更バージョンを配布する場合は、独自の名前とロゴを使用しなければならないことを意味します。">
+<!ENTITY lp.languagetitle "翻訳">
+<!ENTITY lp.language.babelzilla "複数の言語に堪能な方は、<a href='http://babelzilla.org'>babelzilla.org</a> に参加して DownThemAll!! の他の言語への翻訳にご協力ください。">
+<!ENTITY lp.yr.licensetitle "著作権とライセンス">
+<!ENTITY lp.yr.licensed "DownThemAll! は <a href='http://www.gnu.org/licenses/old-licenses/gpl-2.0.html'>GPL 2.0</a> の下でライセンスされています。ライセンスに関する詳細は GPL ファイルをご覧ください。 このライセンスはすべてのソースコードファイルに対して適用されます。">
+<!ENTITY lp.yr.morelicense3 "ソースコード以外のファイルの中には異なるライセンスや追加のライセンスを適用している場合があります。詳しくは <a href='http://code.downthemall.net/repos/'>http://code.downthemall.net/repos/</a> リポジトリから個々のファイルを確認してください。多くのファイルが GPL/LGPL と互換性のある MPL 2.0　か MPL 1.1/GPL 2.0/LGPL 2.1 のトリプルライセンスで提供されいます。各ライセンスについては MPL、GPL、LGPL のファイルをご覧ください。">
+<!ENTITY lp.yr.gplintro "GPL 2.0 重要な一部分 (無保証と免責事項) を抜粋して以下に表示します:">
+<!ENTITY lp.yr.icons "アートワーク、アイコンとボタン">
+<!ENTITY lp.yr.iconsbased4 "は、Mike Matas, Mark James, Noun Project および Tango project の作品を基にしています">
+<!ENTITY lp.yr.artwork3 "オリジナルアートワーク: Copyright © 2004-2013 by Stefano Verna, Federico Parodi and Nils Maier">
+<!ENTITY lp.yr.artworklicense "オリジナルのアートワークは以下のライセンスに基づきます:">
+<!ENTITY lp.yr.logo3 "DownThemAll! ロゴデザイン: Copyright © 2004-2013 by Stefano Verna.">
+<!ENTITY lp.yr.logopermissions "The DownThemAll! name and logo cannot be used without permission in any derivative work, with exception of credits and license-related notices.">
+<!ENTITY lp.ct.bugstitle "バグの報告と新しい機能の提案">
+<!ENTITY lp.ct.bugs2 "不具合や要望は、私たちの <a href='https://bugs.downthemall.net/'>bug tracker</a> に報告してください。">
+<!ENTITY lp.ct.contactstitle "連絡先">
+<!ENTITY lp.ct.contactsfeed2 "あなたからのフィードバックや提案、協力の申し出をお待ちしております。">
+<!ENTITY lp.ct.contacts "詳しくは <a href='http://www.downthemall.net/main/contacts/'>連絡先ページ</a> をご覧ください。">

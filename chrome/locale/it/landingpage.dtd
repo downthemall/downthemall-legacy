@@ -1,6 +1,11 @@
+<!-- To test this out, open chrome://dta/content/about/index.xml in your browser with dTa! installed -->
+<!-- LOCALIZATION NOTE (lp.localedir): UI text direction, either ltr (left-to-right) or rtl (right-to-left); other values not possible -->
 <!ENTITY lp.localedir "ltr">
+<!-- LOCALIZATION NOTE (language): Your language in your language -->
 <!ENTITY language "Italiano">
+<!-- LOCALIZATION NOTE (transAuthor): Your credit; or leave as dTa Team if you don't want credit -->
 <!ENTITY transAuthor "Il team dTa, Alessandro Menti">
+<!-- LOCALIZATION NOTE (fulltranslation): Your credit and language combined -->
 <!ENTITY fulltranslation "Traduzione italiana del team dTa e di Alessandro Menti">
 <!ENTITY amo.summary2 "Il primo e unico gestore di download/acceleratore nel tuo browser!">
 <!ENTITY amo.description.intro "DownThemAll! è tutto ciò che puoi desiderare da un gestore di download: offre un avanzato acceleratore che rende i tuoi download fino a quattro volte più veloci e ti permette di interrompere e riprendere i download quando vuoi.">
@@ -44,6 +49,7 @@
 <!ENTITY lp.tut.alltabs "È possibile accodare contemporaneamente elementi da tutte le schede utilizzando i menù a discesa del pulsante sulla barra degli strumenti.">
 <!ENTITY lp.tut.tabrestore "Saranno disponibili solo i collegamenti da schede completamente ripristinate.">
 <!ENTITY lp.tb.intro "DownThemAll! offre alcuni pulsanti nella barra degli strumenti per fornirti un modo pratico di accedere alle funzionalità di DownThemAll!.">
+<!-- LOCALIZATION NOTE (lp.tb.install): Text for the toolbar install button -->
 <!ENTITY lp.tb.install "Aggiungi pulsanti alla barra degli strumenti">
 <!ENTITY lp.tb.add.title "Aggiungere e usare i pulsanti della barra degli strumenti">
 <!ENTITY lp.tb.add.p1 "DownThemAll! include quattro pulsanti della barra degli strumenti per rendere più facile trovare e accodare i download">

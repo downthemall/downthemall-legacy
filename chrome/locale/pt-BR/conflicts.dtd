@@ -1,0 +1,7 @@
+<!ENTITY window.title "Conflito de Arquivos!">
+<!ENTITY text.value "Memorizar esta configuração:">
+<!ENTITY download.label "Apenas para este download">
+<!ENTITY session.label "Somente para essa sessão">
+<!ENTITY always.label "A partir de agora">
+<!ENTITY overwrite.label "Sobrescrever o arquivo existente">
+<!ENTITY skip.label "Omitir/Cancelar">

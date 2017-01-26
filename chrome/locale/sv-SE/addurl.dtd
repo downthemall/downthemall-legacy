@@ -1,0 +1,6 @@
+<!ENTITY windowtitle "Alla nedladdningar">
+<!ENTITY adddescription.value "Ange nedladdnings-URL och (valfritt) hänvisningssidan.">
+<!ENTITY createbatchdescriptor.label "Skapa batchbeskrivning">
+<!ENTITY createbatchdescriptor.tooltip "Skapa en batchbeskrivning från aktuell textmarkering">
+<!ENTITY desc.batches.value "Du kan också använda batchbeskrivning för att hämta fler filer samtidigt.">
+<!ENTITY examples.value "Exempel:">

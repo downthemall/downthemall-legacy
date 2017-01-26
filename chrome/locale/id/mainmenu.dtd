@@ -1,0 +1,5 @@
+<!ENTITY fileMenu.label "Berkas">
+<!ENTITY fileMenu.accesskey "F">
+<!ENTITY newNavigatorCmd.label "Jendela Peramban Baru">
+<!ENTITY tabCmd.label "Tab Peramban Baru">
+<!ENTITY closeWindow.label "Tutup DownThemAll!">

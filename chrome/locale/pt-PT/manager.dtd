@@ -11,6 +11,7 @@
 <!ENTITY percent.label "Percentagem">
 <!ENTITY pct.label "Evolução">
 <!ENTITY dim.label "Tamanho">
+<!-- LOCALIZATION NOTE (time2.label):  Est. == Estimated -->
 <!ENTITY time2.label "Tempo Est.">
 <!ENTITY parts.label "Partes">
 <!ENTITY speed.label "Velocidade">
@@ -21,7 +22,9 @@
 <!ENTITY infoPrivate.value "Transferência Privada">
 <!ENTITY elapsedTitle.value "Decorrido:">
 <!ENTITY remainingTitle.value "Restante:">
+<!-- LOCALIZATION NOTE (currentSpeedTitle.value):  Please keep this short, and use abbreviations is necessary, or the tooltip will widen too much. -->
 <!ENTITY currentSpeedTitle.value "Velocidade actual:">
+<!-- LOCALIZATION NOTE (avgSpeedTitle.value):  Please keep this short, and use abbreviations is necessary. -->
 <!ENTITY avgSpeedTitle.value "Velocidade Média:">
 <!ENTITY path.label "Guardar caminho">
 <!ENTITY hash.label "Checksum">

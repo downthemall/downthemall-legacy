@@ -1,6 +1,11 @@
+<!-- To test this out, open chrome://dta/content/about/index.xml in your browser with dTa! installed -->
+<!-- LOCALIZATION NOTE (lp.localedir): UI text direction, either ltr (left-to-right) or rtl (right-to-left); other values not possible -->
 <!ENTITY lp.localedir "ltr">
+<!-- LOCALIZATION NOTE (language): Your language in your language -->
 <!ENTITY language "Русский">
+<!-- LOCALIZATION NOTE (transAuthor): Your credit; or leave as dTa Team if you don't want credit -->
 <!ENTITY transAuthor "Sergeys, insolor, Anton Pinsky">
+<!-- LOCALIZATION NOTE (fulltranslation): Your credit and language combined -->
 <!ENTITY fulltranslation "Русский перевод: Sergeys, insolor, Anton Pinsky">
 <!ENTITY amo.summary2 "Первый и единственный менеджер / ускоритель загрузки в Вашем браузере!">
 <!ENTITY amo.description.intro "DownThemAll - всё, что можно желать от менеджера загрузки: он имеет передовой ускоритель, который увеличивает скорость загрузки до 4x раз, позволяет вам делать паузу и возобновлять прерванные загрузки в любое время.">
@@ -44,6 +49,7 @@
 <!ENTITY lp.tut.alltabs "Вы можете добавлять в очередь на загрузку элементы со всех вкладок сразу. Используйте для этого меню кнопок на панели инструментов.">
 <!ENTITY lp.tut.tabrestore "Будут доступны ссылки только с полностью восстановленных вкладок.">
 <!ENTITY lp.tb.intro "В DownThemAll! доступны несколько кнопок для панели инструментов, которые дают вам удобный доступ к функциям DownThemAll!.">
+<!-- LOCALIZATION NOTE (lp.tb.install): Text for the toolbar install button -->
 <!ENTITY lp.tb.install "Добавить кнопки в панель инструментов">
 <!ENTITY lp.tb.add.title "Добавление и использование кнопок панели инструментов">
 <!ENTITY lp.tb.add.p1 "DownThemAll! имеет четыре кнопки для панели инструментов, чтобы упростить поиск и добавление в очередь загрузки">

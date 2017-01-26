@@ -1,0 +1,26 @@
+<!-- LOCALIZATION NOTE : FILE Please do NOT translate DownThemAll! and OneClick -->
+<!ENTITY dta-tbinstall "Alla verktygsfältsknappar">
+<!ENTITY dta-pref.label "Inställningar">
+<!ENTITY dta-about2.label "Om DownThemAll!">
+<!ENTITY dta-manager-button "Hanterare">
+<!ENTITY dta-manager-button.desc "Öppnar hanterarfönstret.">
+<!ENTITY dta-selector-button2.label "OneClick!-markerare">
+<!ENTITY dta-selector-button.desc "Lägger till objekt genom att vänsterklicka på dem.">
+<!ENTITY dta-tb-all.label "Samtliga flikar">
+<!ENTITY dta-tb-single.label "Aktuell flik">
+<!ENTITY dta-selection2.label "DownThemAll!-markering">
+<!ENTITY dta-selection-turbo2.label "OneClick!-markering">
+<!ENTITY dta-regular2.label "DownThemAll!">
+<!ENTITY dta-regular.desc "Öppnar DownThemAll!-markeringsfönster för aktuell flik.">
+<!ENTITY dta-regular-turbo2.label "dTa! OneClick">
+<!ENTITY dta-regular-turbo.desc "Laddar ned alla objekt från aktuell sida enligt de senast använda inställningarna och filtren.">
+<!ENTITY dta-img-save2.label "Spara bild med DownThemAll!">
+<!ENTITY dta-img-save-turbo2.label "Spara bild med dTa! OneClick">
+<!ENTITY dta-video-save2.label "Spara video med DownThemAll!">
+<!ENTITY dta-video-save-turbo2.label "Spara video med dTa! OneClick">
+<!ENTITY dta-audio-save2.label "Spara ljud med DownThemAll!">
+<!ENTITY dta-audio-save-turbo2.label "Spara ljud med dTa! OneClick">
+<!ENTITY dta-link-save2.label "Spara länk med DownThemAll!">
+<!ENTITY dta-link-save-turbo2.label "Spara länk med dTa! OneClick">
+<!ENTITY dta-form-save2.label "Spara formulärmål med DownThemAll!">
+<!ENTITY dta-form-save-turbo2.label "Spara formulärmål med dTa! OneClick">

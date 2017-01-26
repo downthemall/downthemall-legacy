@@ -11,6 +11,7 @@
 <!ENTITY percent.label "百分比">
 <!ENTITY pct.label "进度">
 <!ENTITY dim.label "大小">
+<!-- LOCALIZATION NOTE (time2.label):  Est. == Estimated -->
 <!ENTITY time2.label "剩余时间">
 <!ENTITY parts.label "块">
 <!ENTITY speed.label "速度">
@@ -21,7 +22,9 @@
 <!ENTITY infoPrivate.value "隐私下载">
 <!ENTITY elapsedTitle.value "完成:">
 <!ENTITY remainingTitle.value "剩余:">
+<!-- LOCALIZATION NOTE (currentSpeedTitle.value):  Please keep this short, and use abbreviations is necessary, or the tooltip will widen too much. -->
 <!ENTITY currentSpeedTitle.value "当前速度:">
+<!-- LOCALIZATION NOTE (avgSpeedTitle.value):  Please keep this short, and use abbreviations is necessary. -->
 <!ENTITY avgSpeedTitle.value "平均速度:">
 <!ENTITY path.label "保存路径">
 <!ENTITY hash.label "校验码">

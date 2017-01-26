@@ -1,0 +1,26 @@
+<!ENTITY start.label "Starta!">
+<!ENTITY start.key "s">
+<!ENTITY queue.label "Lägg till som pausad">
+<!ENTITY queue.key "p">
+<!ENTITY options.label "Inställningar">
+<!ENTITY url.value "Ladda ned">
+<!ENTITY url.placeholder "Ange nedladdnings-URI">
+<!ENTITY override.filename.value "Anpassat filnamn">
+<!ENTITY override.filename.placeholder "Ange nytt filnamn">
+<!ENTITY override.filename.tip "Ange nytt filnamn eller lämna tomt för standardnamnet">
+<!ENTITY directory.caption "Spara filer i:">
+<!ENTITY directory.placeholder "Ange eller välj mapp">
+<!ENTITY mirrors.value "Speglar:">
+<!ENTITY referrer.value "Hänvisningssida:">
+<!ENTITY referrer.placeholder "Ange hänvisnings-URI">
+<!ENTITY referrer.tip "Ange hänvisnings-URI eller lämna tomt för att inte skicka en hänvisning">
+<!ENTITY description.value "Beskrivning:">
+<!ENTITY checksum.value "Kontrollsumma (Hash):">
+<!ENTITY browse.tooltip "Bläddra...">
+<!ENTITY mirrormanager.tip "Hantera nedladdningsspeglar">
+<!ENTITY mask3.label "Mask">
+<!ENTITY mask.tip "Valda filer sparas och döps om enligt denna mask">
+<!ENTITY mask.once.label "Använd mask endast denna gång">
+<!ENTITY selectall.label "Markera allt">
+<!ENTITY selectinv.label "Invertera markering">
+<!ENTITY selectnone.label "Markera ingenting">

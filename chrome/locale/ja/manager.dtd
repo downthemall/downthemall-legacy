@@ -1,0 +1,70 @@
+<!ENTITY tooladddownload.label "ダウンロードを追加">
+<!ENTITY tooladd.tooltip "DownThemAll にダウンロードするファイルを追加します">
+<!ENTITY tooldonate.tooltiptext "少額の寄付で DownThemAll の開発を支援できます!">
+<!ENTITY movetop.label "先頭へ">
+<!ENTITY movebottom.label "最後へ">
+<!ENTITY moveup.label "上へ">
+<!ENTITY movedown.label "下へ">
+<!ENTITY search.placeholder "ダウンロードの検索">
+<!ENTITY download.label "ダウンロード/ファイル名">
+<!ENTITY domain.label "ドメイン">
+<!ENTITY percent.label "割合">
+<!ENTITY pct.label "進捗状況">
+<!ENTITY dim.label "サイズ">
+<!-- LOCALIZATION NOTE (avgSpeedTitle.value):  Please keep this short, and use abbreviations is necessary. -->
+<!ENTITY time2.label "残り時間">
+<!ENTITY parts.label "分割数">
+<!ENTITY speed.label "転送速度">
+<!ENTITY infoURLTitle.value "ダウンロード元:">
+<!ENTITY infoSizeTitle.value "ファイルサイズ:">
+<!ENTITY infoDateTitle.value "追加日時:">
+<!ENTITY infoMultiple.value "複数のダウンロード">
+<!ENTITY infoPrivate.value "プライベートダウンロード">
+<!ENTITY elapsedTitle.value "経過時間:">
+<!ENTITY remainingTitle.value "残り時間:">
+<!-- LOCALIZATION NOTE (currentSpeedTitle.value):  Please keep this short, and use abbreviations is necessary, or the tooltip will widen too much. -->
+<!ENTITY currentSpeedTitle.value "現在の転送速度:">
+<!-- LOCALIZATION NOTE (time2.label):  Est. == Estimated -->
+<!ENTITY avgSpeedTitle.value "平均転送速度:">
+<!ENTITY path.label "保存先">
+<!ENTITY hash.label "チェックサム">
+<!ENTITY infos.label "ダウンロード情報">
+<!ENTITY launch.label "ファイルを開く">
+<!ENTITY rename.label "ファイル名を変更">
+<!ENTITY delete.label "ファイルを削除">
+<!ENTITY targetdir.label "フォルダーを開く">
+<!ENTITY pause.label "一時停止">
+<!ENTITY resume.label "再開">
+<!ENTITY cancel.label "キャンセル">
+<!ENTITY removemenu.label "ダウンロードを削除">
+<!ENTITY removeselected.label "選択したダウンロードを削除">
+<!ENTITY removehost.label "同じドメインのダウンロードを削除">
+<!ENTITY removebatch.label "現在のバッチを削除">
+<!ENTITY removecompleted.label "完了したダウンロードを削除">
+<!ENTITY removeAll.label "すべて削除">
+<!ENTITY removeFailed.label "削除に失敗しました">
+<!ENTITY removePaused.label "一時停止のダウンロードを削除">
+<!ENTITY removeDupes.label "重複したダウンロードを削除">
+<!ENTITY removeGone.label "ダウンロードとファイルを削除">
+<!ENTITY advanced.label "詳細">
+<!ENTITY addchunk.label "分割を追加">
+<!ENTITY removechunk.label "分割を削除">
+<!ENTITY force.label "今すぐ開始">
+<!ENTITY import.label "ファイルからインポート">
+<!ENTITY exportto.label "選択した項目をファイルにエクスポート">
+<!ENTITY addlimits.label "このドメインに対して個別の設定">
+<!ENTITY options.caption "オプション">
+<!ENTITY loading2.label "読み込み中...">
+<!ENTITY restore.label "復元">
+<!ENTITY close.label "閉じる">
+<!ENTITY invertmatcher.label "列フィルターを反転">
+<!ENTITY clearmatcher.label "列フィルターを消去">
+<!ENTITY speedlimit2.tooltip "ファイルの転送速度に上限を設定します。リストに登録されたダウンロードに対して自動的に適用されます。">
+<!ENTITY perdownloadspeedlimit2.label "転送速度制限">
+<!ENTITY perdownloadspeedlimit2.tooltip "ファイルの転送速度に上限を設定出来ます。この設定は指定したダウンロードに対してのみ有効です。">
+<!ENTITY mirrors.label "ミラーサーバーの管理">
+<!ENTITY mirrors.tooltip "ミラーサーバーからのダウンロードを管理します">
+<!ENTITY toolbar.icons "アイコンを使用">
+<!ENTITY toolbar.full "アイコンと文字を使用">
+<!ENTITY sortascending.label "A &gt; Z 昇順で並び替え">
+<!ENTITY sortdescending.label "Z &gt; A　降順で並び替え">

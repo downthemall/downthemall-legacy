@@ -1,0 +1,7 @@
+<!ENTITY window.title "Filkonfilkt!">
+<!ENTITY text.value "Spara denna inställning:">
+<!ENTITY download.label "Endast för denna nedladdning">
+<!ENTITY session.label "Endast under denna session">
+<!ENTITY always.label "Från och med nu">
+<!ENTITY overwrite.label "Skriv över befintlig fil">
+<!ENTITY skip.label "Hoppa över/Avbryt">

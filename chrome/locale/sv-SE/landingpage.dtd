@@ -1,0 +1,101 @@
+<!-- To test this out, open chrome://dta/content/about/index.xml in your browser with dTa! installed -->
+<!-- LOCALIZATION NOTE (lp.localedir): UI text direction, either ltr (left-to-right) or rtl (right-to-left); other values not possible -->
+<!ENTITY lp.localedir "ltr">
+<!-- LOCALIZATION NOTE (language): Your language in your language -->
+<!ENTITY language "Svenska">
+<!-- LOCALIZATION NOTE (transAuthor): Your credit; or leave as dTa Team if you don't want credit -->
+<!ENTITY transAuthor "Thunderpig, xXxXx och Phoenix">
+<!-- LOCALIZATION NOTE (fulltranslation): Your credit and language combined -->
+<!ENTITY fulltranslation "Svensk översättning av: Thunderpig, xXxXx och Phoenix">
+<!ENTITY amo.summary2 "Den första och enda nedladdningshanteraren/-acceleratorn i din webbläsare!">
+<!ENTITY amo.description.intro "DownThemAll har allt du någonsin kunnat önska dig av en nedladdningshanterare: Den har en avancerad accelerator som snabbar upp nedladdningar upp till fyra gånger och den låter dig pausa och återuppta nedladdningar när som helst.">
+<!ENTITY amo.description.feat2 "DownThemAll är snabbt, pålitligt och enkelt att använda! Den låter dig ladda ned alla länkar eller bilder som finns på en webbsida och mycket mer: Du kan förfina dina nedladdningar med helt anpassningsbara kriterier för att bara få det du verkligen vill ha. Få full kontroll över dina nedladdningar, dedikerade hastighet och antal parallella anslutningar när som helst. Använd Metalänkar eller lägg till speglar manuellt för att ladda ned en fil från olika servrar samtidigt.">
+<!ENTITY amo.description.free2 "DownThemAll är öppen källkod och freeware. Inget adware, inget spyware, ingen spårning, ingen kostnad alls!">
+<!ENTITY amo.description.more "För utförligare information gå till vår <a href='http://www.downthemall.net/howto/features/'>webbsida</a>.">
+<!ENTITY lp.title "Om DownThemAll!">
+<!ENTITY lp.welcome "Välkommen till DownThemAll!">
+<!ENTITY lp.info "Kolla på dessa videor som visar hur man använder DownThemAll! och lär dig mer om din integritet och dina rättigheter">
+<!ENTITY lp.moreinfo "För mer information besök oss på <a href='http://www.downthemall.net/howto/features/'>funktionsidan</a>.">
+<!ENTITY lp.gettingstarted "Komma igång">
+<!ENTITY lp.toolbar "Verktygsfältsknappar">
+<!ENTITY lp.privacy "Sekretess">
+<!ENTITY lp.yourrights "Dina rättigheter">
+<!ENTITY lp.contact "Kontakt">
+<!ENTITY lp.pleasenote "Var god observera:">
+<!ENTITY lp.donate2 "Överväga att bidra">
+<!ENTITY lp.tut.firsttitle "Din första nedladdning">
+<!ENTITY lp.tut.fd2 "Att ladda ned en fil i dTa är riktigt enkelt men även riktigt kraftfullt. Om du får välja att öppna eller spara en fil kan du använda alternativet DownThemAll!. När du har valt var du vill spara nedladdningen startar nedladdningen omedelbart eller köläggs för att laddas ned senare.">
+<!ENTITY lp.tut.selecttitle "Hur man använder markeringsfönstret">
+<!ENTITY lp.tut.selintro "I högerklicksmenyn på en webbsida visas ett nytt DownThemAll!-alternativ. När du klickar på detta alternativ kommer ett markeringsfönster visas, som du enkelt kan använda för att välja en eller flera länkar från en sida.">
+<!ENTITY lp.tut.seloptions "I markeringsfönstret har du många sätt att välja vilka filer du vill ladda ned:">
+<!ENTITY lp.tut.selopthand2 "Du kan kontrollera länkarna du vill ladda ned för hand.">
+<!ENTITY lp.tut.seloptfilters2 "Du kan använda inbyggda eller egna filter, t.ex. för att ladda ned alla länkade bilder.">
+<!ENTITY lp.tut.seloptfast2 "Dessutom kan du ange ett eget filter i fältet Snabbfiltrering, t.ex. <code>*.pdf,*.doc</code> eller använd t.o.m. reguljära uttryck">
+<!ENTITY lp.tut.seltypes "Markeringsfönstret innehåller flikar, för två olika typer av nedladdningar:">
+<!ENTITY lp.tut.seltypelinks "Fliken &quot;Länkar&quot; innehåller alla nedladdningsbara länkar som hittas på sidan">
+<!ENTITY lp.tut.seltypepics "Och fliken &quot;Bilder och media&quot; innehåller alla bilder och annan media som visas på sidan">
+<!ENTITY lp.tut.selgalleries "Bilder i full storlek länkas ofta bara från gallerisidor, vilket är varför du hittar dem i fliken &quot;Länkar&quot;">
+<!ENTITY lp.tut.seldone2 "När du har valt filerna att ladda ned trycker du antingen på &quot;Starta!&quot; för att starta dina nedladdningar omedelbart eller &quot;Lägg till som pausad&quot; för att ladda ned senare.">
+<!ENTITY lp.tut.batchestitle "Laddar ned batcher">
+<!ENTITY lp.tut.batches1 "Många användare vill ladda ner batcher av sekventiellt numrerade filer. DownThemAll! låter dig specificera batcher lika enkelt som videon visar.">
+<!ENTITY lp.tut.batches2 "Grundsyntaxen är: <code>[start:end]</code> eller <code>[start:end:step]</code> där både <code>start</code> och <code>end</code> kan antingen vara en siffra eller ett enda tecken. <code>step</code> definierar stegbredden och är 1 om det utelämnas.">
+<!ENTITY lp.tut.batches3 "T.ex. om du vill ladda ned bilder från 001 till 100 kan du ändra webbadressen till <code>http://exempel.org/[001:100].jpg</code>">
+<!ENTITY lp.tut.batchesctx "Dessutom låter högerklicksmenyn i URL-fältet i fönstret &quot;Lägg till nedladdningar&quot; dig enkelt konvertera en textmarkering till en batchbeskrivning.">
+<!ENTITY lp.tut.oneclicktitle "DownThemAll! OneClick">
+<!ENTITY lp.tut.oneclick1.2 "När du gjorde din första nedladdning kommer ett annat objekt bli tillgängligt: DownThemAll! OneClick, som låter dig ladda ned filer direkt med de föregående inställningarna och hoppa över nedladdningsalternativen och/eller markeringsrutor.">
+<!ENTITY lp.tut.oneclick2 "Så OneClick låter dig snabbt lägga flera länkar i kö.">
+<!ENTITY lp.tut.oneclickn "Efter att funktionen som rensar privat data i Firefox används kommer OneClick inte vara tillgänglig förrän du har startat en vanlig DownThemAll!-nedladdning igen.">
+<!ENTITY lp.tut.tabstitle "Ladda ned objekt från alla flikar samtidigt">
+<!ENTITY lp.tut.alltabs "Det är möjligt att kölägga objekt från alla flikar på en gång med hjälp av verktygsfältsknappens rullmenyer.">
+<!ENTITY lp.tut.tabrestore "Endast länkar från helt återställda flikar kommer att vara tillgängliga.">
+<!ENTITY lp.tb.intro "DownThemAll! erbjuder några vertkygsfältsknappar som ger dig ett enkelt sätt att nå funktionerna i DownThemAll!.">
+<!-- LOCALIZATION NOTE (lp.tb.install): Text for the toolbar install button -->
+<!ENTITY lp.tb.install "Lägg till verktygsfältsknappar">
+<!ENTITY lp.tb.add.title "Lägga till och använda verktygsfältsknappar">
+<!ENTITY lp.tb.add.p1 "DownThemAll! erbjuder fyra verktygsfältsknappar som gör det lättare att hitta och kölägga nedladdningar">
+<!ENTITY lp.tb.add.dta "DownThemAll!-knapp">
+<!ENTITY lp.tb.add.dtadesc "Öppnar markeringsfönstret för den aktuella fliken.">
+<!ENTITY lp.tb.add.tdta "OneClick!-knapp">
+<!ENTITY lp.tb.add.tdtadesc "Laddar ned alla objekt från den aktuella sidan enligt de senast använda inställningarna och filtren.">
+<!ENTITY lp.tb.add.manager "DownThemAll!-hanterarknapp">
+<!ENTITY lp.tb.add.managerdesc "Öppnar hanterarfönstret.">
+<!ENTITY lp.tb.add.selector "DownThemAll!-markeringsknapp">
+<!ENTITY lp.tb.add.selectordesc "Lägger till objekt genom att vänsterklicka på dem.">
+<!ENTITY lp.tb.add.p2 "Verktygsfältsknapparna kan läggas till via <code>Visa → Verktygsfält → Anpassa</code>.">
+<!ENTITY lp.tb.dnd.title "Dra och släpp">
+<!ENTITY lp.tb.dnd.p1 "Du kan dra och släppa varje länk eller bild på DownThemAll!- eller OneClick!-knappen för att ladda ned den.">
+<!ENTITY lp.tb.dnd.p2 "Hanterarfönstret kan också användas för att släppa objekt att ladda ned på.">
+<!ENTITY lp.tb.dnd.order "Du kan ändra ordningen i din nedladdningskö genom att dra och släppa. Markera några nedladdningar och släpp dem på önskad position.">
+<!ENTITY lp.tb.selector.title "Hur man använder DownThemAll!-markeringen">
+<!ENTITY lp.tb.selector.queueing "DownThemAll!-markeringen låter dig kölägga många nedladdningar bara genom att klicka på länkarna eller bilderna.">
+<!ENTITY lp.tb.selector.how "För att aktivera markeringen klickar du på motsvarande verktygsfältsknapp. För att inaktivera den när du är klar klickar du bara på knappen igen.">
+<!ENTITY lp.pr.title "Sekretessnotis">
+<!ENTITY lp.pr.intro2 "DownThemAll! respekterar din integritet.">
+<!ENTITY lp.pr.settings2 "Du kan låta DownThemAll! ta bort alla slutförda, avbrutna och ofärdiga nedladdningar från nedladdningslistan när fönstret stängs genom att ändra inställningarna i Inställningar → Sekretess.">
+<!ENTITY lp.pr.diag2 "Du kan aktivera diagnostiska meddelanden som kommer att loggas i felkonsolen och skrivas till filen dta_log.txt i panelen Inställningar → Sekretess. Diagnostiska meddelanden kommer förmodligen innehålla känslig information som webbadresser, filsökvägar, namnen på de filer du laddar ned eller t.o.m. information. Detta alternativ är INAKTIVERAD som standard för att skydda din integritet. Om du skickar in en diagnostisk logg kan du välja att censurera någon känslig information. Diagnostiska loggar kommer aldrig att överföras och/eller publiceras automatiskt.">
+<!ENTITY lp.pr.pwpbm "DownThemAll! stöder Firefox:s fönsterdefinierade privata surfläge: När du lägger till nedladdningar från ett privat surffönster kommer DownThemAll! inte att lagra någon information om nedladdade fönster, nedladdningsmappar eller använda omdöpningsmasker. Observera att annan data - som nyligen skapade filter eller, såklart, själva nedladdningarna - skrivs fortfarande på din hårddisk.">
+<!ENTITY lp.pr.link "Denna notis finns alltid tillgänglig från denna sida (about:downthemall) och länkas i inställningsfönstret">
+<!ENTITY lp.yr.usagetitle "Användning och omfördelning">
+<!ENTITY lp.yr.usage "Upphovsmännen licensierar DownThemAll! på ett sätt så du helt fritt och utan kostnad kan:">
+<!ENTITY lp.yr.usageuse "Använda DownThemAll!">
+<!ENTITY lp.yr.usagemod "Modifiera DownThemAll!">
+<!ENTITY lp.yr.usagedist "Omfördela DownThemAll!, med eller utan modifikationer">
+<!ENTITY lp.yr.usagemore "Se licenserna för mer information.">
+<!ENTITY lp.yr.logo "Logotyperna använder en mer begränsad licens för att vi ska kunna skydda vårt rykte mot bedragare. Detta innebär att du måste använda din egen logotyp och namn om du skulle vilja distribuera modifierade versioner av DownThemAll!">
+<!ENTITY lp.languagetitle "Språk">
+<!ENTITY lp.language.babelzilla "Om du kan flera språk flytande kan du registrera dig på <a href='http://babelzilla.org'>babelzilla.org</a> för att hjälpa till att översätta detta och många andra bra tillägg.">
+<!ENTITY lp.yr.licensetitle "Upphovsrätt och licens">
+<!ENTITY lp.yr.licensed "DownThemAll! är licensierad under <a href='http://www.gnu.org/licenses/old-licenses/gpl-2.0.html'>GPL 2.0</a>. Se GPL-filen. Detta gäller alla källkodsfiler.">
+<!ENTITY lp.yr.morelicense3 "Individuella filer kan ha ytterligare och/eller olika licenser. Se motsvarande filer som är tillgängliga på <a href='http://code.downthemall.net/repos/'>http://code.downthemall.net/repos/</a>. De flesta filer är licenserade under GPL/LGPL-compatible MPL 2.0, eller har de tre licenserna MPL 1.1/GPL 2.0/LGPL 2.1. Se de respektive MPL-, GPL- och LGPL-filerna.">
+<!ENTITY lp.yr.gplintro "De mest viktiga avsnitten från GPL 2.0, ansvarsfriskrivningen om ingen garanti och skador:">
+<!ENTITY lp.yr.icons "Konst, ikoner och knappar">
+<!ENTITY lp.yr.iconsbased4 "baseras på konst av Mike Matas, Mark James, the Noun Project och Tango project">
+<!ENTITY lp.yr.artwork3 "Ursprunglig konst är: Copyright © 2004-2013 av Stefano Verna, Federico Parodi och Nils Maier">
+<!ENTITY lp.yr.artworklicense "Ursprunglig konst är licensierad under:">
+<!ENTITY lp.yr.logo3 "Logotypdesign för DownThemAll!: Copyright © 2004-2013 av Stefano Verna.">
+<!ENTITY lp.yr.logopermissions "Namnet DownThemAll! och dess logotyp kan inte användas i något derivat verk utan tillstånd, förutom i erkännanden och licensrelaterade notiser.">
+<!ENTITY lp.ct.bugstitle "Rapportera buggar/Begär funktioner">
+<!ENTITY lp.ct.bugs2 "Rapportera buggar och begär funktioner på vår <a href='https://bugs.downthemall.net/'>buggspårningslista</a>.">
+<!ENTITY lp.ct.contactstitle "Kontakt">
+<!ENTITY lp.ct.contactsfeed2 "Vi vill få återkoppling, förslag och/eller erbjudanden om hjälp.">
+<!ENTITY lp.ct.contacts "Se vår <a href='http://www.downthemall.net/main/contacts/'>kontaktsida</a>.">

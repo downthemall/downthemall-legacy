@@ -1,6 +1,11 @@
+<!-- To test this out, open chrome://dta/content/about/index.xml in your browser with dTa! installed -->
+<!-- LOCALIZATION NOTE (lp.localedir): UI text direction, either ltr (left-to-right) or rtl (right-to-left); other values not possible -->
 <!ENTITY lp.localedir "ltr">
+<!-- LOCALIZATION NOTE (language): Your language in your language -->
 <!ENTITY language "Türkçe">
+<!-- LOCALIZATION NOTE (transAuthor): Your credit; or leave as dTa Team if you don't want credit -->
 <!ENTITY transAuthor "Sinan Kaan Yerli ve dTa Ekibi">
+<!-- LOCALIZATION NOTE (fulltranslation): Your credit and language combined -->
 <!ENTITY fulltranslation "İngilizce çeviri: Sinan Kaan Yerli ve dTa Ekibi">
 <!ENTITY amo.summary2 "Ağ gezginindeki ilk ve tek indirme yöneticisi/hızlandırıcısı!">
 <!ENTITY amo.description.intro "DownThemAll'da bir indirme yöneticisinden beklediğiniz her şey var: indirmeyi 4 kata kadar hızlandıran ve indirmelerinizi istedğiniz zaman duraklatıp yeniden sürdürebileceğiniz gibi gelişmiş özellikler içerir.">
@@ -44,6 +49,7 @@
 <!ENTITY lp.tut.alltabs "Araça çubuğundaki alt menüleri kullanarak tüm sekmelerdeki öğeleri tek kerede indirme sırasına alabilirsiniz">
 <!ENTITY lp.tut.tabrestore "Yalnızca tümüyle erişilmiş sekmelerdeki bağlantılar uygun olacaktır.">
 <!ENTITY lp.tb.intro "DownThemAll!">
+<!-- LOCALIZATION NOTE (lp.tb.install): Text for the toolbar install button -->
 <!ENTITY lp.tb.install "Araç çubuğu tuşu ekle">
 <!ENTITY lp.tb.add.title "Araç çubuğuna tuş eklemek ve onları kullanmak">
 <!ENTITY lp.tb.add.p1 "DownThemAll!'da, indirme bulma ve sıraya eklemeyi kolaylaştıran dört araç çubuğu tuşu vardır">

@@ -1,3 +1,4 @@
+<!-- LOCALIZATION NOTE (windowstyle.3): Additional window style; Do not translate; increase values if the preferences window is cropped in your locale -->
 <!ENTITY windowstyle.3 "width:48em;height:44em;">
 <!ENTITY filterspane.label "Filtri">
 <!ENTITY listhead1.label "Nome">

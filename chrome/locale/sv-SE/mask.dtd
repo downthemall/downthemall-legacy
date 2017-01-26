@@ -1,0 +1,31 @@
+<!ENTITY mask.tags "Omdöpningstaggar">
+<!ENTITY mask.name "Filnamn">
+<!ENTITY mask.ext "Filtyp">
+<!ENTITY mask.url "Grund-URL">
+<!ENTITY mask.curl "Fullständig URL">
+<!ENTITY mask.flatcurl "Fullständig platt URL">
+<!ENTITY mask.batch "Batchnummer">
+<!ENTITY mask.inum "Objektnummer">
+<!ENTITY mask.hh "Timmar">
+<!ENTITY mask.mm "Minuter">
+<!ENTITY mask.ss "Sekunder">
+<!ENTITY mask.d "Dag">
+<!ENTITY mask.m "Månad">
+<!ENTITY mask.y "År">
+<!ENTITY mask.subdirs "URL-undermappar">
+<!ENTITY mask.flatsubdirs "Platta URL-undermappar">
+<!ENTITY mask.linktext "Länktext">
+<!ENTITY mask.flatlinktext "Platt länktext">
+<!ENTITY mask.refername "Hänvisningsnamn">
+<!ENTITY mask.referext "Hänvisningsfiländelse">
+<!ENTITY mask.refer "Hänvisnings-URL">
+<!ENTITY mask.crefer "Full hänvisning">
+<!ENTITY mask.flatcrefer "Platt fullständig hänvisning">
+<!ENTITY mask.referdirs "Hänvisningsundermappar">
+<!ENTITY mask.flatreferdirs "Platta hänvisningsundermappar">
+<!ENTITY mask.qstring "Frågesträng">
+<!ENTITY mask.referqstring "Hänvisande frågesträng">
+<!ENTITY mask.title "Rubrik associerad med länk">
+<!ENTITY mask.flattitle2 "Platt rubrik associerad med länk">
+<!ENTITY mask.tip "Klicka eller dra till omdöpningsmasken">
+<!ENTITY mask.open.tip "Referenstabell för omdöpningstaggar">

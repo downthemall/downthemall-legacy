@@ -1,0 +1,10 @@
+<!ENTITY title "Pengelolaan Mirror DownThemAll!">
+<!ENTITY header "Pengelolaan Mirror">
+<!ENTITY byline1 "Unduhan bisa dimuat dari berbagai lokasi yang berbeda. Berkas akan secara otomatis digabungkan.">
+<!ENTITY byline2 "Silakan menambahkan atau membuang lokasi yang menunjuk pada berkas yang sama.">
+<!ENTITY byline3 "Menambahkan lokasi yang menunjuk pada berkas yang berbeda akan menyebabkan kerusakan unduhan">
+<!ENTITY addmirror.tip "Tambahkan Mirror Unduhan">
+<!ENTITY removemirror.tip "Buang Mirror Unduhan Terpilih">
+<!ENTITY checkmirrors.tip "Periksa Semua Mirror Unduhan">
+<!ENTITY mirrorurl "Lokasi:">
+<!ENTITY preference "Prioritas:">

@@ -1,6 +1,11 @@
+<!-- To test this out, open chrome://dta/content/about/index.xml in your browser with dTa! installed -->
+<!-- LOCALIZATION NOTE (lp.localedir): UI text direction, either ltr (left-to-right) or rtl (right-to-left); other values not possible -->
 <!ENTITY lp.localedir "ltr">
+<!-- LOCALIZATION NOTE (language): Your language in your language -->
 <!ENTITY language "Slovenščina">
+<!-- LOCALIZATION NOTE (transAuthor): Your credit; or leave as dTa Team if you don't want credit -->
 <!ENTITY transAuthor "Ekipa dTa">
+<!-- LOCALIZATION NOTE (fulltranslation): Your credit and language combined -->
 <!ENTITY fulltranslation "Angleški prevod: ekipa dTa">
 <!ENTITY amo.summary2 "Prvi in edini upravitelj/pospeševalnik prenosov v brskalniku!">
 <!ENTITY amo.description.intro "DownThemAll je vse, kar si želite od upravitelja prenosov: vsebuje napredni pospeševalnik, ki poveča hitrost do 4x in kadarkoli omogoča premore in obnovitve prenosov.">
@@ -44,6 +49,7 @@
 <!ENTITY lp.tut.alltabs "Predmete lahko z uporabo spustnih menijev gumba orodne vrstice dodate v čakalno vrsto iz vseh zavihkov.">
 <!ENTITY lp.tut.tabrestore "Na voljo bodo samo povezave iz popolnoma obnovljenih zavihkov.">
 <!ENTITY lp.tb.intro "DownThemAll! omogoča nekaj gumbov za orodno vrstico, ki vam dajo priročen način dostopa do možnosti DownThemAll!.">
+<!-- LOCALIZATION NOTE (lp.tb.install): Text for the toolbar install button -->
 <!ENTITY lp.tb.install "Dodaj gumbe orodne vrstice">
 <!ENTITY lp.tb.add.title "Dodajanje in uporaba gumbov za orodno vrstico">
 <!ENTITY lp.tb.add.p1 "DownThemAll! omogoča štiri gumbe za orodno vrstico, s katerimi lahko enostavno najdete in dodate prenose v čakalno vrsto">

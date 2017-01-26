@@ -1,6 +1,11 @@
+<!-- To test this out, open chrome://dta/content/about/index.xml in your browser with dTa! installed -->
+<!-- LOCALIZATION NOTE (lp.localedir): UI text direction, either ltr (left-to-right) or rtl (right-to-left); other values not possible -->
 <!ENTITY lp.localedir "ltr">
+<!-- LOCALIZATION NOTE (language): Your language in your language -->
 <!ENTITY language "Română">
+<!-- LOCALIZATION NOTE (transAuthor): Your credit; or leave as dTa Team if you don't want credit -->
 <!ENTITY transAuthor "Cătălin Zamfirescu">
+<!-- LOCALIZATION NOTE (fulltranslation): Your credit and language combined -->
 <!ENTITY fulltranslation "Traducere în română: Cătălin Zamfirescu">
 <!ENTITY amo.summary2 "The first and only download manager/accelerator inside your browser!">
 <!ENTITY amo.description.intro "DownThemAll! este tot ceea ce se poate dori de la un gestionar de descărcări: are un accelerator avansat care mărește viteza de descărcare de până la 4 ori și vă permite să întrerupeți și să reluați descărcările în orice moment.">
@@ -44,6 +49,7 @@
 <!ENTITY lp.tut.alltabs "It is possible to queue items from all tabs at once, by using the toolbar button drop-down menus.">
 <!ENTITY lp.tut.tabrestore "Only links from fully restored tabs will be available.">
 <!ENTITY lp.tb.intro "DownThemAll! vă pune la dispoziție câteva butoane în bara de unelte care vă oferă o modalitate convenabilă de a accesa facilitățile sale.">
+<!-- LOCALIZATION NOTE (lp.tb.install): Text for the toolbar install button -->
 <!ENTITY lp.tb.install "Adaugă butoane">
 <!ENTITY lp.tb.add.title "<font face="Helvetica">Adăugarea și folosirea butoanelor din bara de unelte&quot;&gt;">
 <!ENTITY lp.tb.add.p1 "DownThemAll! pune la dispoziție patru butoane în bara de unelte pentru a face ușoare căutarea și descărcarea fișierelor:">

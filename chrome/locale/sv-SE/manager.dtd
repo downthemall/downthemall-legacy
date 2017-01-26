@@ -1,0 +1,70 @@
+<!ENTITY tooladddownload.label "Lägg till nedladdningar">
+<!ENTITY tooladd.tooltip "Lägg till en nedladdning manuellt i DownThemAll">
+<!ENTITY tooldonate.tooltiptext "Du kan hjälpa oss att göra DownThemAll! ännu bättre. Överväg att göra en liten donation!">
+<!ENTITY movetop.label "Längst upp">
+<!ENTITY movebottom.label "Längst ned">
+<!ENTITY moveup.label "Upp">
+<!ENTITY movedown.label "Ned">
+<!ENTITY search.placeholder "Sök nedladdningar">
+<!ENTITY download.label "Nedladdning/Namn">
+<!ENTITY domain.label "Domän">
+<!ENTITY percent.label "Procent">
+<!ENTITY pct.label "Förlopp">
+<!ENTITY dim.label "Storlek">
+<!-- LOCALIZATION NOTE (time2.label):  Est. == Estimated -->
+<!ENTITY time2.label "Uppsk. tid">
+<!ENTITY parts.label "Segment">
+<!ENTITY speed.label "Hastighet">
+<!ENTITY infoURLTitle.value "Från:">
+<!ENTITY infoSizeTitle.value "Storlek:">
+<!ENTITY infoDateTitle.value "Datum tillagt:">
+<!ENTITY infoMultiple.value "Flera objekt">
+<!ENTITY infoPrivate.value "Privat nedladdning">
+<!ENTITY elapsedTitle.value "Förfluten:">
+<!ENTITY remainingTitle.value "Återstående:">
+<!-- LOCALIZATION NOTE (currentSpeedTitle.value):  Please keep this short, and use abbreviations is necessary, or the tooltip will widen too much. -->
+<!ENTITY currentSpeedTitle.value "Aktuell hastighet:">
+<!-- LOCALIZATION NOTE (avgSpeedTitle.value):  Please keep this short, and use abbreviations is necessary. -->
+<!ENTITY avgSpeedTitle.value "Medelhastighet:">
+<!ENTITY path.label "Sökväg">
+<!ENTITY hash.label "Kontrollsumma">
+<!ENTITY infos.label "Nedladdningsinfo">
+<!ENTITY launch.label "Öppna fil">
+<!ENTITY rename.label "Byt namn på fil">
+<!ENTITY delete.label "Radera fil(er)">
+<!ENTITY targetdir.label "Öppna mapp">
+<!ENTITY pause.label "Pausa">
+<!ENTITY resume.label "Återuppta">
+<!ENTITY cancel.label "Avbryt">
+<!ENTITY removemenu.label "Ta bort nedladdningar">
+<!ENTITY removeselected.label "Ta bort markerade">
+<!ENTITY removehost.label "Ta bort domännedladdningar">
+<!ENTITY removebatch.label "Ta bort aktuell batch">
+<!ENTITY removecompleted.label "Ta bort färdiga nedladdningar">
+<!ENTITY removeAll.label "Ta bort allt">
+<!ENTITY removeFailed.label "Ta bort misslyckade">
+<!ENTITY removePaused.label "Ta bort pausade">
+<!ENTITY removeDupes.label "Ta bort dubbletter">
+<!ENTITY removeGone.label "Rensa försvunna filer">
+<!ENTITY advanced.label "Avancerat">
+<!ENTITY addchunk.label "Ett till segment">
+<!ENTITY removechunk.label "Ett färre segment">
+<!ENTITY force.label "Tvinga start">
+<!ENTITY import.label "Importera från fil">
+<!ENTITY exportto.label "Exportera valda till fil">
+<!ENTITY addlimits.label "Lägg till domänspecifika gränser">
+<!ENTITY options.caption "Alternativ">
+<!ENTITY loading2.label "Läser in…">
+<!ENTITY restore.label "Återställ">
+<!ENTITY close.label "Stäng">
+<!ENTITY invertmatcher.label "Invertera kolumnfilter">
+<!ENTITY clearmatcher.label "Rensa kolumnfilter">
+<!ENTITY speedlimit2.tooltip "Ändra global hastighetsgräns. Listan uppdateras dynamiskt.">
+<!ENTITY perdownloadspeedlimit2.label "Hastighetsgräns">
+<!ENTITY perdownloadspeedlimit2.tooltip "Ändra gränsen för nedladdningshastigheten. Globala hastighetsgränsen kommer fortfarande gälla.">
+<!ENTITY mirrors.label "Hantera speglar">
+<!ENTITY mirrors.tooltip "Hantera platser för nedladdningsspeglar">
+<!ENTITY toolbar.icons "Visa ikoner">
+<!ENTITY toolbar.full "Visa ikoner och text">
+<!ENTITY sortascending.label "Sortera A &gt; Ö">
+<!ENTITY sortdescending.label "Sortera Ö &gt; A">

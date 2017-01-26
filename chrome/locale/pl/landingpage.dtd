@@ -1,6 +1,11 @@
+<!-- To test this out, open chrome://dta/content/about/index.xml in your browser with dTa! installed -->
+<!-- LOCALIZATION NOTE (lp.localedir): UI text direction, either ltr (left-to-right) or rtl (right-to-left); other values not possible -->
 <!ENTITY lp.localedir "ltr">
+<!-- LOCALIZATION NOTE (language): Your language in your language -->
 <!ENTITY language "Polski">
+<!-- LOCALIZATION NOTE (transAuthor): Your credit; or leave as dTa Team if you don't want credit -->
 <!ENTITY transAuthor "Leszek(teo)Życzkowski">
+<!-- LOCALIZATION NOTE (fulltranslation): Your credit and language combined -->
 <!ENTITY fulltranslation "Polskie tumaczenie wykonane przez Leszka(teo)Życzkowskiego">
 <!ENTITY amo.summary2 "Pierwszy i jedyny wbudowany w twoją przeglądarkę menedżer plików/akcelerator!">
 <!ENTITY amo.description.intro "DownThemAll zawiera wszystko, czego można życzyć sobie od menedżera plików. Ma zaawansowany akcelerator przyspieszający do czterech razy prędkość pobierania plików i umożliwia wstrzymywanie i wznawianie pobierania w dowolnym czasie.">
@@ -44,6 +49,7 @@
 <!ENTITY lp.tut.alltabs "Używając menu rozwijanego przycisku narzędziowego można kolejkować elementy ze wszystkich kart na raz.">
 <!ENTITY lp.tut.tabrestore "Będą dostępne tylko odnośniki z całkowicie odtworzonych kart.">
 <!ENTITY lp.tb.intro "DownThemAll! oferuje kilka przycisków narzędziowych umożliwiających wygodny sposób dostępu do funkcji DownThemAll!">
+<!-- LOCALIZATION NOTE (lp.tb.install): Text for the toolbar install button -->
 <!ENTITY lp.tb.install "Dodaj przyciski narzędziowe">
 <!ENTITY lp.tb.add.title "Dodawanie i używanie przycisków narzędziowych">
 <!ENTITY lp.tb.add.p1 "DownThemAll! ma cztery przyciski narzędziowe ułatwiające znalezienie i kolejkowanie pobrań:">
