@@ -1,0 +1,5 @@
+<!ENTITY fileMenu.label "Arkiv">
+<!ENTITY fileMenu.accesskey "A">
+<!ENTITY newNavigatorCmd.label "Nytt webbläsarfönster">
+<!ENTITY tabCmd.label "Ny webbläsarflik">
+<!ENTITY closeWindow.label "Stäng DownThemAll!">

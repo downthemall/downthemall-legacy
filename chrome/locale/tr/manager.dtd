@@ -11,6 +11,7 @@
 <!ENTITY percent.label "Yüzde">
 <!ENTITY pct.label "İlerleme">
 <!ENTITY dim.label "Boyut">
+<!-- LOCALIZATION NOTE (time2.label):  Est. == Estimated -->
 <!ENTITY time2.label "Thm. Zaman">
 <!ENTITY parts.label "Parçalar">
 <!ENTITY speed.label "Hız">
@@ -21,7 +22,9 @@
 <!ENTITY infoPrivate.value "Özel İndirme">
 <!ENTITY elapsedTitle.value "Geçen:">
 <!ENTITY remainingTitle.value "Kalan:">
+<!-- LOCALIZATION NOTE (currentSpeedTitle.value):  Please keep this short, and use abbreviations is necessary, or the tooltip will widen too much. -->
 <!ENTITY currentSpeedTitle.value "Anlık hız:">
+<!-- LOCALIZATION NOTE (avgSpeedTitle.value):  Please keep this short, and use abbreviations is necessary. -->
 <!ENTITY avgSpeedTitle.value "Ortalama Hız:">
 <!ENTITY path.label "Kayıt yolu">
 <!ENTITY hash.label "Sağlama">

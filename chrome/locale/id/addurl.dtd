@@ -1,0 +1,6 @@
+<!ENTITY windowtitle "Tambah Unduhan">
+<!ENTITY adddescription.value "Masukkan URL unduhan dan (opsional) halaman rujukan.">
+<!ENTITY createbatchdescriptor.label "Buat Deskriptor Batch">
+<!ENTITY createbatchdescriptor.tooltip "Buat deskriptor batch dari seleksi teks yang disorot saat ini">
+<!ENTITY desc.batches.value "Anda juga bisa menggunakan deskriptor batch untuk mengunduh beberapa berkas secara bersamaan.">
+<!ENTITY examples.value "Contoh:">

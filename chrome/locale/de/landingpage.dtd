@@ -3,7 +3,9 @@
 <!ENTITY lp.localedir "ltr">
 <!-- LOCALIZATION NOTE (transAuthor): Your credit; or leave as dTa Team if you don't want credit -->
 <!ENTITY language "Deutsch">
+<!-- LOCALIZATION NOTE (transAuthor): Your credit; or leave as dTa Team if you don't want credit -->
 <!ENTITY transAuthor "Nils Maier">
+<!-- LOCALIZATION NOTE (fulltranslation): Your credit and language combined -->
 <!ENTITY fulltranslation "Deutsche Übersetzung von: Nils Maier + weiteren Helfern">
 <!ENTITY amo.summary2 "Der erste und einzige Downloadmanager/-beschleuniger direkt in Ihrem Browser!">
 <!ENTITY amo.description.intro "DownThemAll! ist alles, was man sich von einem Download-Manager wünscht: es enthält fortschrittliche Download-Beschleunigung, die die Geschwindigkeit bis zum 4-fachen anhebt und erlaubt es Downloads jederzeit zu pausieren und wieder fortzusetzen.">
@@ -47,6 +49,7 @@
 <!ENTITY lp.tut.alltabs "Es ist möglich von allen Tabs auf einmal Downloads hinzuzufügen, indem man das Menü der Toolbar-Buttons benutzt.">
 <!ENTITY lp.tut.tabrestore "Links können nur von vollständig wiederhergestellten Tabs verarbeitet werden.">
 <!ENTITY lp.tb.intro "DownThemAll! bietet einige Symbolleisten-Buttons an, die es ermöglichen DownThemAll! Funktionen angenehm zu benutzen.">
+<!-- LOCALIZATION NOTE (lp.tb.install): Text for the toolbar install button -->
 <!ENTITY lp.tb.install "Toolbar-Buttons hinzufügen">
 <!ENTITY lp.tb.add.title "Hinzufügen und Benutzen von Symbolleisten-Buttons">
 <!ENTITY lp.tb.add.p1 "DownThemAll! stellt vier Symbolleisten-Buttons bereit, die es einfach machen, Downloads zu finden und zu starten">

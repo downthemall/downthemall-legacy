@@ -1,0 +1,70 @@
+<!ENTITY tooladddownload.label "Tambah Unduhan">
+<!ENTITY tooladd.tooltip "Tambah unduhan secara manual ke DownThemAll">
+<!ENTITY tooldonate.tooltiptext "Anda bisa membantu kami membuat DownThemAll lebih baik. Pertimbangkan memberi sedikit donasi!">
+<!ENTITY movetop.label "Atas">
+<!ENTITY movebottom.label "Bawah">
+<!ENTITY moveup.label "Naik">
+<!ENTITY movedown.label "Turun">
+<!ENTITY search.placeholder "Cari unduhan">
+<!ENTITY download.label "Unduhan/Nama">
+<!ENTITY domain.label "Domain">
+<!ENTITY percent.label "Persentase">
+<!ENTITY pct.label "Kemajuan">
+<!ENTITY dim.label "Ukuran">
+<!-- LOCALIZATION NOTE (time2.label):  Est. == Estimated -->
+<!ENTITY time2.label "Perkiraan Waktu">
+<!ENTITY parts.label "Bagian">
+<!ENTITY speed.label "Kecepatan">
+<!ENTITY infoURLTitle.value "Dari:">
+<!ENTITY infoSizeTitle.value "Ukuran:">
+<!ENTITY infoDateTitle.value "Tanggal ditambahkan:">
+<!ENTITY infoMultiple.value "Beberapa Item">
+<!ENTITY infoPrivate.value "Unduhan Privat">
+<!ENTITY elapsedTitle.value "Berlalu:">
+<!ENTITY remainingTitle.value "Tersisa:">
+<!-- LOCALIZATION NOTE (currentSpeedTitle.value):  Please keep this short, and use abbreviations is necessary, or the tooltip will widen too much. -->
+<!ENTITY currentSpeedTitle.value "Kecepatan saat ini:">
+<!-- LOCALIZATION NOTE (avgSpeedTitle.value):  Please keep this short, and use abbreviations is necessary. -->
+<!ENTITY avgSpeedTitle.value "Kecepatan Rata-rata:">
+<!ENTITY path.label "Jalur penyimpanan">
+<!ENTITY hash.label "Ceksum">
+<!ENTITY infos.label "Informasi Unduhan">
+<!ENTITY launch.label "Buka Berkas">
+<!ENTITY rename.label "Ubah Nama Berkas">
+<!ENTITY delete.label "Hapus Berkas">
+<!ENTITY targetdir.label "Buka Direktori">
+<!ENTITY pause.label "Jeda">
+<!ENTITY resume.label "Lanjutkan">
+<!ENTITY cancel.label "Batal">
+<!ENTITY removemenu.label "Buang Unduhan">
+<!ENTITY removeselected.label "Buang Terpilih">
+<!ENTITY removehost.label "Buang Domain Unduhan">
+<!ENTITY removebatch.label "Buang Batch Saat Ini">
+<!ENTITY removecompleted.label "Buang Unduhan Yang Sudah Selesai">
+<!ENTITY removeAll.label "Buang Semua">
+<!ENTITY removeFailed.label "Buang Yang Gagal">
+<!ENTITY removePaused.label "Buang Yang Dijeda">
+<!ENTITY removeDupes.label "Buang Duplikat">
+<!ENTITY removeGone.label "Bersihkan Berkas Yang Hilang">
+<!ENTITY advanced.label "Lanjutan">
+<!ENTITY addchunk.label "Satu Bagian Lagi">
+<!ENTITY removechunk.label "Kurangi Satu Bagian">
+<!ENTITY force.label "Paksa Mulai">
+<!ENTITY import.label "Impor dari berkas">
+<!ENTITY exportto.label "Ekspor Terpilih ke Berkas">
+<!ENTITY addlimits.label "Tambah Batasan Domain">
+<!ENTITY options.caption "Opsi">
+<!ENTITY loading2.label "Memuat…">
+<!ENTITY restore.label "Kembalikan">
+<!ENTITY close.label "Tutup">
+<!ENTITY invertmatcher.label "Balikkan Filter Kolom">
+<!ENTITY clearmatcher.label "Bersihkan Filter Kolom">
+<!ENTITY speedlimit2.tooltip "Ubah batas kecepatan global. Secara dinamis diperbarui.">
+<!ENTITY perdownloadspeedlimit2.label "Batas Kecepatan">
+<!ENTITY perdownloadspeedlimit2.tooltip "Ubah batas kecepatan unduhan. Batas kecepatan global tetap berlaku.">
+<!ENTITY mirrors.label "Kelola Mirror">
+<!ENTITY mirrors.tooltip "Kelola lokasi mirror unduhan">
+<!ENTITY toolbar.icons "Gunakan Ikon">
+<!ENTITY toolbar.full "Gunakan Ikon dan Teks">
+<!ENTITY sortascending.label "Urutkan A &gt; Z">
+<!ENTITY sortdescending.label "Urutkan Z &gt; A">

@@ -1,6 +1,11 @@
+<!-- To test this out, open chrome://dta/content/about/index.xml in your browser with dTa! installed -->
+<!-- LOCALIZATION NOTE (lp.localedir): UI text direction, either ltr (left-to-right) or rtl (right-to-left); other values not possible -->
 <!ENTITY lp.localedir "esq. á dereit.">
+<!-- LOCALIZATION NOTE (language): Your language in your language -->
 <!ENTITY language "Galego">
+<!-- LOCALIZATION NOTE (transAuthor): Your credit; or leave as dTa Team if you don't want credit -->
 <!ENTITY transAuthor "O equipo dTa">
+<!-- LOCALIZATION NOTE (fulltranslation): Your credit and language combined -->
 <!ENTITY fulltranslation "Tradución ao galego: lois, marisma">
 <!ENTITY amo.summary2 "O primeiro e único xestor/acelerador de descargas dentro do seu navegador!">
 <!ENTITY amo.description.intro "DownThemAll! ten todo o que pode precisar un xestor de descargas: incorpora un avanzado acelerador que incrementa a velocidade até 4 veces e permite deter e continuar as descargas en calquera momento.">
@@ -44,6 +49,7 @@
 <!ENTITY lp.tut.alltabs "É posible poñer na cola elementos de todas as lapelas á vez usando os menús despregables do botón da barra de ferramentas.">
 <!ENTITY lp.tut.tabrestore "Só estarán dispoñíbeis as ligazóns das lapelas completamente restauradas.">
 <!ENTITY lp.tb.intro "DownThemAll! ofrece algúns botóns para a barra de ferramentas que dan acceso ás funcionalidades de DownThemAll!.">
+<!-- LOCALIZATION NOTE (lp.tb.install): Text for the toolbar install button -->
 <!ENTITY lp.tb.install "Engadir botóns á barra de ferramentas">
 <!ENTITY lp.tb.add.title "Engadir e usar os botóns da barra de ferramentas">
 <!ENTITY lp.tb.add.p1 "Os botóns da barra de ferramentas coas funcionalidades de DownThemAll! fan máis doado atopar e poñer na cola as descargas">

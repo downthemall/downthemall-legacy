@@ -1,0 +1,16 @@
+<!ENTITY title "Välj">
+<!ENTITY filters.caption "Filter">
+<!ENTITY additional.caption "Snabbfiltrering">
+<!ENTITY additional.tip "Textfiler: Här kan du ange flera (kommaseparerade) filter">
+<!ENTITY filter.tip "Ange här dina filter! (Några exempel finns i rullgardinslisten)">
+<!ENTITY menu.check.label "Markera valda objekt">
+<!ENTITY menu.uncheck.label "Avmarkera valda objekt">
+<!ENTITY menu.toggle.label "Växla valet för markerade objekt">
+<!ENTITY menu.copylinks2.label "Kopiera länkar">
+<!ENTITY tab.links.label "Länkar">
+<!ENTITY tab.media.label "Bilder och media">
+<!ENTITY header.desc.label "Beskrivning">
+<!ENTITY selectfiltered.label "Markera endast filtrerade">
+<!ENTITY disableother.label "Inaktivera andra filter">
+<!ENTITY disableother.tooltip "Inaktivera övriga filter och använd senaste filter">
+<!ENTITY resname.value "Resursnamn">

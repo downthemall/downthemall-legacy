@@ -1,0 +1,7 @@
+<!ENTITY window.title "同じ名前のファイルが既に存在しています">
+<!ENTITY text.value "この設定を次回も使用:">
+<!ENTITY download.label "このダウンロードのみ適用">
+<!ENTITY session.label "このセッションのみ適用">
+<!ENTITY always.label "常にこの設定を使用">
+<!ENTITY overwrite.label "既存のファイルを上書きする">
+<!ENTITY skip.label "無視/キャンセル">

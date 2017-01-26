@@ -11,6 +11,7 @@
 <!ENTITY percent.label "Procent">
 <!ENTITY pct.label "Evoluție">
 <!ENTITY dim.label "Dimensiune">
+<!-- LOCALIZATION NOTE (time2.label):  Est. == Estimated -->
 <!ENTITY time2.label "Durată estimată">
 <!ENTITY parts.label "Segmente">
 <!ENTITY speed.label "Viteză">
@@ -21,7 +22,9 @@
 <!ENTITY infoPrivate.value "Descărcare „fără urme”">
 <!ENTITY elapsedTitle.value "Timp scurs:">
 <!ENTITY remainingTitle.value "Timp rămas:">
+<!-- LOCALIZATION NOTE (currentSpeedTitle.value):  Please keep this short, and use abbreviations is necessary, or the tooltip will widen too much. -->
 <!ENTITY currentSpeedTitle.value "Viteză curentă:">
+<!-- LOCALIZATION NOTE (avgSpeedTitle.value):  Please keep this short, and use abbreviations is necessary. -->
 <!ENTITY avgSpeedTitle.value "Viteză medie:">
 <!ENTITY path.label "Cale de stocare">
 <!ENTITY hash.label "Sumă de control">

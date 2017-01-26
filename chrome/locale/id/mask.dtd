@@ -1,0 +1,31 @@
+<!ENTITY mask.tags "Tag Ubah Nama">
+<!ENTITY mask.name "Nama berkas">
+<!ENTITY mask.ext "Ekstensi">
+<!ENTITY mask.url "URL dasar">
+<!ENTITY mask.curl "URL full">
+<!ENTITY mask.flatcurl "URL flat full">
+<!ENTITY mask.batch "Nomor batch">
+<!ENTITY mask.inum "Nomor item">
+<!ENTITY mask.hh "Jam">
+<!ENTITY mask.mm "Menit">
+<!ENTITY mask.ss "Detik">
+<!ENTITY mask.d "Hari">
+<!ENTITY mask.m "Bulan">
+<!ENTITY mask.y "Tahun">
+<!ENTITY mask.subdirs "URL subdirektori">
+<!ENTITY mask.flatsubdirs "URL subdirektori flat">
+<!ENTITY mask.linktext "Teks tautan">
+<!ENTITY mask.flatlinktext "Teks tautan flat">
+<!ENTITY mask.refername "Nama perujuk">
+<!ENTITY mask.referext "Ekstensi perujuk">
+<!ENTITY mask.refer "URL perujuk">
+<!ENTITY mask.crefer "Perujuk full">
+<!ENTITY mask.flatcrefer "Perujuk full flat">
+<!ENTITY mask.referdirs "Subdirektori perujuk">
+<!ENTITY mask.flatreferdirs "Subdirektori flat perujuk">
+<!ENTITY mask.qstring "Lema kueri">
+<!ENTITY mask.referqstring "Lema kueri perujuk">
+<!ENTITY mask.title "Judul terasosiasi dengan tautan">
+<!ENTITY mask.flattitle2 "Judul flat terasosiasi dengan tautan">
+<!ENTITY mask.tip "Klik atau seret untuk pola ubah nama">
+<!ENTITY mask.open.tip "Tabel referensi tag ubah nama">

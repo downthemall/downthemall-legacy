@@ -1,0 +1,26 @@
+<!ENTITY start.label "開始">
+<!ENTITY start.key "s">
+<!ENTITY queue.label "後でダウンロード">
+<!ENTITY queue.key "p">
+<!ENTITY options.label "設定">
+<!ENTITY url.value "ダウンロード">
+<!ENTITY url.placeholder "ダウンロードする URI を入力してください">
+<!ENTITY override.filename.value "別のファイル名">
+<!ENTITY override.filename.placeholder "新しいファイル名を入力してください">
+<!ENTITY override.filename.tip "新しいファイル名を入力してください。空欄にすると既定のファイル名が使用されます。">
+<!ENTITY directory.caption "ファイルの保存先:">
+<!ENTITY directory.placeholder "フォルダー名を入力するか選択してください">
+<!ENTITY mirrors.value "ミラーサーバー:">
+<!ENTITY referrer.value "参照元ページ(リファラー):">
+<!ENTITY referrer.placeholder "参照元の URI を入力してください">
+<!ENTITY referrer.tip "参照元 URI を入力してください。空欄にすると参照元を送信しません">
+<!ENTITY description.value "説明:">
+<!ENTITY checksum.value "チェックサム (ハッシュ):">
+<!ENTITY browse.tooltip "保存先...">
+<!ENTITY mirrormanager.tip "ミラーサーバーを管理します">
+<!ENTITY mask3.label "ファイル名の規則">
+<!ENTITY mask.tip "ダウンロードしたファイルの名前をこの規則に沿って変更します">
+<!ENTITY mask.once.label "今回のみ名前を変更する">
+<!ENTITY selectall.label "すべて選択">
+<!ENTITY selectinv.label "選択を反転">
+<!ENTITY selectnone.label "全選択を解除">

@@ -1,0 +1,124 @@
+<!-- LOCALIZATION NOTE (windowstyle.3): Additional window style; Do not translate; increase values if the preferences window is cropped in your locale -->
+<!ENTITY windowstyle.3 "width:48em;height:44em;">
+<!ENTITY filterspane.label "Filter">
+<!ENTITY listhead1.label "Caption">
+<!ENTITY listhead2.label "Ekstensi">
+<!ENTITY filter.label "Ekstensi Filter:">
+<!ENTITY useAs.label "Gunakan filter sebagai:">
+<!ENTITY filter.images.label "Filter gambar">
+<!ENTITY filter.links.label "Filter tautan">
+<!ENTITY add.label "Tambah Filter Baru">
+<!ENTITY dtacontext2.label "Preferensi">
+<!ENTITY buttonlabelextra2 "Kembalikan Pengaturan Bawaan">
+<!ENTITY dtaPreferences.title "Preferensi DownThemAll!">
+<!ENTITY manager "Pengelola dTa!">
+<!ENTITY mainpane.label "Umum">
+<!ENTITY mainpane.defaults.caption "Bawaan">
+<!ENTITY mainpane.defaults.desc "Direktori unduhan, pola ubah nama dan filter yang digunakan oleh OneClick! bisa diatur di jendela pilihan DownThemAll! yang ada">
+<!ENTITY mainpane.nameclash.caption "Ketika berkas dengan nama yang sama sudah ada:">
+<!ENTITY mainpane.rename.label "Ubah Nama">
+<!ENTITY mainpane.overwrite.label "Timpa">
+<!ENTITY mainpane.skip.label "Lewati">
+<!ENTITY mainpane.ask.label "Tanya">
+<!ENTITY mainpane.misc.caption "Macam-macam">
+<!ENTITY mainpane.sounderror2.label "Putar suara saat galat">
+<!ENTITY mainpane.alert.caption "Ketika unduhan selesai:">
+<!ENTITY mainpane.alert.label "Peringatkan saya:">
+<!ENTITY mainpane.alertbox.label "Menggunakan Kotak Pengingat">
+<!ENTITY mainpane.alertnotifications2.label "Menggunakan Notifikasi Desktop">
+<!ENTITY mainpane.alertnone.label "Jangan Ingatkan Saya">
+<!ENTITY mainpane.sounddone.label "Putar suara saat semua unduhan selesai">
+<!ENTITY mainpane.closedta.label "Tutup DownThemAll saat unduhan selesai">
+<!ENTITY mainpane.settime.label "Tetapkan waktu berkas ke saat diubah (server) atau waktu saat ditambahkan">
+<!ENTITY mainpane.rememberoneclick.label "Pastikan dTa OneClick mengingat apakah diterapkan pada Semua Tab atau Tab Saat Ini">
+<!ENTITY mainpane.confirmremove2.label "Konfirmasi penghapusan unduhan">
+<!ENTITY mainpane.textlinks.label "Kenali tautan teks">
+<!ENTITY mainpane.listsniffedvideos.label "Rekam dan ungkap video (Flash)">
+<!ENTITY privacypane.label "Privasi">
+<!ENTITY privacypane.closing.caption "Ketika jendela Pengelola tertutup">
+<!ENTITY privacypane.removecompleted2.label "Buang unduhan yang selesai">
+<!ENTITY privacypane.removecanceled2.label "Buang unduhan yang batal/gagal">
+<!ENTITY privacypane.removeaborted2.label "Buang unduhan yang tidak selesai">
+<!ENTITY privacypane.deletefoldershistory.label "Kosongkan Folderlist">
+<!ENTITY privacypane.deletefiltershistory.label "Kosongkan Filter Tambahan">
+<!ENTITY privacypane.showlog.label "Lihat Log">
+<!ENTITY privacypane.reveallog.label "Tampilkan Berkas">
+<!ENTITY privacypane.deletelog.label "Hapus Log">
+<!ENTITY privacypane.dropdowns.caption "Menu Dropdown">
+<!ENTITY privacypane.dropdownresults2.label "Jumlah entri yang Disimpan">
+<!ENTITY privacypane.logs.caption "Log Diagnostik">
+<!ENTITY privacypane.enablelogs.label "Aktifkan pencatatan diagnostik">
+<!ENTITY privacypane.notice.caption "Pemberitahuan">
+<!ENTITY privacypane.notice.desc "DownThemAll juga terintegrasi dengan fitur Pembersihan Data Privat bawaan (jika tersedia).">
+<!ENTITY privacypane.privacynotice.label "Pemberitahuan Privasi Kami">
+<!ENTITY serverspane.label "Jaringan">
+<!ENTITY serverspane.downloads.caption "Unduhan">
+<!ENTITY serverspane.concurrent2.label "Unduhan bersamaan:">
+<!ENTITY serverspane.perserver2.label "Unduhan per server:">
+<!ENTITY serverspane.url.label "Lokasi atau domain:">
+<!ENTITY serverspane.new.label "Batas Baru">
+<!ENTITY serverspane.limits.label "Batas Per-Sever">
+<!ENTITY serverpane.limits.noitems "Batas per-server belum ditetapkan">
+<!ENTITY serverspane.connections.label "Koneksi:">
+<!ENTITY serverspane.speed2.label "Batas kecepatan:">
+<!ENTITY serverspane.segments.label "Bagian:">
+<!ENTITY serverspane.unlimited "Tidak terbatas">
+<!ENTITY serverspane.limited "Terbatas">
+<!ENTITY serverspane.autoretry2.caption "Pengulangan Otomatis">
+<!ENTITY serverspane.autoretry.interval.label "Ulangi setiap">
+<!ENTITY serverspane.autoretry.max.label "Pengulangan Maks.">
+<!ENTITY serverspane.cancel.label "Batal">
+<!ENTITY serverspane.edit.label "Sunting">
+<!ENTITY serverspane.remove.label "Buang">
+<!ENTITY schedpane.label "Jadwal">
+<!ENTITY schedpane.enable.label "Aktifkan jadwal">
+<!ENTITY schedpane.start.label "Hanya mulai unduhan antara:">
+<!ENTITY schedpane.end.label "dan selesai pada:">
+<!ENTITY schedpane.open.label "Buka otomatis Pengelola">
+<!ENTITY advancedpane.label "Lanjutan">
+<!ENTITY advancedpane.downloads.caption "Kontrol unduhan lanjutan">
+<!ENTITY advancedpane.miscellaneous.caption "Macam-macam">
+<!ENTITY advancedpane.files.caption "Berkas">
+<!ENTITY advancedpane.chunks2.label "Jumlah bagian per unduhan:">
+<!ENTITY advancedpane.chunksdisabled "Nonaktif">
+<!ENTITY advancedpane.autosegments.label "Tambah bagian baru setelah bagian sebelumnya selesai">
+<!ENTITY advancedpane.timeout2.label "Unduhan kedaluwarsa setelah">
+<!ENTITY advancedpane.seconds "Detik">
+<!ENTITY advancedpane.minute "Menit">
+<!ENTITY advancedpane.minutes "Menit">
+<!ENTITY advancedpane.hour "Jam">
+<!ENTITY advancedpane.hours "Jam">
+<!ENTITY advancedpane.tempfiles.caption "Berkas Sementara">
+<!ENTITY advancedpane.usetemp.label "Simpan bagian unduhan di direktori sementara">
+<!ENTITY advancedpane.tempdir.label "Gunakan direktori ini:">
+<!ENTITY advancedpane.permissions "Perizinan Berkas">
+<!ENTITY advancedpane.permissions.groupmay "Anggota grup bisa">
+<!ENTITY advancedpane.permissions.everybodymay "Orang lain bisa">
+<!ENTITY advancedpane.permissions.read "Baca">
+<!ENTITY advancedpane.permissions.write "Tulis">
+<!ENTITY advancedpane.loadendfirst2.label "Muat beberapa kilobyte terakhir terlebih dahulu">
+<!ENTITY advancedpane.scheduler.caption "Urutan mulai unduhan:">
+<!ENTITY advancedpane.scheduler.fast "Cepat - Sesuai urutan">
+<!ENTITY advancedpane.scheduler.fair "Wajar+Pelan - Distribusi seimbang">
+<!ENTITY advancedpane.scheduler.legacy "Legacy - tak terbatas">
+<!ENTITY advancedpane.exposeinua.label "Singkap DownThemAll! di User-Agent">
+<!ENTITY advancedpane.sparsefiles.caption "Berkas-cicil">
+<!ENTITY advancedpane.sparsefiles.label "Gunakan berkas cicilan ketika tersedia">
+<!ENTITY advancedpane.sparsefiles.tooltip "Berkas cicilan adalah berkas yang tidak secara seketika tersedia di harddisk. Berkas cicilan mungkin akan menyebabkan pra-alokasi yang lebih cepat, tetapi juga performa penulisan yang lebih sedikit dan/atau lebih banyak fragmentasi berkas!">
+<!ENTITY uipane.label "Antarmuka">
+<!ENTITY uipane.namesonly.label "Hanya tampilkan nama berkas di jendela Pengelola">
+<!ENTITY uipane.integration.caption "Integrasi">
+<!ENTITY uipane.downloadwin.label "Tambahkan DownThemAll! ke jendela 'Simpan Berkas'">
+<!ENTITY uipane.context.caption "Menu Konteks">
+<!ENTITY uipane.tools.caption "Menu Alat">
+<!ENTITY uipane.compact.label "Gunakan menu ringkas">
+<!ENTITY uipane.hide.label "Sembunyikan menu ini">
+<!ENTITY uipane.showtooltip.label "Tampilkan tooltip unduhan">
+<!ENTITY uipane.manager.caption "Jendela Pengelola">
+<!ENTITY uipane.startminimized.label "Minimalkan saat Mulai">
+<!ENTITY uipane.minimizetotray.label "Minimalkan ke baki sistem">
+<!ENTITY uipane.getmintrayr.label "Dapatkan MinTrayR">
+<!ENTITY uipane.notification.label "Ketika menambahkan unduhan dengan OneClick, tampilkan:">
+<!ENTITY uipane.notification.nonotification.radio "Tidak ada notifikasi">
+<!ENTITY uipane.notification.doorhangernotification.radio "Pengait pintu">
+<!ENTITY uipane.notification.desktopnotification.radio "Notifikasi desktop">

@@ -11,6 +11,7 @@
 <!ENTITY percent.label "Процент">
 <!ENTITY pct.label "Выполнение">
 <!ENTITY dim.label "Размер">
+<!-- LOCALIZATION NOTE (time2.label):  Est. == Estimated -->
 <!ENTITY time2.label "Время">
 <!ENTITY parts.label "Части">
 <!ENTITY speed.label "Скорость">
@@ -21,7 +22,9 @@
 <!ENTITY infoPrivate.value "Приватная загрузка">
 <!ENTITY elapsedTitle.value "Завершено:">
 <!ENTITY remainingTitle.value "Осталось:">
+<!-- LOCALIZATION NOTE (currentSpeedTitle.value):  Please keep this short, and use abbreviations is necessary, or the tooltip will widen too much. -->
 <!ENTITY currentSpeedTitle.value "Текущая скорость:">
+<!-- LOCALIZATION NOTE (avgSpeedTitle.value):  Please keep this short, and use abbreviations is necessary. -->
 <!ENTITY avgSpeedTitle.value "Средняя скорость:">
 <!ENTITY path.label "Сохранено в..">
 <!ENTITY hash.label "Контрольная сумма">

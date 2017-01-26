@@ -1,0 +1,124 @@
+<!-- LOCALIZATION NOTE (windowstyle.3): Additional window style; Do not translate; increase values if the preferences window is cropped in your locale -->
+<!ENTITY windowstyle.3 "width:48em;height:44em;">
+<!ENTITY filterspane.label "Filter">
+<!ENTITY listhead1.label "Rubrik">
+<!ENTITY listhead2.label "Filtyper">
+<!ENTITY filter.label "Filtrerade filtyper:">
+<!ENTITY useAs.label "Använd filter som:">
+<!ENTITY filter.images.label "Bildfilter">
+<!ENTITY filter.links.label "Länkfilter">
+<!ENTITY add.label "Lägg till nytt filter">
+<!ENTITY dtacontext2.label "Inställningar">
+<!ENTITY buttonlabelextra2 "Återställ standardinställningar">
+<!ENTITY dtaPreferences.title "Inställningar för DownThemAll!...">
+<!ENTITY manager "Hanterare">
+<!ENTITY mainpane.label "Allmänt">
+<!ENTITY mainpane.defaults.caption "Standardvärden">
+<!ENTITY mainpane.defaults.desc "Nedladdningsmappen, omdöpningsmasker och filter som OneClick! använder kan konfigureras i den vanliga DownThemAll!-markeringsdialogen.">
+<!ENTITY mainpane.nameclash.caption "När en fil med samma namn redan finns:">
+<!ENTITY mainpane.rename.label "Döp om">
+<!ENTITY mainpane.overwrite.label "Ersätt">
+<!ENTITY mainpane.skip.label "Hoppa över">
+<!ENTITY mainpane.ask.label "Fråga">
+<!ENTITY mainpane.misc.caption "Övrigt">
+<!ENTITY mainpane.sounderror2.label "Spela upp ljud vid fel">
+<!ENTITY mainpane.alert.caption "När nedladdningar är slutförda:">
+<!ENTITY mainpane.alert.label "Meddela mig:">
+<!ENTITY mainpane.alertbox.label "Med dialogrutor">
+<!ENTITY mainpane.alertnotifications2.label "Med skrivbordsnotifikationer">
+<!ENTITY mainpane.alertnone.label "Meddela inte">
+<!ENTITY mainpane.sounddone.label "Spela upp ett ljud när samtliga filhämtningar är slutförda">
+<!ENTITY mainpane.closedta.label "Stäng DownThemAll! när alla nedladdningar är slutförda">
+<!ENTITY mainpane.settime.label "Ange filens tid till senast ändrad (server) eller tid vid köläggning">
+<!ENTITY mainpane.rememberoneclick.label "Låt dTa! OneClick komma ihåg om det gäller alla flikar eller aktuell flik">
+<!ENTITY mainpane.confirmremove2.label "Bekräfta borttagning av nedladdningar">
+<!ENTITY mainpane.textlinks.label "Känn igen textlänkar">
+<!ENTITY mainpane.listsniffedvideos.label "Spela in och lista (Flash)videor">
+<!ENTITY privacypane.label "Sekretess">
+<!ENTITY privacypane.closing.caption "När hanterarfönstret stängs">
+<!ENTITY privacypane.removecompleted2.label "Ta bort slutförda nedladdningar">
+<!ENTITY privacypane.removecanceled2.label "Avbryt avbrutna/misslyckade nedladdningar">
+<!ENTITY privacypane.removeaborted2.label "Ta bort ofärdiga nedladdningar">
+<!ENTITY privacypane.deletefoldershistory.label "Rensa mapplista">
+<!ENTITY privacypane.deletefiltershistory.label "Rensa ytterligare filter">
+<!ENTITY privacypane.showlog.label "Visa logg">
+<!ENTITY privacypane.reveallog.label "Visa fil">
+<!ENTITY privacypane.deletelog.label "Radera logg">
+<!ENTITY privacypane.dropdowns.caption "Rullande menyer">
+<!ENTITY privacypane.dropdownresults2.label "Antal poster att behålla">
+<!ENTITY privacypane.logs.caption "Diagnostisk logg">
+<!ENTITY privacypane.enablelogs.label "Aktivera diagnostisk logg">
+<!ENTITY privacypane.notice.caption "Notis">
+<!ENTITY privacypane.notice.desc "DownThemAll! integrerar även med den inbyggda funktionen som rensar privat data (om tillgänglig).">
+<!ENTITY privacypane.privacynotice.label "Vår sekretessnotis">
+<!ENTITY serverspane.label "Nätverk">
+<!ENTITY serverspane.downloads.caption "Nedladdningar">
+<!ENTITY serverspane.concurrent2.label "Samtidiga nedladdningar:">
+<!ENTITY serverspane.perserver2.label "Nedladdningar per server:">
+<!ENTITY serverspane.url.label "Plats eller domän:">
+<!ENTITY serverspane.new.label "Ny gräns">
+<!ENTITY serverspane.limits.label "Serverdefinierade gränser">
+<!ENTITY serverpane.limits.noitems "Inga serverdefinierade gränser har specificerats">
+<!ENTITY serverspane.connections.label "Anslutningar:">
+<!ENTITY serverspane.speed2.label "Hastighetsgräns:">
+<!ENTITY serverspane.segments.label "Segment:">
+<!ENTITY serverspane.unlimited "Obegränsad">
+<!ENTITY serverspane.limited "Begränsad">
+<!ENTITY serverspane.autoretry2.caption "Automatiska återförsök">
+<!ENTITY serverspane.autoretry.interval.label "Försök varje">
+<!ENTITY serverspane.autoretry.max.label "Max antal försök">
+<!ENTITY serverspane.cancel.label "Avbryt">
+<!ENTITY serverspane.edit.label "Redigera">
+<!ENTITY serverspane.remove.label "Ta bort">
+<!ENTITY schedpane.label "Schema">
+<!ENTITY schedpane.enable.label "Aktivera schema">
+<!ENTITY schedpane.start.label "Starta endast nedladdningar mellan:">
+<!ENTITY schedpane.end.label "och sluta:">
+<!ENTITY schedpane.open.label "Öppna hanteraren automatiskt">
+<!ENTITY advancedpane.label "Avancerat">
+<!ENTITY advancedpane.downloads.caption "Avancerad nedladdningskontroll">
+<!ENTITY advancedpane.miscellaneous.caption "Övrigt">
+<!ENTITY advancedpane.files.caption "Filer">
+<!ENTITY advancedpane.chunks2.label "Antal segment per nedladdning:">
+<!ENTITY advancedpane.chunksdisabled "Inaktiverat">
+<!ENTITY advancedpane.autosegments.label "Starta ett nytt segment efter ett föregående segment slutförs">
+<!ENTITY advancedpane.timeout2.label "Nedladdningstidsgräns efter">
+<!ENTITY advancedpane.seconds "sekunder">
+<!ENTITY advancedpane.minute "minut">
+<!ENTITY advancedpane.minutes "minuter">
+<!ENTITY advancedpane.hour "timme">
+<!ENTITY advancedpane.hours "timmar">
+<!ENTITY advancedpane.tempfiles.caption "Temporära filer">
+<!ENTITY advancedpane.usetemp.label "Spara hämtningsdelarna i en tillfällig mapp">
+<!ENTITY advancedpane.tempdir.label "Använd denna mapp:">
+<!ENTITY advancedpane.permissions "Filbehörigheter">
+<!ENTITY advancedpane.permissions.groupmay "Gruppmedlemmar kan">
+<!ENTITY advancedpane.permissions.everybodymay "Alla andra kan">
+<!ENTITY advancedpane.permissions.read "Läsa">
+<!ENTITY advancedpane.permissions.write "Skriva">
+<!ENTITY advancedpane.loadendfirst2.label "Läs in de sista kilobyten först">
+<!ENTITY advancedpane.scheduler.caption "Startordning för nedladdning:">
+<!ENTITY advancedpane.scheduler.fast "Snabb - Enligt köordning">
+<!ENTITY advancedpane.scheduler.fair "Rättvis+Långsam - Jämnt fördelat">
+<!ENTITY advancedpane.scheduler.legacy "Legacy - inga gränser">
+<!ENTITY advancedpane.exposeinua.label "Exponera DownThemAll! i användaragenten">
+<!ENTITY advancedpane.sparsefiles.caption "Kringspridda filer">
+<!ENTITY advancedpane.sparsefiles.label "Använd kringspridda filer om stöd finns">
+<!ENTITY advancedpane.sparsefiles.tooltip "Kringspridda filer är filer som inte omedelbart reserveras på hårddisken. Kringspridda filer kan orsaka snabbare förallokering, men även sämre skrivprestanda och/eller mer filfragmentering.">
+<!ENTITY uipane.label "Gränssnitt">
+<!ENTITY uipane.namesonly.label "Visa endast filnamn i hanterarfönstret">
+<!ENTITY uipane.integration.caption "Integrering">
+<!ENTITY uipane.downloadwin.label "Integrera DownThemAll! i Firefox &quot;Spara som&quot;-ruta">
+<!ENTITY uipane.context.caption "Högerklicksmeny">
+<!ENTITY uipane.tools.caption "Verktygsmeny">
+<!ENTITY uipane.compact.label "Använd en kompakt meny">
+<!ENTITY uipane.hide.label "Dölj denna meny">
+<!ENTITY uipane.showtooltip.label "Visa verktygstips för nedladdningar">
+<!ENTITY uipane.manager.caption "Hanterarfönster">
+<!ENTITY uipane.startminimized.label "Starta minimerad">
+<!ENTITY uipane.minimizetotray.label "Minimera till aktivitetsfältet">
+<!ENTITY uipane.getmintrayr.label "Hämta MinTrayR">
+<!ENTITY uipane.notification.label "När nedladdningar läggs till med OneClick, visa:">
+<!ENTITY uipane.notification.nonotification.radio "Ingen notifikation">
+<!ENTITY uipane.notification.doorhangernotification.radio "Dörrhängare">
+<!ENTITY uipane.notification.desktopnotification.radio "Skrivbordsnotifikation">

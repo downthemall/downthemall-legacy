@@ -1,0 +1,26 @@
+<!-- LOCALIZATION NOTE : FILE Please do NOT translate DownThemAll! and OneClick -->
+<!ENTITY dta-tbinstall "Tambah Tombol Bilah Alat">
+<!ENTITY dta-pref.label "Preferensi">
+<!ENTITY dta-about2.label "Tentang DownThemAll!">
+<!ENTITY dta-manager-button "Pengelola">
+<!ENTITY dta-manager-button.desc "Membuka jendela Pengelola.">
+<!ENTITY dta-selector-button2.label "Pemilih OneClick!">
+<!ENTITY dta-selector-button.desc "Tambahkan item dengan mengkliknya.">
+<!ENTITY dta-tb-all.label "Semua Tab">
+<!ENTITY dta-tb-single.label "Tab Saat Ini">
+<!ENTITY dta-selection2.label "Pemilihan DownThemAll!">
+<!ENTITY dta-selection-turbo2.label "Pemilihan OneClick">
+<!ENTITY dta-regular2.label "DownThemAll!">
+<!ENTITY dta-regular.desc "Membuka jendela Pemilihan DownThemAll! untuk tab saat ini.">
+<!ENTITY dta-regular-turbo2.label "dTa! OneClick">
+<!ENTITY dta-regular-turbo.desc "Mengunduh semua item dari halaman saat ini menurut preferensi dan filter yang digunakan terakhir.">
+<!ENTITY dta-img-save2.label "Simpan Gambar dengan DownThemAll!">
+<!ENTITY dta-img-save-turbo2.label "Simpan Gambar dengan dTa! OneClick">
+<!ENTITY dta-video-save2.label "Simpan Video dengan DownThemAll!">
+<!ENTITY dta-video-save-turbo2.label "Simpan Video dengan dTa! OneClick">
+<!ENTITY dta-audio-save2.label "Simpan Audio dengan DownThemAll!">
+<!ENTITY dta-audio-save-turbo2.label "Simpan Audio dengan dTa! OneClick">
+<!ENTITY dta-link-save2.label "Simpan Tautan dengan DownThemAll!">
+<!ENTITY dta-link-save-turbo2.label "Simpan Tautan dengan dTa! OneClick">
+<!ENTITY dta-form-save2.label "Simpan Target Form dengan with DownThemAll!">
+<!ENTITY dta-form-save-turbo2.label "Simpan Target Form dengan dTa! OneClick">

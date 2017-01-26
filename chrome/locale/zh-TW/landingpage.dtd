@@ -1,6 +1,11 @@
+<!-- To test this out, open chrome://dta/content/about/index.xml in your browser with dTa! installed -->
+<!-- LOCALIZATION NOTE (lp.localedir): UI text direction, either ltr (left-to-right) or rtl (right-to-left); other values not possible -->
 <!ENTITY lp.localedir "ltr">
+<!-- LOCALIZATION NOTE (language): Your language in your language -->
 <!ENTITY language "正體中文">
+<!-- LOCALIZATION NOTE (transAuthor): Your credit; or leave as dTa Team if you don't want credit -->
 <!ENTITY transAuthor "rayx000, scsi, tiffblue, Sakura3814, Goldie Lin.">
+<!-- LOCALIZATION NOTE (fulltranslation): Your credit and language combined -->
 <!ENTITY fulltranslation "正體中文翻譯：rayx000, scsi, tiffblue, Sakura3814, Goldie Lin.">
 <!ENTITY amo.summary2 "第一且唯一一個在瀏覽器裡面的下載管理員／加速器。">
 <!ENTITY amo.description.intro "DownThemAll! 可以滿足您對下載的需求；安裝後不僅可以加速下載至 4 倍速，而且可隨時暫停／續傳。">
@@ -44,6 +49,7 @@
 <!ENTITY lp.tut.alltabs "可透過使用工具列按鈕的下拉式選單，一次從所有分頁佇列多個下載項目。">
 <!ENTITY lp.tut.tabrestore "僅從完全恢復的分頁之鏈結才可用。">
 <!ENTITY lp.tb.intro "DownThemAll! 也提供了一些按鍵，方便您的使用。">
+<!-- LOCALIZATION NOTE (lp.tb.install): Text for the toolbar install button -->
 <!ENTITY lp.tb.install "新增工具列按鍵">
 <!ENTITY lp.tb.add.title "新增且使用工具列按鍵">
 <!ENTITY lp.tb.add.p1 "DownThemAll! 提供了四個按鍵讓您">

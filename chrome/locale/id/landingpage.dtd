@@ -1,0 +1,101 @@
+<!-- To test this out, open chrome://dta/content/about/index.xml in your browser with dTa! installed -->
+<!-- LOCALIZATION NOTE (lp.localedir): UI text direction, either ltr (left-to-right) or rtl (right-to-left); other values not possible -->
+<!ENTITY lp.localedir "ltr">
+<!-- LOCALIZATION NOTE (language): Your language in your language -->
+<!ENTITY language "Inggris">
+<!-- LOCALIZATION NOTE (transAuthor): Your credit; or leave as dTa Team if you don't want credit -->
+<!ENTITY transAuthor "Tim dTa">
+<!-- LOCALIZATION NOTE (fulltranslation): Your credit and language combined -->
+<!ENTITY fulltranslation "Terjemahan inggris oleh: Tim dTa">
+<!ENTITY amo.summary2 "Pertama dan satu-satunya pengelola/akselerator unduhan di dalam peramban Anda!">
+<!ENTITY amo.description.intro "DownThemAll adalah semua yang Anda inginkan dari pengelola unduhan: mengunggulkan akselerator lanjutan yang menambah kecepatan hingga 4x dan memungkinkan Anda menangguhkan dan melanjutkan unduhan kapanpun juga.">
+<!ENTITY amo.description.feat2 "DownThemAll cepat, handal dan mudah digunakan! Memungkinkan Anda mengunduh semua tautan atau gambar yang ada di halaman web dan masih banyak lagi: Anda bisa menyaring unduhan Anda menggunakan kriteria sehingga Anda bisa mendapatkan apa yang Anda inginkan. Kontrol penuh unduhan Anda, kecepatan yang tetap dan jumlah koneksi paralel kapanpun juga. Gunakan Metalink atau tambah mirror secara manual untuk mengunduh berkas dari server yang berbeda secara bersamaan.">
+<!ENTITY amo.description.free2 "DownThemAll bersumber terbuka dan bebas digunakan. Tidak ada Adware, Spyware pelacakan, dan tanpa biaya sama sekali!">
+<!ENTITY amo.description.more "Untuk informasi lebih lanjut kunjungi <a href='http://www.downthemall.net/howto/features/'>halaman Fitur</a>.">
+<!ENTITY lp.title "Tentang DownThemAll!">
+<!ENTITY lp.welcome "Selamat datang di DownThemAll!">
+<!ENTITY lp.info "Tonton video yang memperlihatkan bagaimana cara menggunakan DownThemAll! dan pelajari lebih lanjut tentang privasi dan hak Anda">
+<!ENTITY lp.moreinfo "Untuk informasi lebih lanjut kunjungi <a href='http://www.downthemall.net/howto/features/'>halaman fitur</a>.">
+<!ENTITY lp.gettingstarted "Memulai pertama kali">
+<!ENTITY lp.toolbar "Tombol bilah alat">
+<!ENTITY lp.privacy "Privasi">
+<!ENTITY lp.yourrights "Hak Anda">
+<!ENTITY lp.contact "Kontak">
+<!ENTITY lp.pleasenote "Catatan:">
+<!ENTITY lp.donate2 "Harap pertimbangkan untuk berkontribusi">
+<!ENTITY lp.tut.firsttitle "Unduhan pertama Anda">
+<!ENTITY lp.tut.fd2 "Mengunduh berkas menggunakan dTa sangat mudah dilakukan. Jika diminta untuk membuka atau menyimpan berkas Anda bisa menggunakan item DownThemAll!. Setelah memilih dimana Anda menyimpan unduhan Anda, Anda bisa memulai unduhan sesegara mungkin atau mengantrekannya untuk diunduh nanti.">
+<!ENTITY lp.tut.selecttitle "Menggunakan jendela pemilihan">
+<!ENTITY lp.tut.selintro "Menu konteks dari situs web memunculkan item DownThemAll! baru. Menggunakan opsi ini akan menampilkan jendela pemilihan DownThemAll!, yang bisa Anda gunakan dengan mudah untuk memilih satu atau lebih tautan dari halaman tersebut.">
+<!ENTITY lp.tut.seloptions "Di dalam jendela pemilihan Anda memiliki banyak cara untuk memilih berkas mana yang akan diunduh:">
+<!ENTITY lp.tut.selopthand2 "Anda bisa memilih tautan yang Anda ingin unduh secara manual.">
+<!ENTITY lp.tut.seloptfilters2 "Anda bisa menggunakan Filter bawaan, mis. untuk mengunduh semua tautan gambar.">
+<!ENTITY lp.tut.seloptfast2 "Sebagai tambahan Anda bisa mengetik pilihan Anda di ruas filter cepat, contoh <code>*.pdf,*.doc</code> atau bisa juga menggunakan ekspresi reguler">
+<!ENTITY lp.tut.seltypes "Jendela pemilihan memiliki dua tab, untuk dua tipe unduhan yang berbeda:">
+<!ENTITY lp.tut.seltypelinks "Tab tautan berisi semua tautan yang bisa diunduh yang ditemukan di halaman tersebut">
+<!ENTITY lp.tut.seltypepics "Dan tab Gambar dan Media berisi semua gambar dan media lainnya yang ada di halaman tersebut">
+<!ENTITY lp.tut.selgalleries "Gambar ukuran penuh terkadang hanya ditautkan dari halaman galeri, oleh sebab itu Anda akan melihatnya di tab Tautan">
+<!ENTITY lp.tut.seldone2 "Setelah Anda memilih berkas untuk diunduh, Anda bisa menekan Mulai! untuk segera menjalankan unduhan Anda atau mengantrekannya untuk diunduh nanti.">
+<!ENTITY lp.tut.batchestitle "Mengunduh Batch">
+<!ENTITY lp.tut.batches1 "Banyak pengguna menginginkan untuk mengunduh banyak berkas sekaligus berdasarkan urutan angka. DownThemAll! memungkinkan Anda melakukannya dengan mudah seperti yang ditunjukkan video berikut.">
+<!ENTITY lp.tut.batches2 "Sintaksis dasarnya adalah: <code>[start:end]</code> atau <code>[start:end:step]</code> dimana kedua <code>start</code> dan <code>end</code> bisa berupa angka atau karakter sederhana. <code>step</code> menjabarkan jumlah langkah dan bernilai 1 jika tidak diisi.">
+<!ENTITY lp.tut.batches3 "Sebagai contoh jika Anda ingin mengunduh gambar dari 001 sampai 100,  Anda bisa mengubah URL menjadi: <code>http://example.org/[001:100].jpg</code>">
+<!ENTITY lp.tut.batchesctx "Lebih lanjut, konteks menu dari ruas URL di jendela Tambah Unduhan memungkinkan Anda dengan mudah mengubah pemilihan teks menjadi deskriptor batch.">
+<!ENTITY lp.tut.oneclicktitle "DownThemAll! OneClick">
+<!ENTITY lp.tut.oneclick1.2 "Setelah unduhan pertama selesai, unduhan berikutnya akan tersedia: DownThemAll! OneClick, yang bisa Anda gunakan untuk mengunduh berkas menggunakan pengaturan sebelumnya dan lewati opsi unduhan dan/atau jendela pemilihan.">
+<!ENTITY lp.tut.oneclick2 "OneClick juga memungkinkan Anda dengan sangat cepat mengantrekan banyak tautan sekaligus.">
+<!ENTITY lp.tut.oneclickn "Setelah menggunakan fitur Pembersihan Data Privat di Firefox, fitur OneClick tidak akan tersedia sampai Anda memulai unduhan DownThemAll! biasa lagi.">
+<!ENTITY lp.tut.tabstitle "Mengunduh item dari semua tab secara bersamaan">
+<!ENTITY lp.tut.alltabs "Memungkinkan untuk mengantrekan item dari semua tab secara bersamaan, dengan menggunakan menu dropdown tombol bilah alat">
+<!ENTITY lp.tut.tabrestore "Hanya tautan dari tab yang dipulihkan seutuhnya yang akan tersedia">
+<!ENTITY lp.tb.intro "DownThemAll! menyediakan beberapa tombol bilah alat yang mempermudah mengakses fitur DownThemAll! tertentu.">
+<!-- LOCALIZATION NOTE (lp.tb.install): Text for the toolbar install button -->
+<!ENTITY lp.tb.install "Tambah tombol bilah alat">
+<!ENTITY lp.tb.add.title "Menambahkan dan menggunakan tombol bilah alat">
+<!ENTITY lp.tb.add.p1 "DownThemAll! menyediakan empat tombol bilah alat untuk mempermudah menemukan dan menambahkan unduhan">
+<!ENTITY lp.tb.add.dta "Tombol DownThemAll!">
+<!ENTITY lp.tb.add.dtadesc "Buka jendela Pemilihan DownThemAll! untuk tab saat ini.">
+<!ENTITY lp.tb.add.tdta "Tombol OneClick!">
+<!ENTITY lp.tb.add.tdtadesc "Unduh semua item dari halaman saat ini menurut preferensi dan filter yang digunakan terakhir.">
+<!ENTITY lp.tb.add.manager "Tombol Pengelola DownThemAll!">
+<!ENTITY lp.tb.add.managerdesc "Buka jendela Pengelola.">
+<!ENTITY lp.tb.add.selector "Tombol Pemilih DownThemAll!">
+<!ENTITY lp.tb.add.selectordesc "Tambahkan item dengan mengkliknya.">
+<!ENTITY lp.tb.add.p2 "Tombol bilah alat bisa ditambahkan via <code>Tampilan → Bilah Alat → Ubahsuai</code>.">
+<!ENTITY lp.tb.dnd.title "Seret &amp; jatuhkan">
+<!ENTITY lp.tb.dnd.p1 "Anda bisa menyeret dan menjatuhkan tautan atau gambar apapun ke tombol DownThemAll! atau OneClick! untuk mengunduhnya.">
+<!ENTITY lp.tb.dnd.p2 "Jendela Pengelola juga bisa digunakan sebagai target untuk mengunduh item tersebut.">
+<!ENTITY lp.tb.dnd.order "Anda bisa mengurutkan unduhan Anda dengan menyeret dan menjatuhkannya. Cukup pilih beberapa unduhan dan jatuhkan mereka pada posisi yang diinginkan.">
+<!ENTITY lp.tb.selector.title "Menggunakan Pemilih DownThemAll!">
+<!ENTITY lp.tb.selector.queueing "Pemilih DownThemAll! memungkinkan Anda menambahkan banyak unduhan cukup dengan klik pada tautan atau gambar.">
+<!ENTITY lp.tb.selector.how "Untuk mengaktifkan Pemilih, klik tombol bilah alat terkait. Untuk menonaktifkannya, cukup klik lagi tombol tersebut.">
+<!ENTITY lp.pr.title "Pemberitahuan Privasi">
+<!ENTITY lp.pr.intro2 "DownThemAll! menghormati privasi Anda.">
+<!ENTITY lp.pr.settings2 "Anda bisa membuat DownThemAll! membuang unduhan yang selesai, batal, dan tidak selesai dari daftar unduhan setelah menutup jendela dengan mengubah aturan di panel Preferensi → Privasi.">
+<!ENTITY lp.pr.diag2 "Anda bisa mengaktifkan pesan diagnostik, yang akan mencatat baik kesalahan pada konsol dan membuat berkas dta_log.txt, pada panel Preferensi → Privasi. Pesan diagnostik mungkin akan memuat informasi yang sensitif seperti URL, jalur berkas, nama berkas yang Anda unduh, atau bahkan informasi kuki. Opsi ini NONAKTIF secara bawaan untuk melindungi privasi Anda. Jika Anda mengirimkan catatan diagnostik, pastikan Anda menghapus seluruh informasi sensitif yang ada. Catatan diagnostik tidak akan pernah dikirim dan/atau dipublikasikan secara otomatis.">
+<!ENTITY lp.pr.pwpbm "DownThemAll! mendukung Mode Penjelajahan Privat Per-Jendela Firefox: Ketika Anda menambahkan unduhan dari Jendela Penjelajahan Privat, DownThemAll! tidak akan menyimpan informasi apapun tentang berkas unduhan tersebut. Harap dicatat bahwa data lainnya - seperti filter yang baru dibuat, atau, tentu saja, berkas unduhan tersebut - tetap akan ditulis ke disk Anda.">
+<!ENTITY lp.pr.link "Pemberitahuan ini akan selalu tersedia di halaman berikut (about:downthemall) dan juga ditautkan dari jendela Preferensi">
+<!ENTITY lp.yr.usagetitle "Penggunaan dan distribusi">
+<!ENTITY lp.yr.usage "Pengembang melisensikan DownThemAll! dengan sedemikian rupa agar Anda dengan mudah dan tanpa biaya:">
+<!ENTITY lp.yr.usageuse "Menggunakan DownThemAll!">
+<!ENTITY lp.yr.usagemod "Memodifikasi DownThemAll!">
+<!ENTITY lp.yr.usagedist "Mendistribusikan DownThemAll!, dengan atau tanpa modifikasi">
+<!ENTITY lp.yr.usagemore "Lihat lisensi untuk keterangan lebih lanjut.">
+<!ENTITY lp.yr.logo "Logo menggunakan lisensi yang lebih ketat, untuk melindungi reputasi kami dari para penipu. Artinya Anda perlu membuat nama dan logo Anda sendiri untuk mendistribusikan versi modifikasi DownThemAll!">
+<!ENTITY lp.languagetitle "Bahasa">
+<!ENTITY lp.language.babelzilla "Jika Anda ahli berbagai bahasa, harap pertimbangkan bergabung dengan <a href='http://babelzilla.org'>babelzilla.org</a> untuk membantu menerjemahkan DownThemAll! dan pengaya keren lainnya.">
+<!ENTITY lp.yr.licensetitle "Hak Cipta dan Lisensi">
+<!ENTITY lp.yr.licensed "DownThemAll! menggunakan lisensi <a href='http://www.gnu.org/licenses/old-licenses/gpl-2.0.html'>GPL 2.0</a>. Lihat berkas GPL. Ini belaku untuk semua kode sumber.">
+<!ENTITY lp.yr.morelicense3 "Berkas-berkas tertentu mungkin memiliki lisensinya sendiri. Kunjungi dan lihat repositori kode yang tersedia di <a href='http://code.downthemall.net/repos/'>http://code.downthemall.net/repos/</a>. Sebagian besar berkas menggunakan lisensi GPL/LGPL yang kompatibel dengan MPL 2.0, atau menggunakan tiga lisensi sekaligus MPL 1.1/GPL 2.0/LGPL 2.1. Lihat berkas MPL, GPL, LGPL terkait.">
+<!ENTITY lp.yr.gplintro "Bagian yang terpenting dari GPL 2.0, adalah tidak adanya garansi dan jaminan kerusakan, kunjungi:">
+<!ENTITY lp.yr.icons "Desain, ikon dan tombol">
+<!ENTITY lp.yr.iconsbased4 "berdasarkan karya dari Mike Matas, Mark James, the Noun Project dan the Tango project">
+<!ENTITY lp.yr.artwork3 "Desain original: Hak Cipta © 2004-2013 by Stefano Verna, Federico Parodi dan Nils Maier">
+<!ENTITY lp.yr.artworklicense "Desain original menggunakan lisensi:">
+<!ENTITY lp.yr.logo3 "Desain logo DownThemAll!: Hak Cipta © 2004-2013 oleh Stefano Verna.">
+<!ENTITY lp.yr.logopermissions "Logo dan nama DownThemAll! tidak boleh digunakan tanpa izin dalam kondisi apapun, kecuali pada ucapan terima kasih dan pemberitahuan yang terkait lisensi.">
+<!ENTITY lp.ct.bugstitle "Pelaporan bug/Permintaan fitur">
+<!ENTITY lp.ct.bugs2 "Harap kirim laporan bug dan permintaan fitur di halaman <a href='https://bugs.downthemall.net/'>pelacak bug</a> kami.">
+<!ENTITY lp.ct.contactstitle "Kontak">
+<!ENTITY lp.ct.contactsfeed2 "Kami sangat berharap bisa menerima masukan Anda, saran dan/atau tawaran untuk membantu.">
+<!ENTITY lp.ct.contacts "Silakan kunjungi <a href='http://www.downthemall.net/main/contacts/'>halaman kontak</a> kami.">

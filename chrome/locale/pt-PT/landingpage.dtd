@@ -1,6 +1,11 @@
+<!-- To test this out, open chrome://dta/content/about/index.xml in your browser with dTa! installed -->
+<!-- LOCALIZATION NOTE (lp.localedir): UI text direction, either ltr (left-to-right) or rtl (right-to-left); other values not possible -->
 <!ENTITY lp.localedir "ltr">
+<!-- LOCALIZATION NOTE (language): Your language in your language -->
 <!ENTITY language "Português">
+<!-- LOCALIZATION NOTE (transAuthor): Your credit; or leave as dTa Team if you don't want credit -->
 <!ENTITY transAuthor "Ricardo Simões xmcorporation,.com">
+<!-- LOCALIZATION NOTE (fulltranslation): Your credit and language combined -->
 <!ENTITY fulltranslation "Tradução para Português por: Ricardo Simões xmcorporation.com">
 <!ENTITY amo.summary2 "O primeiro e único acelerador/gestor de transferências dentro do seu navegador!">
 <!ENTITY amo.description.intro "DownThemAll é tudo o que pode desejar de um gestor de transferências: tem um acelerador avançado que aumenta até 4x mais a velocidade e permite que pause e resuma transferências em qualquer altura.">
@@ -44,6 +49,7 @@
 <!ENTITY lp.tut.alltabs "É possível colocar items de todos os separadores ao mesmo tempo em fila de espera, usando o botão da barra de ferramentas de menus drop-down.">
 <!ENTITY lp.tut.tabrestore "Apenas ligações de separadores totalmente restaurados ficarão disponíveis.">
 <!ENTITY lp.tb.intro "O DownThemAll! oferece alguns botões para barra de ferramentas que lhe dão uma maneira conveniente para aceder às funcionalidades do DownThemAll!">
+<!-- LOCALIZATION NOTE (lp.tb.install): Text for the toolbar install button -->
 <!ENTITY lp.tb.install "Adicionar botões de barra de tarefa">
 <!ENTITY lp.tb.add.title "Adicionando e usando botões da barra de ferramentas">
 <!ENTITY lp.tb.add.p1 "O DownThemAll! tem quatro botões de barra de ferramentas para tornar mais fácil encontrar e ordenar as transferências">

@@ -1,0 +1,6 @@
+<!ENTITY windowtitle "Adicionar downloads">
+<!ENTITY adddescription.value "Digite a URL e a página de referência (opcional) do download.">
+<!ENTITY createbatchdescriptor.label "Criar um Indicador de Lotes">
+<!ENTITY createbatchdescriptor.tooltip "Criar um indicador de lotes para a seleção de texto atual">
+<!ENTITY desc.batches.value "Você também pode usar indicadores de lotes para fazer downloads de múltiplos arquivos ao mesmo tempo.">
+<!ENTITY examples.value "Exemplos:">

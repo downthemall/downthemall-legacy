@@ -1,6 +1,11 @@
+<!-- To test this out, open chrome://dta/content/about/index.xml in your browser with dTa! installed -->
+<!-- LOCALIZATION NOTE (lp.localedir): UI text direction, either ltr (left-to-right) or rtl (right-to-left); other values not possible -->
 <!ENTITY lp.localedir "ltr">
+<!-- LOCALIZATION NOTE (language): Your language in your language -->
 <!ENTITY language "Español">
+<!-- LOCALIZATION NOTE (transAuthor): Your credit; or leave as dTa Team if you don't want credit -->
 <!ENTITY transAuthor "urko (babelzilla)">
+<!-- LOCALIZATION NOTE (fulltranslation): Your credit and language combined -->
 <!ENTITY fulltranslation "Traducción al español: urko (babelzilla)">
 <!ENTITY amo.summary2 "El primer y único gestor de descargas dentro de su navegador.">
 <!ENTITY amo.description.intro "DownThemAll tiene todo lo que usted puede desear en un gestor de descargas: incluye un acelerador que aumenta la velocidad de descarga hasta un 400&#37;, y permite detener y reanudar las descargas en cualquier momento.">
@@ -44,6 +49,7 @@
 <!ENTITY lp.tut.alltabs "Es posible poner en cola elementos de todas las pestañas a la vez usando el botón de los menús desplegables.">
 <!ENTITY lp.tut.tabrestore "Sólo estarán disponibles los enlaces de las pestañas totalmente restauradas.">
 <!ENTITY lp.tb.intro "DownThemAll! le ofrece varios botones (iconos) de barra de herramientas que le permiten acceder fácil y rápidamente a sus funciones.">
+<!-- LOCALIZATION NOTE (lp.tb.install): Text for the toolbar install button -->
 <!ENTITY lp.tb.install "Añadir iconos de barra de herramientas">
 <!ENTITY lp.tb.add.title "Añadir y usar botones de la barra de herramientas">
 <!ENTITY lp.tb.add.p1 "DownThemAll! ofrece cuatro botones de barra de herramientas para que sea más fácil encontrar y poner en cola las descargas.">

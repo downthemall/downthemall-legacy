@@ -1,0 +1,26 @@
+<!ENTITY start.label "Mulai!">
+<!ENTITY start.key "s">
+<!ENTITY queue.label "Tambah jeda">
+<!ENTITY queue.key "p">
+<!ENTITY options.label "Preferensi">
+<!ENTITY url.value "Unduhan">
+<!ENTITY url.placeholder "Masukkan URI unduhan">
+<!ENTITY override.filename.value "Nama berkas ubahsuai">
+<!ENTITY override.filename.placeholder "Masukkan nama berkas baru">
+<!ENTITY override.filename.tip "Masukkan nama berkas baru, atau kosongkan untuk nama bawaan">
+<!ENTITY directory.caption "Simpan berkas di:">
+<!ENTITY directory.placeholder "Masukkan atau pilih folder">
+<!ENTITY mirrors.value "Mirror:">
+<!ENTITY referrer.value "Halaman rujukan:">
+<!ENTITY referrer.placeholder "Masukkan URI perujuk">
+<!ENTITY referrer.tip "Masukkan URI perujuk, atau kosongkan untuk tidak mengirim rujukan">
+<!ENTITY description.value "Deskripsi:">
+<!ENTITY checksum.value "Ceksum (Hash):">
+<!ENTITY browse.tooltip "Jelajah…">
+<!ENTITY mirrormanager.tip "Kelola mirror unduhan">
+<!ENTITY mask3.label "Pola">
+<!ENTITY mask.tip "Berkas yang dipilih akan disimpan dan diubah namanya sesuai dengan pola ini">
+<!ENTITY mask.once.label "Gunakan pola hanya saat ini saja">
+<!ENTITY selectall.label "Pilih Semua">
+<!ENTITY selectinv.label "Balikkan Pilihan">
+<!ENTITY selectnone.label "Tidak Memilih">

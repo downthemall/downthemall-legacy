@@ -1,0 +1,7 @@
+<!ENTITY window.title "Berkas Konflik!">
+<!ENTITY text.value "Ingat pengaturan ini:">
+<!ENTITY download.label "Hanya untuk unduhan ini">
+<!ENTITY session.label "Hanya untuk sesi ini">
+<!ENTITY always.label "Mulai sekarang">
+<!ENTITY overwrite.label "Timpa berkas yang sudah ada">
+<!ENTITY skip.label "Lewati/Batal">

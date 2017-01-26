@@ -11,6 +11,7 @@
 <!ENTITY percent.label "Odstotek">
 <!ENTITY pct.label "Napredek">
 <!ENTITY dim.label "Velikost">
+<!-- LOCALIZATION NOTE (time2.label):  Est. == Estimated -->
 <!ENTITY time2.label "Ocenjeni čas">
 <!ENTITY parts.label "Deli">
 <!ENTITY speed.label "Hitrost">
@@ -21,7 +22,9 @@
 <!ENTITY infoPrivate.value "Zaseben prenos">
 <!ENTITY elapsedTitle.value "Pretečeni čas:">
 <!ENTITY remainingTitle.value "Preostali čas:">
+<!-- LOCALIZATION NOTE (currentSpeedTitle.value):  Please keep this short, and use abbreviations is necessary, or the tooltip will widen too much. -->
 <!ENTITY currentSpeedTitle.value "Trenutna hitrost:">
+<!-- LOCALIZATION NOTE (avgSpeedTitle.value):  Please keep this short, and use abbreviations is necessary. -->
 <!ENTITY avgSpeedTitle.value "Povprečna hitrost:">
 <!ENTITY path.label "Shrani pot">
 <!ENTITY hash.label "Nadzorna vsota">

@@ -1,0 +1,10 @@
+<!ENTITY title "DownThemAll! Spegelhantering">
+<!ENTITY header "Spegelhantering">
+<!ENTITY byline1 "Nedladdningar kan läsas in från olika platser. Filen kombineras sedan åter automatiskt.">
+<!ENTITY byline2 "Lägg gärna till och ta bort platser som pekar på samma fil.">
+<!ENTITY byline3 "Om platser som pekar på olika filer läggs till uppstår en trasig nedladdning">
+<!ENTITY addmirror.tip "Lägg till en nedladdningsspegel">
+<!ENTITY removemirror.tip "Ta bort valda nedladdningsspeglar">
+<!ENTITY checkmirrors.tip "Kontrollera alla nedladdningsspeglar">
+<!ENTITY mirrorurl "Plats:">
+<!ENTITY preference "Prioritet:">

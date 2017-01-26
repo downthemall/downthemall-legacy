@@ -1,0 +1,16 @@
+<!ENTITY title "Tentukan Pilihan Anda">
+<!ENTITY filters.caption "Filter">
+<!ENTITY additional.caption "Filter Cepat">
+<!ENTITY additional.tip "Filter Tekstual: Anda dapat mengatur beberapa filter tekstual sekaligus dengan menggunakan koma.">
+<!ENTITY filter.tip "Ketik filter tekstual Anda di sini! (beberapa contoh pada dropdown)">
+<!ENTITY menu.check.label "Centang Item Terpilih">
+<!ENTITY menu.uncheck.label "Hapus Centang Item Terpilih">
+<!ENTITY menu.toggle.label "Jungkit Centang untuk Item Terpilih">
+<!ENTITY menu.copylinks2.label "Salin Tautan">
+<!ENTITY tab.links.label "Tautan">
+<!ENTITY tab.media.label "Gambar dan Media">
+<!ENTITY header.desc.label "Deskripsi">
+<!ENTITY selectfiltered.label "Pilih Hasil Filteran">
+<!ENTITY disableother.label "Nonaktifkan filter lainnya">
+<!ENTITY disableother.tooltip "Nonaktifkan filter lainnya dan hanya gunakan filter cepat. (Untuk saat ini pengaturan ini hanya bersifat sementara)">
+<!ENTITY resname.value "Nama Sumber">
