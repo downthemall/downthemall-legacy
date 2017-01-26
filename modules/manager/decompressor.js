@@ -23,7 +23,7 @@ class Decompressor {
 			this.outStream = new Instances.BinaryOutputStream(
 				new Instances.BufferedOutputStream(this._outStream, BUFFER_SIZE));
 
-			let converter = Cc["@mozilla.org/streamconv;1?from=" + download.compression + "&to=uncompressed"]
+			const converter = Cc["@mozilla.org/streamconv;1?from=" + download.compression + "&to=uncompressed"]
 				.createInstance(Ci.nsIStreamConverter);
 
 			converter.asyncConvertData(
@@ -33,7 +33,7 @@ class Decompressor {
 				null
 			);
 
-			let chan = Services.oldio.newChannelFromURI(Services.io.newFileURI(this.from));
+			const chan = Services.oldio.newChannelFromURI(Services.io.newFileURI(this.from));
 			chan.asyncOpen(converter, null);
 		}
 		catch (ex) {
@@ -56,6 +56,33 @@ class Decompressor {
 		}
 	}
 
+	setException(ex) {
+		if (this.exception) {
+			return;
+		}
+		this.exception = ex;
+	}
+
+	close() {
+		try {
+			this.outStream.flush();
+			this._outStream.QueryInterface(Ci.nsISeekableStream).setEOF();
+		}
+		catch (ex) {
+			this.setException(ex);
+		}
+		finally {
+			try {
+				this.outStream.close();
+				this._outStream.close();
+			}
+			catch (ex) {
+				// huh?
+				log(LOG_ERROR, "Decompressor: close streams", ex);
+			}
+		}
+	}
+
 	QueryInterface(iid) {
 		if (iid.equals(Ci.nsISupports) || iid.equals(Ci.nsIStreamListener) || iid.equals(Ci.nsIRequestObserver)) {
 			return this;
@@ -68,48 +95,41 @@ class Decompressor {
 	onStopRequest(request, c) {
 		clearInterval(this._timer);
 		// important, or else we don't write out the last buffer and truncate too early. :p
-		this.outStream.flush();
 		try {
-			this._outStream.QueryInterface(Ci.nsISeekableStream).setEOF();
-		}
-		catch (ex) {
-			this.exception = ex;
-		}
-		try {
-			this.outStream.close();
-			this._outStream.close();
-		}
-		catch (ex) {
-			// huh?
-			log(LOG_ERROR, "Decompressor: close streams", ex);
-		}
-		if (this.exception) {
-			try {
-				this.to.remove(false);
+			this.close();
+			if (this.exception) {
+				try {
+					this.to.remove(false);
+				}
+				catch (ex) {
+					// no-op: we're already bad :p
+				}
 			}
-			catch (ex) {
-				// no-op: we're already bad :p
+			else {
+				try {
+					this.from.remove(false);
+				}
+				catch (ex) {
+					log(LOG_ERROR, "Failed to remove tmpFile", ex);
+				}
 			}
 		}
-		try {
-			this.from.remove(false);
-		}
 		catch (ex) {
-			log(LOG_ERROR, "Failed to remove tmpFile", ex);
+			this.setException(ex);
 		}
 		this.callback.call(this.download, this.exception);
 	}
 	onDataAvailable(request, c, stream, offset, count) {
 		try {
-			var binStream = new Instances.BinaryInputStream(stream);
+			const binStream = new Instances.BinaryInputStream(stream);
 			if (count !== this.outStream.write(binStream.readBytes(count), count)) {
 				throw new Exception("Failed to write!");
 			}
 			this.download.partialSize = offset;
 		}
 		catch (ex) {
-			this.exception = ex;
-			var reason = 0x804b0002; // NS_BINDING_ABORTED;
+			this.setException(ex);
+			const reason = 0x804b0002; // NS_BINDING_ABORTED;
 			request.cancel(reason);
 		}
 	}
