@@ -1210,27 +1210,27 @@ var Tree = {
 			}
 			try {
 				let fs = fp.file;
-				if (!(/\.[\d\w-]{1,4}/.test(fs.leafName)) && fp.filterIndex !== 4) {
-					if (fp.filterIndex === 0) {
+				if (!(/\.[\d\w-]{1,5}/.test(fs.leafName)) && fp.filterIndex !== 4) {
+					if (fp.filterIndex === 1) {
 						fs.leafName += ".html";
 					}
-					else if (fp.filterIndex === 2) {
+					else if (fp.filterIndex === 3) {
 						fs.leafName += ".metalink";
 					}
-					else if(fp.filterIndex === 3) {
+					else if(fp.filterIndex === 0) {
 						fs.leafName += ".meta4";
 					}
 					else {
 						fs.leafName += ".txt";
 					}
 				}
-				if (/\.x?html$/i.test(fs.leafName) || fp.filterIndex === 0) {
+				if (/\.x?html$/i.test(fs.leafName) || fp.filterIndex === 1) {
 					ImportExport.exportToHtmlFile(this.getSelected(), document, fs, Prefs.permissions);
 				}
-				else if (/\.metalink$/i.test(fs.leafName) || fp.filterIndex === 2) {
+				else if (/\.metalink$/i.test(fs.leafName) || fp.filterIndex === 3) {
 					ImportExport.exportToMetalinkFile(this.getSelected(), document, fs, Prefs.permissions);
 				}
-				else if(/\.meta4$/i.test(fs.leafName) || fp.filterIndex === 3) {
+				else if(/\.meta4$/i.test(fs.leafName) || fp.filterIndex === 0) {
 					ImportExport.exportToMetalink4File(this.getSelected(), document, fs, Prefs.permissions);
 				}
 				else {
@@ -1244,13 +1244,12 @@ var Tree = {
 		}
 		try {
 			let fp = new Instances.FilePicker(window, _('export.title'), Ci.nsIFilePicker.modeSave);
+			fp.appendFilter(_('filtermetalink'), "*.meta4");
 			fp.appendFilters(Ci.nsIFilePicker.filterHTML);
 			fp.appendFilters(Ci.nsIFilePicker.filterText);
 			fp.appendFilter(_('filtermetalink3'), '*.metalink');
-			fp.appendFilter(_('filtermetalink'), "*.meta4");
 			fp.appendFilters(Ci.nsIFilePicker.filterAll);
-			fp.defaultString = "Downloads.meta4";
-			fp.filterIndex = 3;
+			fp.defaultString = "Downloads";
 
 			if ("open" in fp) {
 				fp.open({done: processResponse.bind(this, fp)});
