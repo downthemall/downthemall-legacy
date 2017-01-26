@@ -35,7 +35,6 @@
 		<key id="kSelectInv" modifiers="accel,shift" key="I" command="cmdSelectInv" />
 		<key id="kOpenFolder" modifiers="accel,shift" key="O" command="cmdOpenFolder" />
 		<key id="kRename" keycode="VK_RETURN" command="cmdRename"/>
-		<key id="kCloseMac" modifiers="accel" key="W" command="cmdClose" />
 	</keyset>
 
 	<notificationbox id="notifications">

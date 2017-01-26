@@ -108,6 +108,7 @@
 
 	<keyset id="mainkeys">
 		<key id="kClose" keycode="VK_ESCAPE" command="cmdClose" />
+		<key id="kCloseMac" modifiers="accel" key="W" command="cmdClose" />
 
 		<key id="kGetInfo" modifiers="alt" key="I" command="cmdGetInfo" />
 
