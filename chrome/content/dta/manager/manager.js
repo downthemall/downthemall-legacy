@@ -2287,10 +2287,22 @@ var QueueItem = class QueueItem {
 				this.handleMetalink();
 				return;
 			}
-			if (!(await this.moveCompleted())) {
-				log(LOG_DEBUG, "moveCompleted scheduled!");
+			try {
+				if (!(await this.moveCompleted())) {
+					log(LOG_DEBUG, "moveCompleted scheduled!");
+					return;
+				}
+			}
+			catch (iex) {
+				log(LOG_ERROR, "move failed", iex);
+				this.fail(
+					_("moveerror"),
+					_("moveerror.long"),
+					_("moveerror.status", iex.message || iex)
+				);
 				return;
 			}
+				
 			await this.setAttributes();
 			if (Prefs.finishEvent) {
 				this.customFinishEvent();
