@@ -139,6 +139,9 @@
 		<key id="kNewWin" modifiers="accel" key="N" command="cmdNewWin" />
 
 		<key id="kSearch" modifiers="accel" key="F" command="cmdSearchFocus"/>
+
+		<key id="kAddChunk" key="VK_PLUS" command="cmdAddChunk" />
+		<key id="kRemoveChunk" key="VK_MINUS" command="cmdRemoveChunk" />
 	</keyset>
 
 
@@ -207,8 +210,8 @@
 			<menuseparator />
 			<menu id="advancedMenu" class="menu-iconic" label="&advanced.label;">
 				<menupopup id="popupmisc">
-					<menuitem id="addchunk" class="action menuitem-iconic" label="&addchunk.label;" command="cmdAddChunk" />
-					<menuitem id="removechunk" class="action menuitem-iconic" label="&removechunk.label;" command="cmdRemoveChunk" />
+					<menuitem id="addchunk" class="action menuitem-iconic" label="&addchunk.label;" key="kAddChunk" command="cmdAddChunk" />
+					<menuitem id="removechunk" class="action menuitem-iconic" label="&removechunk.label;" key="kRemoveChunk" command="cmdRemoveChunk" />
 					<menuseparator class="action"/>
 					<menuitem id="mirrors-cascaded" class="menuitem-iconic" label="&mirrors.label;" tooltiptext="&mirrors.tooltip;" command="cmdMirrors" />
 					<menuseparator id="mirrors-cascaded-sep" />
