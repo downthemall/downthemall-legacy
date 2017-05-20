@@ -54,7 +54,7 @@ function mapper(e) {
 class FakeLink {
 	constructor (url, title) {
 		this.src = this.href = url;
-		if (!!title) {
+		if (title) {
 			this.title = title;
 		}
 	}

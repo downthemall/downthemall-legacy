@@ -8,7 +8,6 @@ const Prefs = require("preferences");
 const {
 	replaceSlashes,
 	getUsablePath,
-	getUsableFileName,
 	getUsableFileNameWithFlatten
 } = require("support/stringfuncs");
 

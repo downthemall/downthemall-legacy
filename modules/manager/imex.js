@@ -4,13 +4,10 @@
 "use strict";
 
 const DTA = require("api");
-const Preferences = require("preferences");
 const {getTextLinks} = require("support/textlinks");
 const Version = require("version");
 const {NS_DTA, NS_METALINKER3, NS_METALINK_RFC5854} = require("support/metalinker");
 const {filterInSitu} = require("utils");
-
-const XPathResult = Ci.nsIDOMXPathResult;
 
 exports.parseTextFile = async function parseTextFile(aFile) {
 	log(LOG_INFO, "Parsing text file: " + aFile.spec);

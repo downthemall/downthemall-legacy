@@ -179,7 +179,7 @@ class ProxyManager {
 	getInfoFor(uri) {
 		return this._getFor(uri)[1];
 	}
-};
+}
 
 exports.ProxyManager = new ProxyManager();
 

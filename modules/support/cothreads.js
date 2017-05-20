@@ -100,7 +100,7 @@ class CoThreadBase {
 			this._finishFunc.call(this._thisCtx, this._yieldEvery);
 		}
 	}
-};
+}
 Object.assign(CoThreadBase.prototype, {
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsISupports, Ci.nsICancelable, Ci.nsIRunnable]),
 });

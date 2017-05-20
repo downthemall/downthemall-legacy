@@ -71,6 +71,6 @@ treechildren::-moz-tree-image(iconic,${entry.toString()}) {
 			log(LOG_ERROR, "sheet: " + rule, ex);
 		}
 	}
-};
+}
 FileExtensionSheet.prototype._atoms = new Atoms();
 exports.FileExtensionSheet = Object.freeze(FileExtensionSheet);

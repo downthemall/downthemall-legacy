@@ -3,7 +3,6 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
-/* global BUFFER_SIZE, MAX_PENDING_SIZE */
 requireJoined(this, "constants");
 const {setTimeout, clearTimeout} = require("support/defer");
 const pressure = require("support/memorypressure");
@@ -38,7 +37,6 @@ class MemoryReporter {
 		this._chunksActive = 0;
 
 		for (let c of this.chunks) {
-			let bs = c.buffer_size;
 			this._pendingBytes += c.buffered;
 			if (c._req) {
 				++this._chunksScheduled;
@@ -135,7 +133,9 @@ class MemoryReporter {
 			else {
 				Services.memrm.unregisterReporter(this);
 			}
-		} catch (ex) {}
+		} catch (ex) {
+			// ignored
+		}
 		if (this.timer) {
 			clearTimeout(this.timer);
 			this.timer = null;
@@ -171,7 +171,7 @@ class MemoryReporter {
 			this.decrementPressure();
 		}, 100);
 	}
-};
+}
 Object.seal(MemoryReporter.prototype);
 const memoryReporter = exports.memoryReporter = new MemoryReporter();
 

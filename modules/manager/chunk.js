@@ -3,7 +3,7 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
-/* global BUFFER_SIZE, PIPE_SEGMENT_SIZE, MAX_PIPE_SEGMENTS */
+/* global PIPE_SEGMENT_SIZE, MAX_PIPE_SEGMENTS */
 requireJoined(this, "constants");
 const Prefs = require("preferences");
 const {ByteBucketTee} = require("support/bytebucket");
@@ -49,14 +49,18 @@ unload(() => {
 	try {
 		_thread.shutdown();
 	}
-	catch (ex) {}
+	catch (ex) {
+		// ignored
+	}
 });
 
-exports.hintChunkBufferSize = function(bs) {
+exports.hintChunkBufferSize = function() {
 };
 
 const Observer = {
+    /* eslint-disable no-unused-vars */
 	observe: function(s, topic, data) {
+    /* eslint-enable no-unused-vars */
 		let perms = Prefs.permissions = Prefs.getExt("permissions", 384);
 		if (perms & 384) {
 			perms |= 64;
@@ -83,7 +87,9 @@ function asyncCopy(instream, outstream, close) {
 		);
 	return new Promise(function(resolve, reject) {
 		copier.asyncCopy({
+			/* eslint-disable no-unused-vars */
 			onStartRequest: function(req, context) {},
+			/* eslint-enable no-unused-vars */
 			onStopRequest: function(req, context, status) {
 				if (!Components.isSuccessCode(status)) {
 					reject(status);
@@ -302,8 +308,13 @@ class Chunk {
 				try {
 					written = this._outStream.writeFrom(aInputStream, bytes);
 				}
-				catch (ex if ex.result == Cr.NS_BASE_STREAM_WOULD_BLOCK || ex == Cr.NS_BASE_STREAM_WOULD_BLOCK) {
-					// aka still nothing written
+				catch (ex) {
+					if (ex.result == Cr.NS_BASE_STREAM_WOULD_BLOCK || ex == Cr.NS_BASE_STREAM_WOULD_BLOCK) {
+						// aka still nothing written
+					}
+					else {
+						throw ex;
+					}
 				}
 				// jshint +W116
 				let remain = bytes - written;
@@ -330,7 +341,6 @@ class Chunk {
 			log(LOG_ERROR, 'write: ' + this.parent.tmpFile.path, ex);
 			throw ex;
 		}
-		return 0;
 	}
 
 	observe() {
@@ -356,8 +366,13 @@ class Chunk {
 		try {
 			written = this._outStream.writeFrom(instream, avail);
 		}
-		catch (ex if ex.result == Cr.NS_BASE_STREAM_WOULD_BLOCK || ex == Cr.NS_BASE_STREAM_WOULD_BLOCK) {
-			// nothing written
+		catch (ex) {
+			if (ex.result == Cr.NS_BASE_STREAM_WOULD_BLOCK || ex == Cr.NS_BASE_STREAM_WOULD_BLOCK) {
+				// nothing written
+			}
+			else {
+				throw ex;
+			}
 		}
 		// jshint +W116
 		avail -= written;
@@ -372,7 +387,6 @@ class Chunk {
 	}
 
 	requestBytes(requested) {
-		let origRequested = requested;
 		if (this._overflowPipe) {
 			requested = this._substractOverflow(requested);
 		}
@@ -448,8 +462,13 @@ class Chunk {
 			try {
 				await makeDir(file.parent, Prefs.dirPermissions, true);
 			}
-			catch (ex if ex.becauseExists) {
-				// no op
+			catch (ex) {
+				if (ex.becauseExists) {
+					// no op
+				}
+				else {
+					throw ex;
+				}
 			}
 			let outStream = new Instances.FileOutputStream(
 				file,
@@ -484,7 +503,13 @@ class Chunk {
 			this._copier.then(closeStream);
 			this._copier.catch(status => {
 				this.errored = true;
-				closeStream();
+				try {
+					closeStream();
+				}
+				catch (ex) {
+					this.download.writeFailed(ex);
+					return;
+				}
 				this.download.writeFailed(status);
 			});
 		}
@@ -505,6 +530,7 @@ class Chunk {
 					await asyncCopy(this._overflowPipe.inputStream, this._outStream, false);
 				}
 				catch (status) {
+					this.errored = true;
 					this.download.writeFailed(status);
 				}
 			}
@@ -538,7 +564,8 @@ class Chunk {
 					await this._copier;
 				}
 				catch (ex) {
-					// ignore here!
+					this.errored = true;
+					// ignore here otherwise!
 				}
 				delete this._copier;
 			}

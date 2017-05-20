@@ -13,7 +13,6 @@ const NS_METALINKER3 = 'http://www.metalinker.org/';
 const NS_METALINK_RFC5854 = 'urn:ietf:params:xml:ns:metalink';
 
 const DTA = require("api");
-const Preferences = require("preferences");
 const {LOCALE} = require("version");
 const {UrlManager} = require("./urlmanager");
 const {NS_DTA, NS_HTML, normalizeMetaPrefs} = require("utils");
@@ -322,7 +321,7 @@ class Metalinker3 extends Base {
 		};
 		return new Metalink(downloads, info, "Metalinker Version 3.0");
 	}
-};
+}
 
 /**
  * Metalink RFC5854 (IETF) Parser
@@ -539,7 +538,6 @@ const __parsers__ = [
  * @return async (Metalink) Parsed metalink data
  */
 function parse(aURI, aReferrer, aCallback) {
-	let xhrLoad, xhrError;
 	let xhr = new XMLHttpRequest();
 	xhr.open("GET", aURI.spec);
 	log(LOG_DEBUG, "parsing metalink at " + aURI.spec);

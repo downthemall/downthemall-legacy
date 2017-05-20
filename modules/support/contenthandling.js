@@ -55,9 +55,6 @@ class ContextLRUMap {
 /**
  * ContentHandling
  */
-function ContentHandlingImpl() {
-	this._init();
-}
 exports.ContentHandling = new class {
 	constructor() {
 		this.classDescription = "DownThemAll! ContentHandling";
@@ -223,7 +220,7 @@ exports.ContentHandling = new class {
 				lc = channel.getInterface(Ci.nsILoadContext);
 			}
 			catch (ex) {
-
+				// ignored
 			}
 		}
 		if (!lc) {
@@ -231,7 +228,7 @@ exports.ContentHandling = new class {
 				lc = channel.notificationCallbacks.getInterface(Ci.nsILoadContext);
 			}
 			catch (ex) {
-
+				// ignored
 			}
 		}
 		if (lc) {
@@ -286,7 +283,9 @@ exports.ContentHandling = new class {
 				}
 				uri = wn.currentURI;
 			}
-			catch (ex) {}
+			catch (ex) {
+				// ignored
+			}
 		}
 		if (!uri) {
 			log(LOG_DEBUG, "Failed to get video doc uri");

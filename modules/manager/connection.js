@@ -37,7 +37,7 @@ function canPrivate(chan) {
 	return ("nsIPrivateBrowsingChannel" in Ci) && (chan instanceof Ci.nsIPrivateBrowsingChannel);
 }
 
-const _ = (function(global) {
+const _ = (function() {
 	let bundles = new StringBundles(["chrome://dta/locale/manager.properties"]);
 	return function(...args) {
 		if (args.length === 1) {
@@ -473,9 +473,13 @@ Connection.prototype = {
 				this.discard(aInputStream, aCount - written);
 			}
 		}
-		catch (ex if (ex !== NS_ERROR_BINDING_ABORTED && ex.result !== NS_ERROR_BINDING_ABORTED)) {
-			log(LOG_ERROR, 'onDataAvailable', ex);
-			this.writeFailed(ex);
+		catch (ex) {
+			if (ex !== NS_ERROR_BINDING_ABORTED && ex.result !== NS_ERROR_BINDING_ABORTED) {
+				log(LOG_ERROR, 'onDataAvailable', ex);
+				this.writeFailed(ex);
+				return;
+			}
+			throw ex;
 		}
 	},
 
@@ -801,8 +805,8 @@ Connection.prototype = {
 				if (~[401, 402, 407, 500, 502, 503, 504].indexOf(code) ||
 					(Preferences.getExt('recoverallhttperrors', false) && code !== 404) ||
 					(code === 403 &&
-					 aChannel instanceof Ci.nsIHttpChannel &&
-					 maybeTempBlacklisted(this, d, aChannel))) {
+						aChannel instanceof Ci.nsIHttpChannel &&
+						maybeTempBlacklisted(this, d, aChannel))) {
 					log(LOG_DEBUG, "we got temp failure!", code);
 					d.pauseAndRetry();
 					d.status = code >= 500 ? _('temperror') : _("error", [formatNumber(code, 3)]);
@@ -982,7 +986,7 @@ Connection.prototype = {
 		}
 
 		try {
-			let visitor = d.visitors.visit(aChannel.QueryInterface(Ci.nsIChannel));
+			d.visitors.visit(aChannel.QueryInterface(Ci.nsIChannel));
 		}
 		catch (ex) {
 			log(LOG_ERROR, "header failed! " + d, ex);
@@ -1211,6 +1215,12 @@ Connection.prototype = {
 			// check if we're complete now
 			if (isRunning && d.chunks.every(e => e.complete)) {
 				if (!d.resumeDownload()) {
+					if (d.chunks.some(e => e.errored)) {
+						log(LOG_ERROR, d + ": Server error or disconnection", "(type 1)");
+						d.pauseAndRetry();
+						d.status = _("servererror");
+						return;
+					}
 					log(LOG_INFO, d + ": Download is complete!");
 					d.finishDownload();
 					return;
@@ -1269,7 +1279,6 @@ Connection.prototype = {
 	onProgress: function(aRequest, aContext, aProgress, aProgressMax) {
 		try {
 			// shortcuts
-			let c = this.c;
 			let d = this.d;
 
 			if (this.reexamine) {

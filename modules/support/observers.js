@@ -68,7 +68,7 @@ class Observer {
 
 	get topics() {
 		let topics = [];
-		for (let [t,o] of this.observers) {
+		for (let [t, _] of this.observers) {
 			topics.push(t);
 		}
 		return topics;
@@ -96,7 +96,7 @@ class Observer {
 			this.unload();
 		}
 	}
-};
+}
 Observer.prototype.QueryInterface =
 	XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference]);
 

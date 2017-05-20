@@ -141,7 +141,6 @@ const RemainderMatch = {
 		};
 	},
 	getMatcher: function(params) {
-		let state = 0;
 		let est = 0;
 		for (let p of params) {
 			let n = parseInt(p, 10);

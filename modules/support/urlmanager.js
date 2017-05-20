@@ -9,7 +9,6 @@ const {
 	normalizeSlashes,
 	removeLeadingSlash,
 	removeFinalSlash,
-	removeLeadingChar,
 	toURL
 	} = require("./stringfuncs");
 
@@ -67,7 +66,7 @@ class UrlManager {
 		return Limits.getEffectiveHost(this._url);
 	}
 	add(url) {
-		if (!url instanceof URL) {
+		if (!(url instanceof URL)) {
 			throw new Exception(url + " is not an URL");
 		}
 		for (let i = 0; i < this._urls.length; ++i) {
@@ -145,7 +144,7 @@ class UrlManager {
 	toArray() {
 		return this._urls.map(e => e);
 	}
-};
+}
 lazyProto(UrlManager.prototype, "usableURL", UrlManager.prototype._usableURL);
 lazyProto(UrlManager.prototype, "usableURLPath", UrlManager.prototype._usableURLPath);
 lazyProto(UrlManager.prototype, "host", UrlManager.prototype._host);

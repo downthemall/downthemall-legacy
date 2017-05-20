@@ -5,7 +5,7 @@
 
 const {URL} = require("api");
 const {memoize} = require("./memoize");
-const {getExtension, toURL} = require("./stringfuncs");
+const {getExtension} = require("./stringfuncs");
 
 const favCache = new LRUMap(200);
 

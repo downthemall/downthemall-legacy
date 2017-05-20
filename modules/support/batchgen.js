@@ -265,6 +265,6 @@ class BatchGenerator {
 			}
 		).join('');
 	}
-};
+}
 
 exports.BatchGenerator = BatchGenerator;
