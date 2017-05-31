@@ -275,6 +275,7 @@ this.LRUMap = LRUMap;
 	var _unloaders = [];
 	let _runUnloader = function _runUnloader(fn, args) {
 		try {
+			args = args || [];
 			fn(...args);
 		}
 		catch (ex) {
