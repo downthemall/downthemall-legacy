@@ -72,9 +72,16 @@ if ("mozIAsyncFavicons" in Ci && Services.favicons instanceof Ci.mozIAsyncFavico
 		const ficb = function(aFavURI) {
 			if (!aFavURI) {
 				log(LOG_DEBUG, "getFavIconAsync: failed " + spec + " " + uri.spec);
-				if (uri.path !== "/") {
+				let path = uri.path || uri.pathQueryRef;
+				if (path !== "/") {
 					uri = uri.clone();
-					uri.path = "/";
+					if ("pathQueryRef" in uri) {
+						uri.pathQueryRef = "/";
+					}
+					else {
+						uri.path = "/";
+					}
+					path = "/";
 					let hostSpec = uri.spec;
 					if (favCache.has(hostSpec)) {
 						let rv = favCache.get(hostSpec);
@@ -91,7 +98,7 @@ if ("mozIAsyncFavicons" in Ci && Services.favicons instanceof Ci.mozIAsyncFavico
 				return;
 			}
 			let rv = fis.getFaviconLinkForIcon(aFavURI).spec;
-			if (uri.path !== "/") {
+			if (path !== "/") {
 				favCache.set(uri.spec, rv);
 			}
 			callback.call(tp, rv, true);
@@ -111,7 +118,12 @@ else if ("nsIFaviconService" in Ci) {
 		let fi = fis.getFaviconImageForPage(uri);
 		if (!fi || fi.equals(defIcon)) {
 			uri = uri.clone();
-			uri.path = "";
+			if ("pathQueryRef" in uri) {
+				uri.pathQueryRef = "/";
+			}
+			else {
+				uri.path = "/";
+			}
 			if (favCache.has(uri.spec)) {
 				callback.call(tp, favCache.get(uri.spec));
 				return;

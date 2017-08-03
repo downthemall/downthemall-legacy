@@ -50,7 +50,7 @@ class UrlManager {
 		return toURL(this._usable);
 	}
 	_usableURLPath() {
-		let rv = this.usableURL.path;
+		let rv = this.usableURL.path || this.usableURL.pathQueryRef;
 		if (rv.length) {
 			rv = removeFinalSlash(normalizeSlashes(rv.substring(0, rv.lastIndexOf("/"))));
 		}

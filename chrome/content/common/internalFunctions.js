@@ -48,7 +48,8 @@ var getLargeIcon = (function() {
 var getFavIcon = (function() {
 	const RE_HTML = /html?$|aspx?$|php\d?$|py$|\/[^.]*$/i;
 	return function getFavIcon(uri, cb, tp) {
-		if (!RE_HTML.test(uri.path)) {
+		const path = uri.path || uri.pathQueryRef;
+		if (!RE_HTML.test(path)) {
 			cb.call(tp, getIcon(uri), false);
 			return;
 		}

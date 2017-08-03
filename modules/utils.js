@@ -490,7 +490,8 @@ function _loadBundles(urls) {
 			strings[s.key] = s.value;
 		}
 		if (uri.host === "dta") {
-			url = "chrome://dta-locale" + uri.path.replace("/locale/", "/content/");
+			const path = uri.path || uri.pathQueryRef;
+			url = "chrome://dta-locale" + path.replace("/locale/", "/content/");
 			log(LOG_DEBUG, "also loading: " + url);
 			for (let s of new SimpleIterator(bundle(url), Ci.nsIPropertyElement)) {
 				let k = s.key;
