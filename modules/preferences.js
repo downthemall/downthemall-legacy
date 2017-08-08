@@ -12,9 +12,12 @@ const PREF_INT = Ci.nsIPrefBranch.PREF_INT;
 const PREF_BOOL = Ci.nsIPrefBranch.PREF_BOOL;
 
 const prefs = Services.prefs;
-if (!(prefs instanceof Ci.nsIPrefBranch2) || !(prefs instanceof Ci.nsIPrefBranch2)) {
-	log(LOG_DEBUG, "simple prefs");
+try {
+	if (!(prefs instanceof Ci.nsIPrefBranch2)) {
+		log(LOG_DEBUG, "simple prefs");
+	}
 }
+catch (ex) { /* ignore */ }
 
 //Helper: get a (multi-byte) string
 function getMultiByte(key, defaultValue){

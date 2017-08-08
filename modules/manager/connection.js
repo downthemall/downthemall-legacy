@@ -295,7 +295,6 @@ Connection.prototype = {
 	contractID: null,
 	classDescription: "DownThemAll! connection",
 	classID: null,
-	implementationLanguage: Ci.nsIProgrammingLanguage.JAVASCRIPT,
 	flags: Ci.nsIClassInfo.MAIN_THREAD_ONLY,
 
 	// nsIChannelEventSink
