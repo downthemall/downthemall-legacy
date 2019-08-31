@@ -648,7 +648,7 @@ var Dialog = {
 
 	openDonate: function() {
 		try {
-			openUrl('http://www.downthemall.net/howto/donate/');
+			openUrl('https://www.downthemall.org/howto/donate/');
 		}
 		catch(ex) {
 			window.alert(ex);

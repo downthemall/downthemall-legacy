@@ -11,11 +11,11 @@
 <!ENTITY amo.description.intro "DownThemAll! on kõik, mida allalaadimiste haldurilt oodata: sellel on võimas kiirendi, mis suurendab kiirust kuni 4x ning see võimaldab allalaadimisi igal ajal peatada ja jätkata.">
 <!ENTITY amo.description.feat2 "DownThemAll on kiire, usaldusväärne ja lihtsalt kasutatav! See võimaldab sul alla laadida kõiki veebilehel olevaid linke või pilte ja palju muud: sa saad oma allalaadimised määrata täielikult kohandatavate kriteeriumite abil, saamaks ainult seda, mida sa tegelikult tahad. Saa oma allalaadimiste üle täielik kontroll, pühendatud kiirus ja samaaegsete ühenduste võimalus igal ajal. Faili samaaegselt mitmest serverist korraga allalaadimiseks saad kasutada metalinke või lisada peeglid käsitsi.">
 <!ENTITY amo.description.free2 "DownThemAll on avatud lähtekoodiga ja tasuta tarkvara. Ei mingeid reklaame, nuhkvara, jälitamist ega kulutusi!">
-<!ENTITY amo.description.more "Lähema teabe saamiseks külasta meie <a href='http://www.downthemall.net/howto/features/'>Võimaluste lehte</a>.">
+<!ENTITY amo.description.more "Lähema teabe saamiseks külasta meie <a href='https://www.downthemall.org/howto/features/'>Võimaluste lehte</a>.">
 <!ENTITY lp.title "Teave DownThemAll!-i kohta">
 <!ENTITY lp.welcome "Tere tulemast kasutama DownThemAll!-i">
 <!ENTITY lp.info "Vaata videosid, mis näitavad, kuidas DownThemAll!-i kasutada ning loe privaatsuse ja oma õiguste kohta">
-<!ENTITY lp.moreinfo "Lähema teabe saamiseks külasta meie <a href='http://www.downthemall.net/howto/features/'>võimaluste lehte</a>.">
+<!ENTITY lp.moreinfo "Lähema teabe saamiseks külasta meie <a href='https://www.downthemall.org/howto/features/'>võimaluste lehte</a>.">
 <!ENTITY lp.gettingstarted "Alustamine">
 <!ENTITY lp.toolbar "Tööriistariba nupud">
 <!ENTITY lp.privacy "Privaatsus">
@@ -86,7 +86,7 @@
 <!ENTITY lp.language.babelzilla "Kui oskad mitut keelt, palun kaalu liitumist lehega <a href='http://babelzilla.org'>babelzilla.org</a>, et aidata tõlkida seda ja palju muid suurepäraseid lisasid.">
 <!ENTITY lp.yr.licensetitle "Autoriõigus ja Litsents">
 <!ENTITY lp.yr.licensed "DownThemAll! on litsentsitud litsentsi <a href='http://www.gnu.org/licenses/old-licenses/gpl-2.0.html'>GPL 2.0</a> alusel. Vaata GPL faili. See käib kõigi lähtekoodifailide kohta.">
-<!ENTITY lp.yr.morelicense3 "Üksikutel failidel võib olla erinev ja/või lisalitsents. Vaata vastavaid hoidla faile aadressil <a href='http://code.downthemall.net/repos/'>http://code.downthemall.net/repos/</a>. Enamus faile on litsentsitud litsentsi GPL/LGPL-ühilduv MPL 2.0 või on kolmik-litsentsitud litsentside MPL 1.1/GPL 2.0/LGPL 2.1 alusel. Vaata vastavaid faile MPL, GPL, LGPL.">
+<!ENTITY lp.yr.morelicense3 "Üksikutel failidel võib olla erinev ja/või lisalitsents. Vaata vastavaid hoidla faile aadressil <a href='https://code.downthemall.org/repos/'>https://code.downthemall.org/repos/</a>. Enamus faile on litsentsitud litsentsi GPL/LGPL-ühilduv MPL 2.0 või on kolmik-litsentsitud litsentside MPL 1.1/GPL 2.0/LGPL 2.1 alusel. Vaata vastavaid faile MPL, GPL, LGPL.">
 <!ENTITY lp.yr.gplintro "Kõige tähtsamad sektsioonid GPL 2.0-st, garantii puudus ja kahjudest lahtiütlemine, on järgmised:">
 <!ENTITY lp.yr.icons "Joonistused, ikoonid ja nupud">
 <!ENTITY lp.yr.iconsbased4 "põhinevad nende töödel: Mike Matas, Mark James, Noun Project ja Tango projekt">
@@ -95,7 +95,7 @@
 <!ENTITY lp.yr.logo3 "DownThemAll! logo disain: Copyright © 2004-2013 Stefano Verna.">
 <!ENTITY lp.yr.logopermissions "DownThemAll! nime ja logo ei tohi loata kasutada üheski tuletuslikus töös, välja arvatud tunnustused ja litsentsiga seotud teatised.">
 <!ENTITY lp.ct.bugstitle "Vigadest teatamine / Funktsioonide taotlused">
-<!ENTITY lp.ct.bugs2 "Palun teavita igast veast ja funktsiooni taotlusest meie <a href='https://bugs.downthemall.net/'>vigade jälitaja</a> kaudu.">
+<!ENTITY lp.ct.bugs2 "Palun teavita igast veast ja funktsiooni taotlusest meie <a href='https://bugs.downthemall.org/'>vigade jälitaja</a> kaudu.">
 <!ENTITY lp.ct.contactstitle "Kontaktandmed">
 <!ENTITY lp.ct.contactsfeed2 "Me oleme väga tänulikud iga tagasiside, soovituse ja/või abipakkumise eest.">
-<!ENTITY lp.ct.contacts "Palun vaata meie <a href='http://www.downthemall.net/main/contacts/'>kontaktide lehte</a> veebis.">
+<!ENTITY lp.ct.contacts "Palun vaata meie <a href='https://www.downthemall.org/main/contacts/'>kontaktide lehte</a> veebis.">

@@ -954,7 +954,7 @@ exports.load = function load(window, outerEvent) {
 		// The remote site does not get special privileges!
 		try {
 			if (!/^about:downthemall/.test(event.target.location) &&
-				event.target.location.host !== "about.downthemall.net") {
+				event.target.location.host !== "about.downthemall.org") {
 				return;
 			}
 		}

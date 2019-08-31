@@ -11,11 +11,11 @@
 <!ENTITY amo.description.intro "DownThemAll har allt du någonsin kunnat önska dig av en nedladdningshanterare: Den har en avancerad accelerator som snabbar upp nedladdningar upp till fyra gånger och den låter dig pausa och återuppta nedladdningar när som helst.">
 <!ENTITY amo.description.feat2 "DownThemAll är snabbt, pålitligt och enkelt att använda! Den låter dig ladda ned alla länkar eller bilder som finns på en webbsida och mycket mer: Du kan förfina dina nedladdningar med helt anpassningsbara kriterier för att bara få det du verkligen vill ha. Få full kontroll över dina nedladdningar, dedikerade hastighet och antal parallella anslutningar när som helst. Använd Metalänkar eller lägg till speglar manuellt för att ladda ned en fil från olika servrar samtidigt.">
 <!ENTITY amo.description.free2 "DownThemAll är öppen källkod och freeware. Inget adware, inget spyware, ingen spårning, ingen kostnad alls!">
-<!ENTITY amo.description.more "För utförligare information gå till vår <a href='http://www.downthemall.net/howto/features/'>webbsida</a>.">
+<!ENTITY amo.description.more "För utförligare information gå till vår <a href='https://www.downthemall.org/howto/features/'>webbsida</a>.">
 <!ENTITY lp.title "Om DownThemAll!">
 <!ENTITY lp.welcome "Välkommen till DownThemAll!">
 <!ENTITY lp.info "Kolla på dessa videor som visar hur man använder DownThemAll! och lär dig mer om din integritet och dina rättigheter">
-<!ENTITY lp.moreinfo "För mer information besök oss på <a href='http://www.downthemall.net/howto/features/'>funktionsidan</a>.">
+<!ENTITY lp.moreinfo "För mer information besök oss på <a href='https://www.downthemall.org/howto/features/'>funktionsidan</a>.">
 <!ENTITY lp.gettingstarted "Komma igång">
 <!ENTITY lp.toolbar "Verktygsfältsknappar">
 <!ENTITY lp.privacy "Sekretess">
@@ -86,7 +86,7 @@
 <!ENTITY lp.language.babelzilla "Om du kan flera språk flytande kan du registrera dig på <a href='http://babelzilla.org'>babelzilla.org</a> för att hjälpa till att översätta detta och många andra bra tillägg.">
 <!ENTITY lp.yr.licensetitle "Upphovsrätt och licens">
 <!ENTITY lp.yr.licensed "DownThemAll! är licensierad under <a href='http://www.gnu.org/licenses/old-licenses/gpl-2.0.html'>GPL 2.0</a>. Se GPL-filen. Detta gäller alla källkodsfiler.">
-<!ENTITY lp.yr.morelicense3 "Individuella filer kan ha ytterligare och/eller olika licenser. Se motsvarande filer som är tillgängliga på <a href='http://code.downthemall.net/repos/'>http://code.downthemall.net/repos/</a>. De flesta filer är licenserade under GPL/LGPL-compatible MPL 2.0, eller har de tre licenserna MPL 1.1/GPL 2.0/LGPL 2.1. Se de respektive MPL-, GPL- och LGPL-filerna.">
+<!ENTITY lp.yr.morelicense3 "Individuella filer kan ha ytterligare och/eller olika licenser. Se motsvarande filer som är tillgängliga på <a href='https://code.downthemall.org/repos/'>https://code.downthemall.org/repos/</a>. De flesta filer är licenserade under GPL/LGPL-compatible MPL 2.0, eller har de tre licenserna MPL 1.1/GPL 2.0/LGPL 2.1. Se de respektive MPL-, GPL- och LGPL-filerna.">
 <!ENTITY lp.yr.gplintro "De mest viktiga avsnitten från GPL 2.0, ansvarsfriskrivningen om ingen garanti och skador:">
 <!ENTITY lp.yr.icons "Konst, ikoner och knappar">
 <!ENTITY lp.yr.iconsbased4 "baseras på konst av Mike Matas, Mark James, the Noun Project och Tango project">
@@ -95,7 +95,7 @@
 <!ENTITY lp.yr.logo3 "Logotypdesign för DownThemAll!: Copyright © 2004-2013 av Stefano Verna.">
 <!ENTITY lp.yr.logopermissions "Namnet DownThemAll! och dess logotyp kan inte användas i något derivat verk utan tillstånd, förutom i erkännanden och licensrelaterade notiser.">
 <!ENTITY lp.ct.bugstitle "Rapportera buggar/Begär funktioner">
-<!ENTITY lp.ct.bugs2 "Rapportera buggar och begär funktioner på vår <a href='https://bugs.downthemall.net/'>buggspårningslista</a>.">
+<!ENTITY lp.ct.bugs2 "Rapportera buggar och begär funktioner på vår <a href='https://bugs.downthemall.org/'>buggspårningslista</a>.">
 <!ENTITY lp.ct.contactstitle "Kontakt">
 <!ENTITY lp.ct.contactsfeed2 "Vi vill få återkoppling, förslag och/eller erbjudanden om hjälp.">
-<!ENTITY lp.ct.contacts "Se vår <a href='http://www.downthemall.net/main/contacts/'>kontaktsida</a>.">
+<!ENTITY lp.ct.contacts "Se vår <a href='https://www.downthemall.org/main/contacts/'>kontaktsida</a>.">

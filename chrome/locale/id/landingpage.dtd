@@ -11,11 +11,11 @@
 <!ENTITY amo.description.intro "DownThemAll adalah semua yang Anda inginkan dari pengelola unduhan: mengunggulkan akselerator lanjutan yang menambah kecepatan hingga 4x dan memungkinkan Anda menangguhkan dan melanjutkan unduhan kapanpun juga.">
 <!ENTITY amo.description.feat2 "DownThemAll cepat, handal dan mudah digunakan! Memungkinkan Anda mengunduh semua tautan atau gambar yang ada di halaman web dan masih banyak lagi: Anda bisa menyaring unduhan Anda menggunakan kriteria sehingga Anda bisa mendapatkan apa yang Anda inginkan. Kontrol penuh unduhan Anda, kecepatan yang tetap dan jumlah koneksi paralel kapanpun juga. Gunakan Metalink atau tambah mirror secara manual untuk mengunduh berkas dari server yang berbeda secara bersamaan.">
 <!ENTITY amo.description.free2 "DownThemAll bersumber terbuka dan bebas digunakan. Tidak ada Adware, Spyware pelacakan, dan tanpa biaya sama sekali!">
-<!ENTITY amo.description.more "Untuk informasi lebih lanjut kunjungi <a href='http://www.downthemall.net/howto/features/'>halaman Fitur</a>.">
+<!ENTITY amo.description.more "Untuk informasi lebih lanjut kunjungi <a href='https://www.downthemall.org/howto/features/'>halaman Fitur</a>.">
 <!ENTITY lp.title "Tentang DownThemAll!">
 <!ENTITY lp.welcome "Selamat datang di DownThemAll!">
 <!ENTITY lp.info "Tonton video yang memperlihatkan bagaimana cara menggunakan DownThemAll! dan pelajari lebih lanjut tentang privasi dan hak Anda">
-<!ENTITY lp.moreinfo "Untuk informasi lebih lanjut kunjungi <a href='http://www.downthemall.net/howto/features/'>halaman fitur</a>.">
+<!ENTITY lp.moreinfo "Untuk informasi lebih lanjut kunjungi <a href='https://www.downthemall.org/howto/features/'>halaman fitur</a>.">
 <!ENTITY lp.gettingstarted "Memulai pertama kali">
 <!ENTITY lp.toolbar "Tombol bilah alat">
 <!ENTITY lp.privacy "Privasi">
@@ -86,7 +86,7 @@
 <!ENTITY lp.language.babelzilla "Jika Anda ahli berbagai bahasa, harap pertimbangkan bergabung dengan <a href='http://babelzilla.org'>babelzilla.org</a> untuk membantu menerjemahkan DownThemAll! dan pengaya keren lainnya.">
 <!ENTITY lp.yr.licensetitle "Hak Cipta dan Lisensi">
 <!ENTITY lp.yr.licensed "DownThemAll! menggunakan lisensi <a href='http://www.gnu.org/licenses/old-licenses/gpl-2.0.html'>GPL 2.0</a>. Lihat berkas GPL. Ini belaku untuk semua kode sumber.">
-<!ENTITY lp.yr.morelicense3 "Berkas-berkas tertentu mungkin memiliki lisensinya sendiri. Kunjungi dan lihat repositori kode yang tersedia di <a href='http://code.downthemall.net/repos/'>http://code.downthemall.net/repos/</a>. Sebagian besar berkas menggunakan lisensi GPL/LGPL yang kompatibel dengan MPL 2.0, atau menggunakan tiga lisensi sekaligus MPL 1.1/GPL 2.0/LGPL 2.1. Lihat berkas MPL, GPL, LGPL terkait.">
+<!ENTITY lp.yr.morelicense3 "Berkas-berkas tertentu mungkin memiliki lisensinya sendiri. Kunjungi dan lihat repositori kode yang tersedia di <a href='https://code.downthemall.org/repos/'>https://code.downthemall.org/repos/</a>. Sebagian besar berkas menggunakan lisensi GPL/LGPL yang kompatibel dengan MPL 2.0, atau menggunakan tiga lisensi sekaligus MPL 1.1/GPL 2.0/LGPL 2.1. Lihat berkas MPL, GPL, LGPL terkait.">
 <!ENTITY lp.yr.gplintro "Bagian yang terpenting dari GPL 2.0, adalah tidak adanya garansi dan jaminan kerusakan, kunjungi:">
 <!ENTITY lp.yr.icons "Desain, ikon dan tombol">
 <!ENTITY lp.yr.iconsbased4 "berdasarkan karya dari Mike Matas, Mark James, the Noun Project dan the Tango project">
@@ -95,7 +95,7 @@
 <!ENTITY lp.yr.logo3 "Desain logo DownThemAll!: Hak Cipta © 2004-2013 oleh Stefano Verna.">
 <!ENTITY lp.yr.logopermissions "Logo dan nama DownThemAll! tidak boleh digunakan tanpa izin dalam kondisi apapun, kecuali pada ucapan terima kasih dan pemberitahuan yang terkait lisensi.">
 <!ENTITY lp.ct.bugstitle "Pelaporan bug/Permintaan fitur">
-<!ENTITY lp.ct.bugs2 "Harap kirim laporan bug dan permintaan fitur di halaman <a href='https://bugs.downthemall.net/'>pelacak bug</a> kami.">
+<!ENTITY lp.ct.bugs2 "Harap kirim laporan bug dan permintaan fitur di halaman <a href='https://bugs.downthemall.org/'>pelacak bug</a> kami.">
 <!ENTITY lp.ct.contactstitle "Kontak">
 <!ENTITY lp.ct.contactsfeed2 "Kami sangat berharap bisa menerima masukan Anda, saran dan/atau tawaran untuk membantu.">
-<!ENTITY lp.ct.contacts "Silakan kunjungi <a href='http://www.downthemall.net/main/contacts/'>halaman kontak</a> kami.">
+<!ENTITY lp.ct.contacts "Silakan kunjungi <a href='https://www.downthemall.org/main/contacts/'>halaman kontak</a> kami.">

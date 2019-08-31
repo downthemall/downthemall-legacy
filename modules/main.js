@@ -23,7 +23,7 @@ if (!("hasTests" in exports)) {
  * AboutModule
  */
 const ABOUT_URI =
-	'https://about.downthemall.net/%BASE_VERSION%/?locale=%LOCALE%&app=%APP_ID%&version=%APP_VERSION%&os=%OS%';
+	'https://about.downthemall.org/%BASE_VERSION%/?locale=%LOCALE%&app=%APP_ID%&version=%APP_VERSION%&os=%OS%';
 
 function AboutModule() {
 }
