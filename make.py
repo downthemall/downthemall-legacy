@@ -153,7 +153,7 @@ def check_locales(errors_only=False):
     else:
         raise ValueError("failed to determine base locale")
 
-    for l, p in listed.items():
+    for l, p in list(listed.items()):
         if not os.path.isdir(p):
             raise ValueError("Listed locale not available {}".format(l))
 
@@ -215,9 +215,9 @@ def releaseversionjs(fp, **kw):
     with Reset(io):
         for l in fp:
             if "const ID = " in l:
-                print >> io, 'const ID = "{}"'.format(RELEASE_ID)
+                print('const ID = "{}"'.format(RELEASE_ID), file=io)
             else:
-                print >> io, l,
+                print(l, end=' ', file=io)
     return io
 
 
@@ -226,9 +226,9 @@ def droptests(fp, **kw):
     io = BytesIO()
     with Reset(io):
         for l in fp:
-            if "dta-tests" in l:
+            if b"dta-tests" in l:
                 continue
-            print >> io, l,
+            io.write(l)
     return io
 
 
@@ -244,7 +244,7 @@ def localize(fp, **kw):
         locale = dict(locale=(f.split("/", 3)[2],))
         with open(f, "rb") as lp:
             for l in lp:
-                l = unicode(l, "utf-8").strip()
+                l = str(l, "utf-8").strip()
                 if not l or l.startswith("#"):
                     continue
                 k, v = l.split("=", 1)
@@ -291,7 +291,7 @@ def localize(fp, **kw):
 
     io = BytesIO()
     with Reset(io):
-        print >> io, rdf.toxml(encoding="utf-8")
+        io.write(rdf.toxml(encoding="utf-8"))
         rdf.unlink()
     return io
 
@@ -313,7 +313,7 @@ def releasify(fp, **kw):
 
     io = BytesIO()
     with Reset(io):
-        print >> io, rdf.toxml(encoding="utf-8")
+        print(rdf.toxml(encoding="utf-8"), file=io)
     rdf.unlink()
     return io
 
@@ -332,7 +332,7 @@ def set_uurl(fp, **kw):
 
     io = BytesIO()
     with Reset(io):
-        print >> io, rdf.toxml(encoding="utf-8")
+        print(rdf.toxml(encoding="utf-8"), file=io)
     rdf.unlink()
     return io
 
@@ -377,7 +377,7 @@ def nightlyrdf(fp, **kw):
 
     io = BytesIO()
     with Reset(io):
-        print >> io, rdf.toxml(encoding="utf-8")
+        print(rdf.toxml(encoding="utf-8"), file=io)
     rdf.unlink()
     return set_uurl(io, **kw)
 
@@ -392,7 +392,7 @@ def devrdf(fp, **kw):
 
     io = BytesIO()
     with Reset(io):
-        print >> io, rdf.toxml(encoding="utf-8")
+        io.write(rdf.toxml(encoding="utf-8"))
     rdf.unlink()
     return io
 
@@ -405,7 +405,7 @@ def pack(xpi, patterns, **kw):
                      key=filesort)
     with ZipFile(xpi, "w", ZIP_DEFLATED) as zp:
         def write(fn, mode, modifier=None):
-            with file(fn, "rb") as fp:
+            with open(fn, "rb") as fp:
                 if modifier:
                     with modifier(fp, **kw) as mp:
                         zp.writestr(fn, mp.read(), mode)
@@ -500,15 +500,13 @@ def create(args):
             with Reset(io):
                 pack(io, patterns, **opts.__dict__)
         except Exception as ex:
-            raise Exception("Failed packing: {}".format(ex)), None, \
-                sys.exc_info()[2]
+            raise Exception("Failed packing: {}".format(ex)).with_traceback(sys.exc_info()[2])
 
         try:
             with open(output, "wb") as op:
                 op.write(io.read())
         except Exception as ex:
-            raise Exception("Failed writing XPI: {}".format(ex)), None, \
-                sys.exc_info()[2]
+            raise Exception("Failed writing XPI: {}".format(ex)).with_traceback(sys.exc_info()[2])
 
 
 if __name__ == "__main__":
