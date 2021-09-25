@@ -2,6 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
+/* jshint -W083 */
 
 const {defer} = require("./defer");
 const obs = require("./observers");
@@ -10,11 +11,12 @@ const obs = require("./observers");
  * Specialized unloader that will trigger whenever either the window gets
  * unloaded or the add-on is shut down
  */
-exports.unloadWindow = function unloadWindow(window, fn, ...args) {
+exports.unloadWindow = function unloadWindow(window, fn) {
+	let args = arguments;
 	let handler = unload(function() {
 		window.removeEventListener('unload', handler, false);
 		try {
-			fn(...args);
+			fn.apply(null, args);
 		}
 		catch (ex) {
 			log(LOG_ERROR, "failed to run window unloader", ex);
@@ -136,7 +138,6 @@ exports.registerOverlay = function registerOverlay(src, location, callback) {
 				try {
 					let uri = Services.io.newURI(data, null, null);
 					winUtils.loadSheet(uri, Ci.nsIDOMWindowUtils.AUTHOR_SHEET);
-          // jshint -W083
 					unloaders.push(function() {
 						winUtils.removeSheet(uri, Ci.nsIDOMWindowUtils.AUTHOR_SHEET);
 					});
@@ -207,7 +208,7 @@ exports.registerOverlay = function registerOverlay(src, location, callback) {
 		return;
 	}
 
-	let _r = new XMLHttpRequest();
+	let _r = new Instances.XHR();
 	_r.onload = function() {
 		let doc = _r.responseXML;
 

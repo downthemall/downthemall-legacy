@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
-/* jshint browser:true */
+/*global window, close, document, opener, removeEventListener, addEventListener */
 
 var all = ['dta-button', 'dta-turbo-button', 'dta-turboselect-button', 'dta-manager-button'];
 
@@ -96,12 +96,11 @@ addEventListener("dialogaccept", function accept() {
 			// Remove a button again
 			// Note that the toolbar is not necessarily nav-bar
 			let tbb = btn.parentNode;
-			// jshint -W083
+			/* jshint -W083 */
 			tbb.currentSet = tbb.currentSet
 				.split(',')
 				.filter(id => id !== b)
 				.join(",");
-			// jshint +W083
 			tbb.setAttribute("currentset", tbb.currentSet);
 			opener.document.persist(tbb.id, "currentset");
 		}

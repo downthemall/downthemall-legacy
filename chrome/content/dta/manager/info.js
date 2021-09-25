@@ -7,6 +7,8 @@
 /* jshint strict:true, globalstrict:true, browser:true */
 
 var {defer} = require("support/defer");
+var {TimerManager} = require("support/timers");
+var Timers = new TimerManager();
 
 function discard() {
 	if (opener) {
@@ -184,6 +186,7 @@ var Dialog = {
 	},
 	unload: function() {
 		Tooltip.stop();
+		Timers.killAllTimers();
 		return true;
 	},
 	browseDir: function() {

@@ -2,9 +2,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
-/* globals Services:true, Instances: true, Cr:true, Cc:true, Ci:true, Cu:true, Cm:true, ctor:true, Exception:true */
-/* globals requireJoined:true, weak:true, lazy:true, reportError:true, QI:true, lazyProto:true, LRUMap:true */
-/* globals log:true, LOG_DEBUG:true, LOG_INFO:true, LOG_ERROR:true */
+/* jshint strict:false */
+/* jshint globalstrict:true */
+/* jshint -W079, -W003, -W083, -W116 */
+/* global Services:true */
 
 var EXPORTED_SYMBOLS = [
 	"require",
@@ -37,33 +38,11 @@ Cm.QueryInterface(Ci.nsIComponentRegistrar);
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://gre/modules/Services.jsm");
-Cu.importGlobalProperties([
-	"atob",
-	"btoa",
-	"Blob",
-	"crypto",
-	"fetch",
-	"File",
-	"TextDecoder",
-	"TextEncoder",
-	"URL",
-	"URLSearchParams",
-	"XMLHttpRequest",
-]);
 
 var weak = Cu.getWeakReference.bind(Cu);
 var reportError = Cu.reportError.bind(Cu);
 var lazy = XPCOMUtils.defineLazyGetter; // bind?
 var QI = XPCOMUtils.generateQI.bind(XPCOMUtils);
-
-var log = function logStub(...args) {
-	Cu.reportError(Array.join(args, ", "));
-};
-
-var LOG_DEBUG = 0, LOG_INFO = 0, LOG_ERROR = 0;
-var Instances;
-
-const DEAD = Symbol();
 
 function canUnload() {
 		let cancel = new Instances.SupportsBool();
@@ -95,46 +74,59 @@ var lazyProto = (function() {
 	};
 })();
 
-class LRUMap extends Map {
-	constructor(limit, values) {
-		if (!(limit > 1) || (limit !== (limit | 0))) {
-			throw new Error("Invalid limit");
-		}
-		super(values);
-		Object.defineProperty(this, "_limit", {value: limit});
-	}
-	get limit() {
-		return this._limit;
-	}
-	get capacity() {
-		return this._limit;
-	}
-	get free() {
-		return this._limit - this.size;
-	}
+var log = function logStub() {
+	Cu.reportError(Array.join(arguments, ", "));
+};
+var LOG_DEBUG = 0, LOG_INFO = 0, LOG_ERROR = 0;
 
-	"set"(key, val) {
-		if (this.has(key)) {
-			super.delete(key);
-			return super.set(key, val);
-		}
-		if (this.size === this._limit) {
-			this.delete(this.keys().next().value);
-		}
-		return super.set(key, val);
+const DEAD = Symbol();
+
+var LRUMap = function LRUMap(limit, values) {
+	if (!(limit > 1) || (limit !== (limit | 0))) {
+		throw new Error("Invalid limit");
 	}
-	/**
-	 * Serialize to JSON (via JSON.stringify)
-	 * Please not that it is serialized to an array containing key/value pairs.
-	 * Please note that therefore keys and values need to be serializable with
-	 * JSON.
-	 * Please note that the limit is not imcluded!
-	 */
-	toJSON() {
-		return Array.from(this.entries());
+	this._limit = limit;
+	this.clear();
+	Object.preventExtensions(this);
+
+	for (let i = (values || DEAD).length - 1; i >= 0; --i) {
+		Cu.reportError(i);
+		this.set(values[i][0], values[i][1]);
 	}
 };
-this.LRUMap = LRUMap;
+LRUMap.prototype = Object.freeze({
+	"get": function(key) { return this._dict.get(key); },
+	"has": function(key) { return this._dict.has(key); },
+	"set": function(key, val) {
+		if (this.has(key)) {
+			this._dict.set(key, val);
+			return;
+		}
+		if (this._arr.length === this._limit) {
+			this._dict.delete(this._arr.shift());
+		}
+		this._dict.set(key, val);
+		this._arr.push(key);
+	},
+	"delete": function(key) {
+		if (!this._dict.has(key)) {
+			return;
+		}
+		this._dict.delete(key);
+		this._arr.splice(this._arr.indexOf(key), 1);
+	},
+	"clear": function() {
+		this._dict = new Map();
+		this._arr = [];
+	},
+	toJSON: function() {
+		let rv = [];
+		for (let i of this._arr) {
+			rv.push([i, this._dict.get(i)]);
+		}
+		return rv;
+	}
+});
 
 //hide our internals
 //Since require() uses .scriptloader, the loaded require scopes will have
@@ -222,9 +214,10 @@ this.LRUMap = LRUMap;
 	dlsg("pps", "@mozilla.org/network/protocol-proxy-service;1", "nsIProtocolProxyService");
 	dlsg("sysprincipal", "@mozilla.org/systemprincipal;1", "nsIPrincipal");
 
-	Instances = exports.Instances = {};
+	const Instances = exports.Instances = {};
 
 	// non-init
+	itor("XHR", "@mozilla.org/xmlextras/xmlhttprequest;1", "nsIXMLHttpRequest");
 	itor("DOMSerializer", "@mozilla.org/xmlextras/xmlserializer;1", "nsIDOMSerializer");
 	itor("MimeInputStream", "@mozilla.org/network/mime-input-stream;1", "nsIMIMEInputStream");
 	itor("SupportsArray","@mozilla.org/supports-array;1", "nsISupportsArray");
@@ -275,8 +268,7 @@ this.LRUMap = LRUMap;
 	var _unloaders = [];
 	let _runUnloader = function _runUnloader(fn, args) {
 		try {
-			args = args || [];
-			fn(...args);
+			fn.apply(null, args);
 		}
 		catch (ex) {
 			try {
@@ -307,27 +299,25 @@ this.LRUMap = LRUMap;
 			_runUnloader(_unloaders[i]);
 		}
 		_unloaders.length = 0;
-		let re = Cu.reportError.bind(Cu);
-		let ns = Cu.nukeSandbox.bind(Cu);
-		let nukeDelayed = (p, scope) => {
-			p.then(function() {
-				ns(scope);
-			}, function(ex) {
-				re(ex);
-				ns(scope);
-			});
-		};
 		for (let r of _registry.keys()) {
 			try {
 				let scope = _registry.get(r);
 				if (scope.asyncShutdown) {
 					let p = scope.asyncShutdown();
 					if (p && p.then) {
-						nukeDelayed(p, scope);
+						let re = Cu.reportError.bind(Cu);
+						let ns = Cu.nukeSandbox.bind(Cu);
+						p.then(function() {
+							ns(scope);
+						}, function(ex) {
+							re(ex);
+							ns(scope);
+						});
 						continue;
 					}
 				}
-				ns(scope);
+
+				Cu.nukeSandbox(scope);
 			}
 			catch (ex) {}
 		}
@@ -344,22 +334,22 @@ this.LRUMap = LRUMap;
 		return;
 	};
 	exports.unload = function unload(fn, ...args) {
-		if (fn === "shutdown") {
+		if (fn == "shutdown") {
 			return shutdown(args.unshift());
 		}
-		if (fn === "eventual-shutdown") {
+		if (fn == "eventual-shutdown") {
 			_upgrade = args.shift();
 			return;
 		}
 
 		// add an unloader
-		if (typeof(fn) !== "function") {
+		if (typeof(fn) != "function") {
 			throw new Error("unloader is not a function");
 		}
 		_unloaders.push(fn);
-		return function(...args) {
-			_runUnloader(fn, args);
-			_unloaders = _unloaders.filter(c => c !== fn);
+		return function() {
+			_runUnloader(fn, arguments);
+			_unloaders = _unloaders.filter(c => c != fn);
 		};
 	};
 
@@ -384,30 +374,29 @@ this.LRUMap = LRUMap;
 		};
 	})();
 
-	let requireJoined;
 	const require = function require(base, module) {
 		let path = module.split("/").filter(e => !!e);
 		if (!path || !path.length) {
 			throw new Error("Invalid module path");
 		}
-		if (path[0] === "." || path[0] === "..") {
+		if (path[0] == "." || path[0] == "..") {
 			path = base.split("/").filter(e => !!e).concat(path);
 		}
 		for (let i = path.length - 2; i >= 0; --i) {
-			if (path[i] === ".") {
+			if (path[i] == ".") {
 				path.splice(i, 1);
 				continue;
 			}
-			if (path[i] !== "..") {
+			if (path[i] != "..") {
 				continue;
 			}
-			if (i === 0) {
+			if (i == 0) {
 				throw new Error("Invalid traversal");
 			}
 			path.splice(i - 1, 2);
 		}
 		let file = path.pop();
-		if (file === ".." || file === ".") {
+		if (file == ".." || file == ".") {
 			throw new Error("Invalid traversal");
 		}
 		base = path.join("/");
@@ -494,7 +483,7 @@ this.LRUMap = LRUMap;
 		return (scope.module && scope.module.exports) || scope.exports;
 	};
 
-	requireJoined = function requireJoined(base, where, module) {
+	const requireJoined = function requireJoined(base, where, module) {
 		module = require(base, module);
 		for (let k of Object.getOwnPropertyNames(module)) {
 			Object.defineProperty(where, k, Object.getOwnPropertyDescriptor(module, k));
@@ -528,7 +517,7 @@ this.LRUMap = LRUMap;
 	exports.require("version").getInfo(function setupVersion(v) {
 		log(
 			LOG_INFO,
-			`${v.NAME}/${v.VERSION} on ${v.APP_NAME}/${v.APP_VERSION} (${v.LOCALE}/${v.OS}) ready`
+			v.NAME + "/" + v.VERSION + " on " + v.APP_NAME + "/" + v.APP_VERSION + " (" + v.LOCALE + " / " + v.OS + ") ready"
 			);
 	});
 	try {

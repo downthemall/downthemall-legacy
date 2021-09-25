@@ -635,12 +635,12 @@ Dialog = {
 	},
 
 	// will check/uncheck/invert the currently selected links
-	toggleSelection: function (...args) {
+	toggleSelection: function () {
 
 		// modes: 1 = check, 2 = uncheck, other = invert
 		let mode = 0;
-		if (args && args.length) {
-			mode = args[0] ? 1 : 2;
+		if (arguments && arguments.length) {
+			mode = arguments[0] ? 1 : 2;
 		}
 		let tree = this.current;
 

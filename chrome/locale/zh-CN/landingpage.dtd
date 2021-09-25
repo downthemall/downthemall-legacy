@@ -11,11 +11,11 @@
 <!ENTITY amo.description.intro "DownThemAll 满足您对一个下载管理器的需求:提供高级加速器可增加4倍以上的加速并且允许您随时暂停并恢复下载。">
 <!ENTITY amo.description.feat2 "DownThemAll 快速，可靠并且容易使用！它让您可以下载页面中的所有链接和图像，还有更多：您可以用可高度可定制的条件提纯您的下载，来获取您想要的！可完全控制下载，随时指定速度和并发连接数量。使用 Metalinks 或手动增加镜像从其它服务器同时下载文件。">
 <!ENTITY amo.description.free2 "DownThemAll 开源，免费。无广告，无间谍软件，无吸费陷阱！">
-<!ENTITY amo.description.more "更多信息请查看我们的 <a href='http://www.downthemall.net/howto/features/'>产品特点页面</a>。">
+<!ENTITY amo.description.more "更多信息请查看我们的 <a href='https://www.downthemall.org/howto/features/'>产品特点页面</a>。">
 <!ENTITY lp.title "关于 DownThemAll!">
 <!ENTITY lp.welcome "欢迎使用 DownThemAll!">
 <!ENTITY lp.info "查看视频了解如何使用 DownThemAll! 以及更多关于隐私与您的权限的内容">
-<!ENTITY lp.moreinfo "更多信息请查看我们的 <a href='http://www.downthemall.net/howto/features/'>产品特点页面</a>。">
+<!ENTITY lp.moreinfo "更多信息请查看我们的 <a href='https://www.downthemall.org/howto/features/'>产品特点页面</a>。">
 <!ENTITY lp.gettingstarted "开始使用">
 <!ENTITY lp.toolbar "工具栏按钮">
 <!ENTITY lp.privacy "隐私">
@@ -86,7 +86,7 @@
 <!ENTITY lp.language.babelzilla "如果您熟练使用多国语言，请考虑加入<a href='http://babelzilla.org'>babelzilla.org</a> 来翻译本扩展以及其它更多好用的扩展。">
 <!ENTITY lp.yr.licensetitle "版权和授权">
 <!ENTITY lp.yr.licensed "DownThemAll!使用<a href='http://www.gnu.org/licenses/old-licenses/gpl-2.0.html'>GPL 2.0</a>。查看GPL文件。应用到所有源代码文件。">
-<!ENTITY lp.yr.morelicense3 "不同的文件可能有附加或不同授权。分别查看这些文件：<a href='http://code.downthemall.net/repos/'>http://code.downthemall.net/repos/</a>。大多数文件基于 GPL/LGPL-compatible MPL 2.0，或是MPL 1.1/GPL 2.0/LGPL 2.1 license。请分别查看MPL，GPL，LGPL文件。">
+<!ENTITY lp.yr.morelicense3 "不同的文件可能有附加或不同授权。分别查看这些文件：<a href='https://code.downthemall.org/repos/'>https://code.downthemall.org/repos/</a>。大多数文件基于 GPL/LGPL-compatible MPL 2.0，或是MPL 1.1/GPL 2.0/LGPL 2.1 license。请分别查看MPL，GPL，LGPL文件。">
 <!ENTITY lp.yr.gplintro "GPL 2.0中最重要的部分，无担保和损害免责，如下：">
 <!ENTITY lp.yr.icons "美工，图标与按钮">
 <!ENTITY lp.yr.iconsbased4 "基于 Mike Matas, Mark James 的作品，Noun Project 与 Tango project">
@@ -95,7 +95,7 @@
 <!ENTITY lp.yr.logo3 "DownThemAll! logo 设计： Copyright © 2004-2013 by Stefano Verna.">
 <!ENTITY lp.yr.logopermissions "DownThemAll! 名称和 Logo 不能未经允许用于任何其它派生作品， 例外情况为归属作者与版权注释。">
 <!ENTITY lp.ct.bugstitle "报告Bug/功能请求">
-<!ENTITY lp.ct.bugs2 "请在我们的<a href='http://bugs.code.downthemall.net/'>bug tracker</a>报告Bug和功能请求。">
+<!ENTITY lp.ct.bugs2 "请在我们的<a href='https://bugs.downthemall.org/'>bug tracker</a>报告Bug和功能请求。">
 <!ENTITY lp.ct.contactstitle "联系方式">
 <!ENTITY lp.ct.contactsfeed2 "我们乐意收到您的反馈，建议或提供帮助。">
-<!ENTITY lp.ct.contacts "请查看我们的在线<a href='http://www.downthemall.net/main/contacts/'>联系方式页面</a>。">
+<!ENTITY lp.ct.contacts "请查看我们的在线<a href='https://www.downthemall.org/main/contacts/'>联系方式页面</a>。">

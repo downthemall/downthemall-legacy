@@ -3,41 +3,36 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
-class GlobalProgressStub {
-	construct(window) {
-		this._total = 0;
-		this._value = 0;
-		this.init(window);
-	}
-	init() {}
-	exit() {}
-	reset() {}
-
-	hide() {}
-	unknown() {}
-	pause() {}
-	activate() {}
-	error() {}
-	get value() {
-		return this._value;
-	}
-	set value(nv) {
-		this._value = nv;
-	}
-	get total() {
-		return this._total;
-	}
-	set total(nv) {
-		this._total = nv;
-	}
+function GlobalProgress(window) {
+	this.init(window);
 }
-exports.GlobalProgress = GlobalProgressStub;
+
+/**
+ * Stub implementation, furthermore showing the interface
+ * Right now it is fairly similar to Win7 capabilities,
+ * but that may change in the future (UNFROZEN)
+ */
+GlobalProgress.prototype = {
+
+	init: function() {},
+	exit: function() {},
+	reset: function() {},
+
+	hide: function() {},
+	unknown: function() {},
+	pause: function() {},
+	activate: function() {},
+	error: function() {},
+
+	total: 0,
+	value: 0
+};
 
 try {
 	// Windows7
 	if (!Services.wintaskbar.available) {
 		// Service is present but not supported
-		throw new Error("not available");
+		throw new Exception("not available");
 	}
 	/* global NO_PROGRESS, INDETERMINATE, PAUSED, NORMAL, ERROR */
 	for (let s in Ci.nsITaskbarProgress) {
@@ -45,73 +40,72 @@ try {
 			this[s.slice(6)] = Ci.nsITaskbarProgress[s];
 		}
 	}
-	class GlobalProgress extends GlobalProgressStub {
-		constructor(window) {
-			super();
-			this._state = NO_PROGRESS;
+	GlobalProgress.prototype = {
+		_state: NO_PROGRESS,
+		init: function(window) {
 			let docShell = window.QueryInterface(Ci.nsIInterfaceRequestor).
 					getInterface(Ci.nsIWebNavigation).
 					QueryInterface(Ci.nsIDocShellTreeItem).treeOwner.
 					QueryInterface(Ci.nsIInterfaceRequestor).
 					getInterface(Ci.nsIXULWindow).docShell;
 			this._progress = Services.wintaskbar.getTaskbarProgress(docShell);
-		}
-		exit() {
+		},
+		exit: function() {
 			this.hide();
 			delete this._progress;
-		}
-		reset() {
+		},
+		reset: function() {
 			this._total = 1;
 			this._value = 0;
 			this.hide();
-		}
-		hide() {
+		},
+		hide: function() {
 			this._state = NO_PROGRESS;
 			this._setState();
-		}
-		unknown() {
+		},
+		unknown: function() {
 			this._state = INDETERMINATE;
 			this._setState();
-		}
-		pause(value, total) {
+		},
+		pause: function(value, total) {
 			if (value && total) {
 				this._value = value;
 				this._total = total;
 			}
 			this._state = PAUSED;
 			this._setState();
-		}
-		activate(value, total) {
+		},
+		activate: function(value, total) {
 			if (value && total) {
 				this._value = value;
 				this._total = total;
 			}
 			this._state = NORMAL;
 			this._setState();
-		}
-		error(value, total) {
+		},
+		error: function(value, total) {
 			if (value && total) {
 				this._value = value;
 				this._total = total;
 			}
 			this._state = ERROR;
 			this._setState();
-		}
+		},
 		get value() {
 			return this._value;
-		}
+		},
 		set value(nv) {
-			this.__value = nv.toFixed(0);
+			this._value = nv.toFixed(0);
 			this._setState();
-		}
+		},
 		get total() {
 			return this._total;
-		}
+		},
 		set total(nv) {
 			this._total = nv.toFixed(0);
 			this._setState();
-		}
-		_setState() {
+		},
+		_setState: function() {
 			if (this._state <= INDETERMINATE) {
 				this._progress.setProgressState(this._state);
 			}
@@ -122,11 +116,14 @@ try {
 					this._total
 					);
 			}
-		}
-	}
-	exports.GlobalProgress = GlobalProgress;
+		},
+		_total: 1,
+		_value: 0
+	};
 }
 catch (ex) {
 	// not available or failed to init
 	// Stub will be used!
 }
+
+exports.GlobalProgress = GlobalProgress;

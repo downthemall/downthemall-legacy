@@ -11,13 +11,6 @@ var IMAGE_FILTER = FilterManager.IMAGE_FILTER;
 
 var Prompts = require("prompts");
 
-function showBool(bool) {
-	if (bool === true || bool === "true") {
-		return "✓";
-	}
-	return "✘";
-}
-
 var Main = {
 	load: function() {
 		$('alert2').hidden = !('nsIAlertsService' in Ci);
@@ -481,7 +474,7 @@ var Servers = {
 		while (this._list.firstChild){
 			this._list.removeChild(this._list.firstChild);
 		}
-		for (let [,limit] of this.listLimits()) {
+		for (let [,limit] in Iterator(this.listLimits())) {
 			let e = document.createElement('richlistitem');
 			e.setAttribute('class', 'serverlimit');
 			e.setAttribute('id', "host" + limit.host);
@@ -490,7 +483,6 @@ var Servers = {
 			e.setAttribute('connections', limit.connections);
 			e.setAttribute('speed', limit.speed);
 			e.setAttribute('segments', limit.segments);
-			e.setAttribute('clean', limit.clean ? "true" : "false");
 			e.limit = limit;
 			this._list.appendChild(e);
 		}
@@ -516,7 +508,6 @@ var Servers = {
 			e.setAttribute('searchlabel', limit.host);
 			e.setAttribute('connections', limit.connections);
 			e.setAttribute('speed', limit.speed);
-			e.setAttribute('clean', limit.clean);
 			e.limit = limit;
 			this._list.appendChild(e);
 			this._list.selectedItem = e;

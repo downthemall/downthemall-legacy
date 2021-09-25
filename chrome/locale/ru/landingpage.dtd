@@ -11,11 +11,11 @@
 <!ENTITY amo.description.intro "DownThemAll - всё, что можно желать от менеджера загрузки: он имеет передовой ускоритель, который увеличивает скорость загрузки до 4x раз, позволяет вам делать паузу и возобновлять прерванные загрузки в любое время.">
 <!ENTITY amo.description.feat2 "DownThemAll быстр, надежен и прост в использовании! Он позволяет Вам загрузить все ссылки и изображения на странице и даже больше:с помощью настраиваемых фильтров Вы загрузите только то, что действительно хотите. Полностью контролируйте ваши загрузки, их скорость, количество параллельных соединений. Пользуйтесь Metalinks и добавляйте вручную зеркала для одновременной загрузки с разных серверов.">
 <!ENTITY amo.description.free2 "DownThemAll - открытое и бесплатное программное обеспечение. Никаких рекламных или шпионских программ, никакого отслеживания, никаких расходов!">
-<!ENTITY amo.description.more "Для получения дополнительной информации посетите страницу <a href='http://www.downthemall.net/howto/features/'>Возможности</a>.">
+<!ENTITY amo.description.more "Для получения дополнительной информации посетите страницу <a href='https://www.downthemall.org/howto/features/'>Возможности</a>.">
 <!ENTITY lp.title "О DownThemAll!">
 <!ENTITY lp.welcome "Добро пожаловать в DownThemAll!">
 <!ENTITY lp.info "Посмотрите видео, показывающее о том, как использовать DownThemAll! и узнайте больше о приватностьи и Ваших правах">
-<!ENTITY lp.moreinfo "Для получения дополнительной информации посетите нашу страницу <a href='http://www.downthemall.net/howto/features/'>возможности</a>.">
+<!ENTITY lp.moreinfo "Для получения дополнительной информации посетите нашу страницу <a href='https://www.downthemall.org/howto/features/'>возможности</a>.">
 <!ENTITY lp.gettingstarted "Начало работы">
 <!ENTITY lp.toolbar "Кнопки панели инструментов">
 <!ENTITY lp.privacy "Приватность">
@@ -86,7 +86,7 @@
 <!ENTITY lp.language.babelzilla "Если Вы владеете иностранными языками, то возможно вам захочется перевести это или другие дополнения на <a href='http://babelzilla.org'>babelzilla.org</a>.">
 <!ENTITY lp.yr.licensetitle "Авторские права и лицензии">
 <!ENTITY lp.yr.licensed "DownThemAll! распространяется по лицензии <a href='http://www.gnu.org/licenses/old-licenses/gpl-2.0.html'>GPL 2.0</a>. См. файл GPL. Это относится ко всем файлам исходного кода.">
-<!ENTITY lp.yr.morelicense3 "Отдельные файлы могут иметь дополнительные и/или другие лицензии. Смотрите соответствующие файлы в репозитории <a href='http://code.downthemall.net/repos/'>http://code.downthemall.net/repos/</a>. В основном файлы лицензированы под совместимой с GPL/LGPL MPL 2.0, или имеют три лицензии MPL 1.1/GPL 2.0/LGPL 2.1. Смотрите соответственно файлы MPL, GPL, LGPL.">
+<!ENTITY lp.yr.morelicense3 "Отдельные файлы могут иметь дополнительные и/или другие лицензии. Смотрите соответствующие файлы в репозитории <a href='https://code.downthemall.org/repos/'>https://code.downthemall.org/repos/</a>. В основном файлы лицензированы под совместимой с GPL/LGPL MPL 2.0, или имеют три лицензии MPL 1.1/GPL 2.0/LGPL 2.1. Смотрите соответственно файлы MPL, GPL, LGPL.">
 <!ENTITY lp.yr.gplintro "Из наиболее важных разделов GPL 2.0, никаких гарантий и ответственности за убытки, следует:">
 <!ENTITY lp.yr.icons "Художественные работы, изображения и кнопки">
 <!ENTITY lp.yr.iconsbased4 "основываются на работах Mike Matas, Mark James, the Noun Project и the Tango project">
@@ -95,7 +95,7 @@
 <!ENTITY lp.yr.logo3 "Дизайн логотипа DownThemAll!: Copyright © 2004-2013 Stefano Verna.">
 <!ENTITY lp.yr.logopermissions "Название и логотип DownThemAll! не могут быть использованы без разрешения в любой иной работе, за исключением ссылок на авторов и связанных с лицензией уведомлений.">
 <!ENTITY lp.ct.bugstitle "Сообщения об ошибках/Предложения">
-<!ENTITY lp.ct.bugs2 "Сообщайте об ошибках и пожеланиях на нашей <a href='https://bugs.downthemall.net/'>системе отслеживания ошибок</a>.">
+<!ENTITY lp.ct.bugs2 "Сообщайте об ошибках и пожеланиях на нашей <a href='https://bugs.downthemall.org/'>системе отслеживания ошибок</a>.">
 <!ENTITY lp.ct.contactstitle "Контакты">
 <!ENTITY lp.ct.contactsfeed2 "Нам будет приятно получить Ваши отзывы, подсказки и предложения о помощи.">
-<!ENTITY lp.ct.contacts "Пожалуйста, смотрите страницу <a href='http://www.downthemall.net/main/contacts/'>контакты</a>.">
+<!ENTITY lp.ct.contacts "Пожалуйста, смотрите страницу <a href='https://www.downthemall.org/main/contacts/'>контакты</a>.">

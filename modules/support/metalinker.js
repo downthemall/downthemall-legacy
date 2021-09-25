@@ -13,6 +13,7 @@ const NS_METALINKER3 = 'http://www.metalinker.org/';
 const NS_METALINK_RFC5854 = 'urn:ietf:params:xml:ns:metalink';
 
 const DTA = require("api");
+const Preferences = require("preferences");
 const {LOCALE} = require("version");
 const {UrlManager} = require("./urlmanager");
 const {NS_DTA, NS_HTML, normalizeMetaPrefs} = require("utils");
@@ -23,20 +24,32 @@ const XPathResult = Ci.nsIDOMXPathResult;
  * Parsed Metalink representation
  * (Do not construct yourself unless you know what you're doing)
  */
-class Metalink {
-	constructor(downloads, info, parser) {
-		this.downloads = downloads;
-		this.info = info;
-		this.parser = parser;
-	}
+function Metalink(downloads, info, parser) {
+	this.downloads = downloads;
+	this.info = info;
+	this.parser = parser;
 }
+Metalink.prototype = {
+	/**
+	 * Array of downloads
+	 */
+	downloads: [],
+	/**
+	 * Dict of general information
+	 */
+	info: {},
+	/**
+	 * Parser identifaction
+	 */
+	parser: ""
+};
 
-class Base {
-	constructor(doc, NS) {
-		this._doc = doc;
-		this._NS = NS;
-	}
-	lookupNamespaceURI(prefix) {
+function Base(doc, NS) {
+	this._doc = doc;
+	this._NS = NS;
+}
+Base.prototype = {
+	lookupNamespaceURI: function Base_lookupNamespaceURI(prefix) {
 		switch (prefix) {
 		case 'html':
 			return NS_HTML;
@@ -44,8 +57,8 @@ class Base {
 			return NS_DTA;
 		}
 		return this._NS;
-	}
-	getNodes(elem, query) {
+	},
+	getNodes: function (elem, query) {
 		let rv = [];
 		let iterator = this._doc.evaluate(
 			query,
@@ -58,19 +71,19 @@ class Base {
 			rv.push(n);
 		}
 		return rv;
-	}
-	getNode(elem, query) {
+	},
+	getNode: function Base_getNode(elem, query) {
 		let r = this.getNodes(elem, query);
 		if (r.length) {
 			return r.shift();
 		}
 		return null;
-	}
-	getSingle(elem, query) {
+	},
+	getSingle: function BasegetSingle(elem, query) {
 		let rv = this.getNode(elem, 'ml:' + query);
 		return rv ? rv.textContent.trim() : '';
-	}
-	getLinkRes(elem, query) {
+	},
+	getLinkRes: function BasegetLinkRes(elem, query) {
 		let rv = this.getNode(elem, 'ml:' + query);
 		if (rv) {
 			let n = this.getSingle(rv, 'name'), l = this.checkURL(this.getSingle(rv, 'url'));
@@ -79,8 +92,8 @@ class Base {
 			}
 		}
 		return null;
-	}
-	checkURL(url, allowed) {
+	},
+	checkURL: function Base_checkURL(url, allowed) {
 		if (!url) {
 			return null;
 		}
@@ -106,23 +119,23 @@ class Base {
 		}
 		return null;
 	}
-}
+};
 
 /**
  * Metalink3 Parser
  * @param doc document to parse
  * @return Metalink
  */
-class Metalinker3 extends Base {
-	constructor(doc) {
-		let root = doc.documentElement;
-		if (root.nodeName !== 'metalink' || root.getAttribute('version') !== '3.0') {
-			throw new Error('mlinvalid');
-		}
-		super(doc, NS_METALINKER3);
+function Metalinker3(doc) {
+	let root = doc.documentElement;
+	if (root.nodeName !== 'metalink' || root.getAttribute('version') !== '3.0') {
+		throw new Exception('mlinvalid');
 	}
-
-	parse(aReferrer) {
+	Base.call(this, doc, NS_METALINKER3);
+}
+Metalinker3.prototype = {
+	__proto__: Base.prototype,
+	parse: function ML3_parse(aReferrer) {
 		if (aReferrer && 'spec' in aReferrer) {
 			aReferrer = aReferrer.spec;
 		}
@@ -321,25 +334,26 @@ class Metalinker3 extends Base {
 		};
 		return new Metalink(downloads, info, "Metalinker Version 3.0");
 	}
-}
+};
 
 /**
  * Metalink RFC5854 (IETF) Parser
  * @param doc document to parse
  * @return Metalink
  */
-class MetalinkerRFC5854 extends Base {
-	constructor(doc) {
-		let root = doc.documentElement;
-		if (root.nodeName !== 'metalink' || root.namespaceURI !== NS_METALINK_RFC5854 ) {
-			if (log.enabled) {
-				log(LOG_DEBUG, root.nodeName + "\nns:" + root.namespaceURI);
-			}
-			throw new Error('mlinvalid');
+function MetalinkerRFC5854(doc) {
+	let root = doc.documentElement;
+	if (root.nodeName !== 'metalink' || root.namespaceURI !== NS_METALINK_RFC5854 ) {
+		if (log.enabled) {
+			log(LOG_DEBUG, root.nodeName + "\nns:" + root.namespaceURI);
 		}
-		super(doc, NS_METALINK_RFC5854);
+		throw new Exception('mlinvalid');
 	}
-	parse(aReferrer) {
+	Base.call(this, doc, NS_METALINK_RFC5854);
+}
+MetalinkerRFC5854.prototype = {
+	__proto__: Base.prototype,
+	parse: function ML4_parse(aReferrer) {
 		if (aReferrer && 'spec' in aReferrer) {
 			aReferrer = aReferrer.spec;
 		}
@@ -446,7 +460,6 @@ class MetalinkerRFC5854 extends Base {
 				}
 			}
 			if (hash) {
-				Cu.reportError(hash);
 				hash = new DTA.HashCollection(hash);
 				let pieces = this.getNodes(file, 'ml:pieces');
 				if (pieces.length) {
@@ -523,7 +536,7 @@ class MetalinkerRFC5854 extends Base {
 		};
 		return new Metalink(downloads, info, "Metalinker Version 4.0 (RFC5854/IETF)");
 	}
-}
+};
 
 const __parsers__ = [
 	Metalinker3,
@@ -538,7 +551,8 @@ const __parsers__ = [
  * @return async (Metalink) Parsed metalink data
  */
 function parse(aURI, aReferrer, aCallback) {
-	let xhr = new XMLHttpRequest();
+	let xhrLoad, xhrError;
+	let xhr = new Instances.XHR();
 	xhr.open("GET", aURI.spec);
 	log(LOG_DEBUG, "parsing metalink at " + aURI.spec);
 	xhr.overrideMimeType("application/xml");

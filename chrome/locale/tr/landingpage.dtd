@@ -11,11 +11,11 @@
 <!ENTITY amo.description.intro "DownThemAll'da bir indirme yöneticisinden beklediğiniz her şey var: indirmeyi 4 kata kadar hızlandıran ve indirmelerinizi istedğiniz zaman duraklatıp yeniden sürdürebileceğiniz gibi gelişmiş özellikler içerir.">
 <!ENTITY amo.description.feat2 "DownThemAll hızlı, güvenilir ve kolay kullanılan bir eklentidir! Eklenti, bir web sayfasındaki tüm bağlantıları ve görüntüleri indirmeyi sağladığı gibi daha bir çok şeyi de yapabilr: tümüyle özelleştirebileceğiniz kriterler getirip yalnızca istediğinizi indirebilecek biçimde indirmelerinize ince ayar yapabilir, indirmelerinizin tüm denetimini ele geçirebilr, hız ve paralel bağlantı sayılarını ayarlayabilir, Meta-bağlantıları kullanarak ya da elle yansılar ekleyerek bir dosyayı farklı sunuculardan aynı anda indirebilirsiniz.">
 <!ENTITY amo.description.free2 "DownThemAll açık kaynak ve ücretsizdir. Reklamlı-yazılım, Casus-yazılım, izleyici, ücretli değildir!">
-<!ENTITY amo.description.more "Daha fazla bilgi için <a href='http://www.downthemall.net/howto/features/'>Özellikler sayfasına</a> uğrayın.">
+<!ENTITY amo.description.more "Daha fazla bilgi için <a href='https://www.downthemall.org/howto/features/'>Özellikler sayfasına</a> uğrayın.">
 <!ENTITY lp.title "DownThemAll! Hakkında">
 <!ENTITY lp.welcome "DownThemAll Hoş Geldiniz!">
 <!ENTITY lp.info "DownThemAll'u nasıl kullanacağınızı gösteren izletilere göz atın ve gizlilik ve haklarınız hakkında daha fazlasını öğrenin.">
-<!ENTITY lp.moreinfo "Daha fazla bilgi için <a href='http://www.downthemall.net/howto/features/'>özellikler sayfasına</a> uğrayın.">
+<!ENTITY lp.moreinfo "Daha fazla bilgi için <a href='https://www.downthemall.org/howto/features/'>özellikler sayfasına</a> uğrayın.">
 <!ENTITY lp.gettingstarted "Başlarken">
 <!ENTITY lp.toolbar "Araç Çubuğu tuşları">
 <!ENTITY lp.privacy "Gizlilik">
@@ -86,7 +86,7 @@
 <!ENTITY lp.language.babelzilla "Başka dillerde de akıcıysanız lütfen <a href='http://babelzilla.org'>babelzilla.org</a>'a katılıp bu ve diğer güzel eklentileri çevirmede yardımcı olabilirsiniz.">
 <!ENTITY lp.yr.licensetitle "Telif Hakkı ve Lisans">
 <!ENTITY lp.yr.licensed "DownThemAll! <a href='http://www.gnu.org/licenses/old-licenses/gpl-2.0.html'>GPL 2.0</a> altında lisanslanmıştır. Bu lisans tüm kaynak kodları için geçerlidir.">
-<!ENTITY lp.yr.morelicense3 "Tekil dosyaların ek ya da farklı lisansları olabilir. <a href='http://code.downthemall.net/repos/'>http://code.downthemall.net/repos/</a> adresindeki ilgili depolanmış dosyalara bakın. Çoğu dosya GPL/LGPL-uyumlu MPL 2.0 lisanslanmış, ya da MPL1.1/GPL 2.0/LGPL 2.1 lisansları altında üçlü-lisanslanmıştır. Sırasıyla MPL, GPL, LGPL dosyalarına bakın.">
+<!ENTITY lp.yr.morelicense3 "Tekil dosyaların ek ya da farklı lisansları olabilir. <a href='https://code.downthemall.org/repos/'>https://code.downthemall.org/repos/</a> adresindeki ilgili depolanmış dosyalara bakın. Çoğu dosya GPL/LGPL-uyumlu MPL 2.0 lisanslanmış, ya da MPL1.1/GPL 2.0/LGPL 2.1 lisansları altında üçlü-lisanslanmıştır. Sırasıyla MPL, GPL, LGPL dosyalarına bakın.">
 <!ENTITY lp.yr.gplintro "GPL 2.0'daki en önemli kısımlar, garanti ve zarar sorumluluk reddi şu şekildedir:">
 <!ENTITY lp.yr.icons "Sanat çalışmaları, ikonlar ve düğmeler">
 <!ENTITY lp.yr.iconsbased4 "Mike Matas, Mark James, Noun Projesi ve Tango Projesi altındaki çalışmalara dayanır.">
@@ -95,7 +95,7 @@
 <!ENTITY lp.yr.logo3 "DownThemAll! logo tasarımı: Telif hakkı © 2004-2013 Stefano Verna.">
 <!ENTITY lp.yr.logopermissions "DownThemAll! adı ve logosu izin alınmaksızın ve emekverenler ile ilgili lisans bilgileri olmaksızın hiçbir yeni üretimde kullanılamaz.">
 <!ENTITY lp.ct.bugstitle "Hatâ bildirimi/Yeni özellik istekleri">
-<!ENTITY lp.ct.bugs2 "Lütfen her türlü hata ve özellik taleplerinizi <a href='https://bugs.downthemall.net/'>hata takipçimize</a> gönderin.">
+<!ENTITY lp.ct.bugs2 "Lütfen her türlü hata ve özellik taleplerinizi <a href='https://bugs.downthemall.org/'>hata takipçimize</a> gönderin.">
 <!ENTITY lp.ct.contactstitle "İletişim">
 <!ENTITY lp.ct.contactsfeed2 "Sizden geri bildirim, öneri ya da yardım teklifi almak da isteriz.">
-<!ENTITY lp.ct.contacts "Lütfen <a href='http://www.downthemall.net/main/contacts/'>iletişim sayfamıza</a> uğrayın.">
+<!ENTITY lp.ct.contacts "Lütfen <a href='https://www.downthemall.org/main/contacts/'>iletişim sayfamıza</a> uğrayın.">

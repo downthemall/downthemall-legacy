@@ -5,7 +5,7 @@
 
 const {URL} = require("api");
 const {memoize} = require("./memoize");
-const {getExtension} = require("./stringfuncs");
+const {getExtension, toURL} = require("./stringfuncs");
 
 const favCache = new LRUMap(200);
 
@@ -72,16 +72,9 @@ if ("mozIAsyncFavicons" in Ci && Services.favicons instanceof Ci.mozIAsyncFavico
 		const ficb = function(aFavURI) {
 			if (!aFavURI) {
 				log(LOG_DEBUG, "getFavIconAsync: failed " + spec + " " + uri.spec);
-				let path = uri.path || uri.pathQueryRef;
-				if (path !== "/") {
+				if (uri.path !== "/") {
 					uri = uri.clone();
-					if ("pathQueryRef" in uri) {
-						uri.pathQueryRef = "/";
-					}
-					else {
-						uri.path = "/";
-					}
-					path = "/";
+					uri.path = "/";
 					let hostSpec = uri.spec;
 					if (favCache.has(hostSpec)) {
 						let rv = favCache.get(hostSpec);
@@ -98,7 +91,7 @@ if ("mozIAsyncFavicons" in Ci && Services.favicons instanceof Ci.mozIAsyncFavico
 				return;
 			}
 			let rv = fis.getFaviconLinkForIcon(aFavURI).spec;
-			if (path !== "/") {
+			if (uri.path !== "/") {
 				favCache.set(uri.spec, rv);
 			}
 			callback.call(tp, rv, true);
@@ -118,12 +111,7 @@ else if ("nsIFaviconService" in Ci) {
 		let fi = fis.getFaviconImageForPage(uri);
 		if (!fi || fi.equals(defIcon)) {
 			uri = uri.clone();
-			if ("pathQueryRef" in uri) {
-				uri.pathQueryRef = "/";
-			}
-			else {
-				uri.path = "/";
-			}
+			uri.path = "";
 			if (favCache.has(uri.spec)) {
 				callback.call(tp, favCache.get(uri.spec));
 				return;
@@ -150,6 +138,7 @@ else {
 		callback.call(tp, getIcon(uri), false);
 	};
 }
+
 
 // The Windows icon loader does not support icons > 32px at the moment
 exports.getLargeIcon = (function() {

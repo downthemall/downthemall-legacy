@@ -45,17 +45,17 @@ exports.newUUIDString = function newUUIDString() {
  * @param stop Stop value (exclusive)
  * @param step Optional. Step value (default: 1/-1)
  */
-exports.range = function* range(...args) {
-	if (!args.length) {
+exports.range = function* range() {
+	if (!arguments.length) {
 		throw Components.results.NS_ERROR_INVALID_ARG;
 	}
-	let start = 0, stop = parseInt(args[0], 10), step;
-	if (args.length >= 2) {
+	let start = 0, stop = parseInt(arguments[0], 10), step;
+	if (arguments.length >= 2) {
 		start = stop;
-		stop = parseInt(args[1], 10);
+		stop = parseInt(arguments[1], 10);
 	}
-	if (args.length >= 3) {
-		step = parseInt(args[2], 10);
+	if (arguments.length >= 3) {
+		step = parseInt(arguments[2], 10);
 	}
 	else {
 		step = stop - start > 0 ? 1 : -1;
@@ -151,28 +151,12 @@ exports.mapInSitu = fmi.mapInSitu;
 exports.filterMapInSitu = fmi.filterMapInSitu;
 exports.mapFilterInSitu = fmi.mapFilterInSitu;
 
-exports.shuffle = function(a) {
-	let c, e = a.length;
-	if (e < 2) {
-		return;
-	}
-	if (e === 2) {
-		[a[0], a[1]] = [a[1], a[0]];
-		return;
-	}
-
-	while (e > 1) {
-		c = Math.floor(Math.random() * (e--));
-		// swap
-		[a[e], a[c]] = [a[c], a[e]];
-	}
-};
-
 exports.randint = function(min, max) {
 	min = Math.ceil(min);
 	max = Math.floor(max);
 	return Math.floor(Math.random() * (max - min)) + min;
 };
+
 
 /**
  * Sorts an array with natural sort order.
@@ -337,8 +321,8 @@ exports.SimpleIterator = Object.freeze(SimpleIterator);
  * regular JS properties.
  * @param properties (nsIProperties) initial properties
  */
-function Properties(...args) {
-	for (let p of args) {
+function Properties() {
+	for (let p of Array.slice(arguments)) {
 		this._parse(p);
 	}
 }
@@ -427,17 +411,16 @@ exports.Properties = Object.freeze(Properties);
 /**
  * Mime quality param constructor
  */
-class MimeQuality {
-	constructor() {
-		this._q = {};
-	}
-
+function MimeQuality() {
+	this._q = {};
+}
+MimeQuality.prototype = Object.freeze({
 	/**
 	 * Add new item
 	 * @param v (string) Parameter value
 	 * @param q (number) Quality number
 	 */
-	add(v, q) {
+	add: function(v, q) {
 		if (typeof q !== "number" || q > 1 || q < 0) {
 			throw new Error("Invalid q");
 		}
@@ -447,12 +430,12 @@ class MimeQuality {
 		}
 		this._q[q].push(v);
 		return this;
-	}
+	},
 	/**
 	 * String representation to be used as Mime parameter literal
 	 * @return Representation
 	 */
-	toString() {
+	toString: function() {
 		function qval(x, i) {
 			return i + (x >= 1 ? "" : ";q=" + x);
 		}
@@ -471,7 +454,7 @@ class MimeQuality {
 		});
 		return exports.mapInSitu(rv, e => e.v).join(",");
 	}
-}
+});
 exports.MimeQuality = Object.freeze(MimeQuality);
 
 let _bundles = Object.create(null);
@@ -490,8 +473,7 @@ function _loadBundles(urls) {
 			strings[s.key] = s.value;
 		}
 		if (uri.host === "dta") {
-			const path = uri.path || uri.pathQueryRef;
-			url = "chrome://dta-locale" + path.replace("/locale/", "/content/");
+			url = "chrome://dta-locale" + uri.path.replace("/locale/", "/content/");
 			log(LOG_DEBUG, "also loading: " + url);
 			for (let s of new SimpleIterator(bundle(url), Ci.nsIPropertyElement)) {
 				let k = s.key;
@@ -532,27 +514,31 @@ function _loadBundles(urls) {
  * @see _
  */
 var StringBundles_params;
-class StringBundles {
-	constructor(documentOrStrings) {
-		if (!('getElementsByTagNameNS' in documentOrStrings)) {
-			this._strings = _loadBundles(documentOrStrings);
-		}
-		else {
-			this._strings = _loadBundles(Array.map(
-				documentOrStrings.getElementsByTagNameNS(NS_DTA, 'stringbundle'),
+function StringBundles(documentOrStrings) {
+	if (!('getElementsByTagNameNS' in documentOrStrings)) {
+		this._strings = _loadBundles(documentOrStrings);
+	}
+	else {
+		this._strings = _loadBundles(Array.map(
+			documentOrStrings.getElementsByTagNameNS(NS_DTA, 'stringbundle'),
+			e => e.getAttribute('src')
+		).concat(
+			Array.map(
+				documentOrStrings.getElementsByTagNameNS(NS_XUL, 'stringbundle'),
 				e => e.getAttribute('src')
-			).concat(
-				Array.map(
-					documentOrStrings.getElementsByTagNameNS(NS_XUL, 'stringbundle'),
-					e => e.getAttribute('src')
-				)
-			));
-		}
+			)
+		));
 	}
-	getString(id) {
+}
+StringBundles._br = /%S/gi;
+StringBundles._repl = function() {
+	return StringBundles_params.shift();
+};
+StringBundles.prototype = Object.freeze({
+	getString: function(id) {
 		return this._strings[id];
-	}
-	getFormattedString(id, params, num) {
+	},
+	getFormattedString: function(id, params, num) {
 		let fmt = this.getString(id);
 		if (isFinite(num)) {
 			fmt = PluralForm.get(num, fmt);
@@ -566,11 +552,7 @@ class StringBundles {
 		}
 		return fmt;
 	}
-}
-StringBundles._br = /%S/gi;
-StringBundles._repl = function() {
-	return StringBundles_params.shift();
-};
+});
 const StringBundles_Observer = {
 	observe: function() {
 		_bundles = Object.create(null);
@@ -667,23 +649,23 @@ exports.normalizeMetaPrefs = function(urls) {
 
 const makeDirCache = new LRUMap(10);
 
-exports.makeDir = async function(dir, perms, force) {
+exports.makeDir = function*(dir, perms, force) {
 	if (!force && makeDirCache.has(dir.path)) {
 		return;
 	}
 	try {
-		await OS.File.makeDir(dir.path, {unixMode: perms});
+		yield OS.File.makeDir(dir.path, {unixMode: perms});
 		makeDirCache.set(dir.path, perms);
 	}
 	catch (ex if ex.becauseExists) {
 		// no op
 	}
 	catch (ex if ex.becauseNoSuchFile) {
-		await exports.makeDir(dir.parent, perms);
-		await exports.makeDir(dir, perms);
+		yield exports.makeDir(dir.parent, perms);
+		yield exports.makeDir(dir, perms);
 	}
 	catch (ex if ex.winLastError === 3) {
-		await exports.makeDir(dir.parent, perms);
-		await exports.makeDir(dir, perms);
+		yield exports.makeDir(dir.parent, perms);
+		yield exports.makeDir(dir, perms);
 	}
 };

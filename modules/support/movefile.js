@@ -16,7 +16,6 @@ let _killWorker = new Promise((resolve, reject) => {
 });
 
 let _worker = new ChromeWorker(BASE_PATH + "support/movefile_worker.js");
-
 function onmessage({data}) {
 	if (data.log) {
 		log(LOG_DEBUG, "movefile_worker said" + data.log);
@@ -45,13 +44,14 @@ function onmessage({data}) {
 }
 
 function onerror(e) {
-	log(LOG_ERROR, `moveFile worker died ${e.message} ${e.filename}:${e.linenumber} ${Object.keys(e)}`, e);
+	log(LOG_ERROR, "moveFile worker died " + e.message + " " + e.filename + " " + e.linenumber + " " + Object.keys(e), e);
 	_worker = null;
 	_kill();
 }
 
 _worker.onmessage = onmessage;
 _worker.onerror = onerror;
+
 
 const asyncShutdown = function() {
 	obs.removeExit(asyncShutdown);

@@ -7,9 +7,8 @@
 const Prefs = require("preferences");
 requireJoined(this, "constants");
 const {ByteBucket} = require("./bytebucket");
-const {filterInSitu, shuffle} = require("utils");
+const {filterInSitu} = require("utils");
 const obs = require("./observers");
-const domainprefs = require("./domainprefs");
 
 const TOPIC = 'DTA:serverlimits-changed';
 const PREFS = 'extensions.dta.serverlimit.';
@@ -21,130 +20,85 @@ const SCHEDULER_FAIR = 'fair';
 const SCHEDULER_RND = 'rnd';
 const SCHEDULER_LEGACY = 'legacy';
 
-let limits = new Map();
-
-const CONNECTIONS = Symbol.for("conns");
-const SPEED = Symbol.for("spd");
-const SEGMENTS = Symbol.for("seg");
-const CLEAN = Symbol.for("cleanRequest");
+let limits = {};
 
 const LIMIT_PROTO = {
-	c: Prefs.getExt("ntask", 2),
+	c: 2,
 	s: -1,
-	seg: 0,
-	cr: false,
+	seg: 0
 };
 Object.freeze(LIMIT_PROTO);
 
-class Limit {
-	constructor(host, isNew) {
-		this._host = host;
-		this._isNew = isNew;
-		try {
-			this.connections = domainprefs.getHost(this._host, CONNECTIONS, null);
-			if (!this.connections) {
-				throw new Error("domain pref not available");
-			}
-			this.speed = domainprefs.getHost(this._host, SPEED, LIMIT_PROTO.s);
-			this.segments = domainprefs.getHost(this._host, SEGMENTS, LIMIT_PROTO.seg);
-			this.clean = domainprefs.getHost(this._host, CLEAN, LIMIT_PROTO.cr);
-		}
-		catch (oex) {
-			try {
-				let branch = LIMITS_PREF + this._host;
-				let o = JSON.parse(Prefs.get(branch, ""));
-				for (let p in LIMIT_PROTO) {
-					if (!o.hasOwnProperty(p)) {
-						o[p] = LIMIT_PROTO[p];
-					}
-				}
-				this.connections = o.c;
-				this.speed = o.s;
-				this.segments = o.seg;
-				this.clean = o.cr;
-				this.save();
-				Prefs.resetBranch(branch);
-			}
-			catch (ex) {
-				this.connections = LIMIT_PROTO.c;
-				this.speed = LIMIT_PROTO.s;
-				this.segments = LIMIT_PROTO.seg;
-				this.clean = LIMIT_PROTO.cr;
+function Limit(host, isNew) {
+	this._host = host;
+	this._isNew = isNew;
+	let o = LIMIT_PROTO;
+	try {
+		o = JSON.parse(Prefs.get(LIMITS_PREF + this._host, ""));
+		for (let p in LIMIT_PROTO) {
+			if (!o.hasOwnProperty(p)) {
+				o[p] = LIMIT_PROTO[p];
 			}
 		}
 	}
-
-	get host() {
-		return this._host;
+	catch (ex) {
+		// no op;
 	}
-	get isNew() {
-		return this._isNew;
-	}
-	get connections() {
-		return this._connections;
-	}
+	this.connections = o.c;
+	this.speed = o.s;
+	this.segments = o.seg;
+}
+Limit.prototype = Object.freeze({
+	get host() { return this._host; },
+	get isNew() { return this._isNew; },
+	get connections() { return this._connections; },
 	set connections(value) {
 		if (!isFinite(value)) {
-			throw new Error("Invalid Limit");
+			throw new Exception("Invalid Limit");
 		}
 		this._connections = value;
-	}
-	get speed() {
-		return this._speed;
-	}
+	},
+	get speed() { return this._speed; },
 	set speed(value) {
 		if (!isFinite(value)) {
-			throw new Error("Invalid Limit");
+			throw new Exception("Invalid Limit");
 		}
 		this._speed = value;
-	}
-	get segments() {
-		return this._segments;
-	}
+	},
+	get segments() { return this._segments; },
 	set segments(value) {
 		if (!isFinite(value)) {
-			throw new Error("Invalid Limit");
+			throw new Exception("Invalid Limit");
 		}
 		this._segments = value;
-	}
-
-	save() {
-		limits.set(this._host, this);
-		domainprefs.setHost(this._host, CONNECTIONS, this.connections);
-		domainprefs.setHost(this._host, SPEED, this.speed);
-		domainprefs.setHost(this._host, SEGMENTS, this.segments);
-		domainprefs.setHost(this._host, CLEAN, this.clean);
+	},
+	save: function() {
+		Prefs.set(
+			LIMITS_PREF + this._host,
+			JSON.stringify({c: this._connections, s: this._speed, seg: this._segments})
+			);
 		this._isNew = false;
-	}
-
-	remove() {
-		limits.delete(this._host);
-		domainprefs.deleteHost(this._host, CONNECTIONS);
-		domainprefs.deleteHost(this._host, SPEED);
-		domainprefs.deleteHost(this._host, SEGMENTS);
-		domainprefs.deleteHost(this._host, CLEAN, this.clean);
+	},
+	remove: function() {
 		Prefs.reset(LIMITS_PREF + this._host);
+	},
+	toString: function() {
+		return this._host +
+			" conn: " + this._connections +
+			" speed: " + this._speed +
+			" segments:" + this._segments;
 	}
+});
 
-	toString() {
-		return `[Limit(conn: ${this._connections}, spd: ${this._speed}, seg: ${this._segments}, cr:${this.clean})]`;
-	}
-}
-
-const loadLimits = async function loadLimits() {
-	await domainprefs.load();
-	limits = new Map();
-	let dp = Array.from(domainprefs.enumHosts()).filter(h => domainprefs.getHost(h, CONNECTIONS));
+function loadLimits() {
+	limits = Object.create(null);
 	let hosts = Prefs.getChildren(LIMITS_PREF).map(e => e.substr(LIMITS_PREF.length));
-	log(LOG_DEBUG, "dp " + dp.join(", "));
-	log(LOG_DEBUG, "hosts " + hosts.join(", "));
-	hosts = Array.from((new Set(dp.concat(hosts))).values());
 	hosts.sort();
 
 	for (let host of hosts) {
 		try {
 			let limit = new Limit(host);
-			limits.set(limit.host, limit);
+			limits[limit.host] = limit;
 			log(LOG_DEBUG, "loaded limit: " + limit);
 		}
 		catch (ex) {
@@ -152,7 +106,7 @@ const loadLimits = async function loadLimits() {
 		}
 	}
 	obs.notify(null, TOPIC, null);
-};
+}
 
 function getEffectiveHost(url) {
 	try {
@@ -165,28 +119,31 @@ function getEffectiveHost(url) {
 
 function addLimit(host) {
 	host = getEffectiveHost(Services.fixups.createFixupURI(host, 0x0));
-	if (limits.has(host)) {
-		return limits.get(host);
+	if (host in limits) {
+		return limits[host];
 	}
 	return new Limit(host, true);
 }
 
 function listLimits() {
-	return limits.entries();
+	return limits;
 }
 
 function getLimitFor(d) {
 	let host = d.urlManager.domain;
-	return limits.get(host);
+	if (host in limits) {
+		return limits[host];
+	}
+	return null;
 }
+
 
 let globalConnections = -1;
 
-class BaseScheduler {
-	static _queuedFilter(e) {
-		return e.state === QUEUED;
-	}
-	next() {
+function BaseScheduler() {}
+BaseScheduler.prototype = Object.freeze({
+	_queuedFilter: function(e) { return e.state === QUEUED; },
+	next: function() {
 		for (let d; this._schedule.length;) {
 			d = this._schedule.shift();
 			if (d.state !== QUEUED) {
@@ -195,129 +152,126 @@ class BaseScheduler {
 			return d;
 		}
 		return null;
-	}
-
-	destroy() {
+	},
+	destroy: function() {
 		this._schedule.length = 0;
 		delete this._schedule;
 	}
-}
+});
+Object.freeze(BaseScheduler);
 
 // Legacy scheduler. Does not respect limits
 // Basically Olegacy(1)
-class LegacyScheduler extends BaseScheduler {
-	constructor(downloads) {
-		super();
-		this._schedule = downloads.filter(BaseScheduler._queuedFilter);
-	}
+function LegacyScheduler(downloads) {
+	this._schedule = downloads.filter(this._queuedFilter);
 }
-exports.LegacyScheduler = LegacyScheduler;
+LegacyScheduler.prototype = BaseScheduler.prototype;
+Object.freeze(LegacyScheduler);
 
 // Fast generator: Start downloads as in queue
-class FastScheduler extends BaseScheduler {
-	constructor(downloads, running) {
-		super();
-		this._downloads = [];
-		for (let i = 0, e = downloads.length; i < e; ++i) {
-			let d = downloads[i];
-			if (d.state === QUEUED) {
-				this._downloads.push(d);
-			}
+function FastScheduler(downloads, running) {
+	this._downloads = [];
+	for (let i = 0, e = downloads.length; i < e; ++i) {
+		let d = downloads[i];
+		if (d.state === QUEUED) {
+			this._downloads.push(d);
 		}
-		this._runCount = 0;
 	}
-
-	next(running) {
+	this._runCount = 0;
+	//this._downloads = downloads.filter(this._queuedFilter);
+}
+FastScheduler.prototype = Object.freeze({
+	__proto__: BaseScheduler.prototype,
+	next: function(running) {
 		if (!this._downloads.length) {
 			return null;
 		}
 
-		let downloading = new Map();
-		let i, e, d;
+		let downloadSet = Object.create(null);
+		let i, e, d, host;
 
 		if (this._runCount > 50) {
-			filterInSitu(this._downloads, BaseScheduler._queuedFilter);
+			filterInSitu(this._downloads, this._queuedFilter);
 			this._runCount = 0;
 		}
 
 		// count running downloads per host
-		for (let r of running) {
-			if (r.totalSize && r.totalSize < 1024*1024) {
+		for (i = 0, e = running.length; i < e; ++i) {
+			if (running[i].totalSize && running[i].totalSize < 1024*1024) {
 				continue;
 			}
-			let host = r.urlManager.domain;
-			downloading.set(host, (downloading.get(host) || 0) + 1);
+			host = running[i].urlManager.domain;
+			downloadSet[host] = ++downloadSet[host] || 1;
 		}
 
 		// calculate available slots
 		// negative means: available, else not available;
-		for (let [host, count] of downloading.entries()) {
-			let limit = limits.get(host);
-			if (limit) {
-				i = limit.connections;
+		for (host in downloadSet) {
+			if (host in limits) {
+				i = limits[host].connections;
 			}
 			else {
 				i = globalConnections;
 			}
 			if (i <= 0) {
 				// no limit
-				i = -1;
+				downloadSet[host] = -1;
 			}
-			downloading.set(host, count - i);
+			else {
+				downloadSet[host] -= i;
+			}
 		}
 
 		for (i = 0, e = this._downloads.length; i < e; ++i) {
-			let d = this._downloads[i];
+			d = this._downloads[i];
 
 			if (!d || d.state !== QUEUED) {
 				continue;
 			}
-			let host = d.urlManager.domain;
-			//log(LOG_ERROR, "fair check: " + host + " downloading:" + downloading.get(host, -1));
+			host = d.urlManager.domain;
 
 			// no running downloads for this host yet
-			if (!downloading.has(host)) {
+			if (!(host in downloadSet)) {
 				this._runCount++;
 				return d;
 			}
-			// free slot
-			if (downloading.get(host) < 0) {
+
+			if (downloadSet[host] < 0) {
 				this._runCount++;
 				return d;
 			}
 		}
 		return null;
-	}
-
-	destroy() {
+	},
+	destroy: function() {
 		this._downloads.length = 0;
 		delete this._downloads;
 	}
-}
-exports.FastScheduler = FastScheduler;
+});
+Object.freeze(FastScheduler);
 
 // Fair Scheduler: evenly distribute slots
 // Performs worse than FastScheduler but is more precise.
-class FairScheduler extends BaseScheduler {
-	constructor(downloads) {
-		super();
-		this._downloadSet = Object.create(null);
+function FairScheduler(downloads) {
+	this._downloadSet = Object.create(null);
 
-		// set up our internal state
-		for (let i = 0, e = downloads.length, d, host; i < e; ++i) {
-			d = downloads[i];
-			if (d.state !== QUEUED) {
-				continue;
-			}
-			host = d.urlManager.domain;
-			if (!(host in this._downloadSet)) {
-				this._downloadSet[host] = new FairScheduler.SchedItem(host);
-			}
-			this._downloadSet[host].push(d);
+	// set up our internal state
+	for (let i = 0, e = downloads.length, d, host; i < e; ++i) {
+		d = downloads[i];
+		if (d.state !== QUEUED) {
+			continue;
 		}
+		host = d.urlManager.domain;
+		if (!(host in this._downloadSet)) {
+			this._downloadSet[host] = new FairScheduler.SchedItem(host);
+		}
+		this._downloadSet[host].push(d);
 	}
+}
+FairScheduler.prototype = Object.freeze({
+	__proto__: BaseScheduler.prototype,
 
-	next(running) {
+	next: function(running) {
 		let i, e, d, host;
 
 		// reset all counters
@@ -326,11 +280,12 @@ class FairScheduler extends BaseScheduler {
 		}
 
 		// Count the running tasks
-		for (let r of running) {
-			if (r.totalSize && r.totalSize < 1024*1024) {
+		for (i = 0, e = running.length; i < e; ++i) {
+			if (running[i].totalSize && running[i].totalSize < 1024*1024) {
 				continue;
 			}
-			host = r.urlManager.domain;
+			d = running[i];
+			host = d.urlManager.domain;
 			if (!(host in this._downloadSet)) {
 				// we don't care, because we don't have any more queued downloads for this host
 				continue;
@@ -363,91 +318,70 @@ class FairScheduler extends BaseScheduler {
 			return d;
 		}
 		return null;
-	}
-
-	destroy() {
+	},
+	destroy: function() {
 		for (let k in this._downloadSet) {
 			this._downloadSet[k].destroy();
 			delete this._downloadSet[k];
 		}
 		this._downloadSet = null;
 	}
-}
-FairScheduler.SchedItem = class {
-	constructor(host) {
-		this.host = host;
-		this.limit = 0;
-		let limit = limits.get(host);
-		if (limit) {
-			this.limit = limit.connections;
-		}
-		else {
-			this.limit = globalConnections;
-		}
-		this.downloads = [];
-		this.resetCounter();
+});
+FairScheduler.SchedItem = function(host) {
+	this.host = host;
+	this.limit = 0;
+	if (host in limits) {
+		this.limit = limits[host].connections;
 	}
-
-	get available() {
-		return this.limit <= 0 || this.n < this.limit;
+	else {
+		this.limit = globalConnections;
 	}
-
-	inc() {
-		this.n++;
-	}
-	resetCounter() {
-		return this.n = 0;
-	}
-
-	toString() {
-		return this.host;
-	}
-
-	get length() {
-		return this.downloads.length;
-	}
-
-	shift() {
+	this.downloads = [];
+	this.resetCounter();
+};
+FairScheduler.SchedItem.prototype = Object.freeze({
+	get available() { return this.limit <= 0 || this.n < this.limit; },
+	inc: function() { this.n++; },
+	resetCounter: function() { return this.n = 0; },
+	toString: function() { return this.host; },
+	get length() { return this.downloads.length; },
+	shift: function() {
 		++this.n;
 		return this.downloads.shift();
-	}
-
-	pop() {
+	},
+	pop: function() {
 		++this.n;
 		return this.downloads.pop();
-	}
-
-	push(d) {
-		return this.downloads.push(d);
-	}
-	destroy() {
+	},
+	push: function(d) { return this.downloads.push(d); },
+	destroy: function() {
 		this.downloads.length = 0;
 		delete this.downloads;
 	}
-};
-exports.FairScheduler = FairScheduler;
+});
+Object.freeze(FairScheduler);
 
 // Fair Dir Scheduler: evenly distribute slots
-class DirScheduler extends BaseScheduler {
-	constructor(downloads) {
-		super();
-		this._downloadSet = Object.create(null);
+function DirScheduler(downloads) {
+	this._downloadSet = Object.create(null);
 
-		// set up our internal state
-		for (let i = 0, e = downloads.length, d, dir; i < e; ++i) {
-			d = downloads[i];
-			if (d.state !== QUEUED) {
-				continue;
-			}
-			dir = d.destinationPath;
-			if (!(dir in this._downloadSet)) {
-				this._downloadSet[dir] = new FairScheduler.SchedItem(dir);
-			}
-			this._downloadSet[dir].push(d);
+	// set up our internal state
+	for (let i = 0, e = downloads.length, d, dir; i < e; ++i) {
+		d = downloads[i];
+		if (d.state !== QUEUED) {
+			continue;
 		}
+		dir = d.destinationPath;
+		if (!(dir in this._downloadSet)) {
+			this._downloadSet[dir] = new FairScheduler.SchedItem(dir);
+		}
+		this._downloadSet[dir].push(d);
 	}
+}
+DirScheduler.prototype = Object.freeze({
+	__proto__: BaseScheduler.prototype,
 
-	next(running) {
+	next: function(running) {
 		let i, e, d, dir;
 
 		// reset all counters
@@ -456,7 +390,8 @@ class DirScheduler extends BaseScheduler {
 		}
 
 		// Count the running tasks
-		for (let d of running) {
+		for (i = 0, e = running.length; i < e; ++i) {
+			d = running[i];
 			dir = d.destinationPath;
 			if (!(dir in this._downloadSet)) {
 				// we don't care, because we don't have any more queued downloads for this directory
@@ -490,26 +425,33 @@ class DirScheduler extends BaseScheduler {
 			return d;
 		}
 		return null;
-	}
-	destroy() {
-		for (let k in this._downloadSet) {
-			this._downloadSet[k].destroy();
-			delete this._downloadSet[k];
-		}
-		this._downloadSet = null;
-	}
-}
-exports.DirScheduler = DirScheduler;
+	},
+	destroy: FairScheduler.prototype.destroy,
+});
+Object.freeze(DirScheduler);
 
 //Random scheduler. Does not respect limits
-class RndScheduler extends BaseScheduler {
-	constructor(downloads, running) {
-		super();
-		this._schedule = downloads.filter(BaseScheduler._queuedFilter);
-		shuffle(this._schedule);
-	}
+function RndScheduler(downloads, running) {
+	this._schedule = downloads.filter(this._queuedFilter);
+	this.shuffle(this._schedule);
 }
-exports.RndScheduler = RndScheduler;
+// Fisher-Yates based shuffle
+RndScheduler.prototype = Object.freeze({
+	__proto__: BaseScheduler.prototype,
+	shuffle: function shuffle(a) {
+		let c, e = a.length;
+		if (e < 4) {
+			// no need to shuffle for such small sets
+			return;
+		}
+		while (e > 1) {
+			c = Math.floor(Math.random() * (e--));
+			// swap
+			[a[e], a[c]] = [a[c], a[e]];
+		}
+	}
+});
+Object.freeze(RndScheduler);
 
 let Scheduler;
 function loadScheduler() {
@@ -540,8 +482,8 @@ var buckets = Object.create(null);
 var unlimitedBucket = new ByteBucket(-1, 1.0, "unlimited");
 function loadServerBuckets() {
 	for (let b in buckets) {
-		if (limits.has(b)) {
-			buckets[b].byteRate = limits.get(b).speed * 1024;
+		if (b in limits) {
+			buckets[b].byteRate = limits[b].speed * 1024;
 		}
 		else {
 			buckets[b].byteRate = -1;
@@ -556,8 +498,8 @@ function getServerBucket(d) {
 	if (host in buckets) {
 		return buckets[host];
 	}
-	if (limits.has(host)) {
-		return (buckets[host] = new ByteBucket(limits.get(host).speed * 1024, 1.2, host));
+	if (host in limits) {
+		return (buckets[host] = new ByteBucket(limits[host].speed * 1024, 1.2, host));
 	}
 	return unlimitedBucket;
 }
@@ -576,7 +518,6 @@ const Observer = {
 	}
 };
 Prefs.addObserver(PREFS, Observer);
-require("./observers").add(Observer, "DTA:domain-prefs");
 unload(() => Observer.unload());
 Observer.observe();
 

@@ -11,16 +11,16 @@ const COMMON_ATOMS = [
 
 const _as = Cc["@mozilla.org/atom-service;1"].getService(Ci.nsIAtomService);
 
-class Atoms {
-	constructor(...args) {
-		for (let i = 0; i < args.length; ++i) {
-			this.getAtom(args[i]);
-		}
-	}
-	getAtom(atom) {
-		return this[atom] || (this[atom] = _as.getAtom(atom));
+function Atoms() {
+	for (let i = 0; i < arguments.length; ++i) {
+		this.getAtom(arguments[i]);
 	}
 }
+Atoms.prototype = {
+	getAtom: function(atom) {
+		return this[atom] || (this[atom] = _as.getAtom(atom));
+	}
+};
 exports.Atoms = Atoms;
 
 for (let atom of COMMON_ATOMS) {

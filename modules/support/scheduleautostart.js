@@ -5,7 +5,7 @@
 
 const Prefs = require("preferences");
 const {QUEUED} = require("constants");
-const {setTimeout, clearTimeout} = require("./defer");
+const {TimerManager} = require("./timers");
 
 //Add some helpers to Date
 //Note to reviewers: Our scope, our rules ;)
@@ -23,6 +23,8 @@ Date.__defineGetter__("today", function() {
 	return rv;
 });
 
+const Timers = new TimerManager();
+
 /* global DTA */
 lazy(this, "DTA", () => require("api"));
 /* global QueueStore */
@@ -36,7 +38,7 @@ const Observer = {
 		log(LOG_DEBUG, "scheduler running");
 	},
 	unload: function() {
-		this.cancelTimer();
+		Timers.killAllTimers();
 	},
 	observe: function(s, topic, d) {
 		if (!this.immediatelyOpened) {
@@ -49,7 +51,7 @@ const Observer = {
 	openManager: function() {
 		let wnd = require("./mediator").getMostRecent();
 		if (!wnd) {
-			setTimeout(() => this.openManager(), 1000);
+			Timers.createOneshot(1000, this.openManager.bind(this));
 			return;
 		}
 		DTA.openManager(wnd);
@@ -99,7 +101,7 @@ const Observer = {
 		if (!this.timer) {
 			return;
 		}
-		clearTimeout(this.timer);
+		Timers.killTimer(this.timer);
 		this.timer = null;
 	},
 	scheduleNext: function() {
@@ -112,7 +114,7 @@ const Observer = {
 			current.addDays(1);
 		}
 		current = current.valueOf() - now.valueOf() + 1000;
-		this.timer = setTimeout(() => this.openIfInRange(), current);
+		this.timer = Timers.createOneshot(current, this.openIfInRange, this);
 	}
 };
 Observer.init();

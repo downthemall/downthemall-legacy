@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
-/* global $, $$, _, Preferences, Dialog, Utils, mapInSitu, RequestManipulation, hash, showPreferences, defer */
+/* global $, $$, _, Preferences, Dialog, Utils, mapInSitu, RequestManipulation, hash, showPreferences, Timers, defer */
 /* global COMPLETE, PAUSED, CANCELED, RUNNING, SPEED_COUNT, TOOLTIP_FREQ */
 /* jshint globalstrict: true, strict:true, browser:true */
 
@@ -209,8 +209,8 @@ var Prefs = {
 	_currentConns: 0,
 	refreshConnPrefs: function(downloads) {
 		let conns = 0;
-		for (let d of downloads) {
-			conns += d.activeChunks;
+		for (let i = 0, e = downloads.length; i < e; i++) {
+			conns += downloads[i].activeChunks;
 		}
 		conns = Math.max(this._baselineConns, Math.min(50, conns));
 		if (this._currentConns !== conns) {
@@ -347,7 +347,7 @@ var Tooltip = {
 			this.speedCanvas.hidden = false;
 			this.speedRow.collapsed = false;
 		}
-		this._timer = setInterval(() => this.update(), TOOLTIP_FREQ);
+		this._timer = Timers.createRepeating(TOOLTIP_FREQ, this.update, this, true);
 		this._initUpdateRetries = 0;
 		this.initUpdate();
 	},
@@ -396,7 +396,7 @@ var Tooltip = {
 	stop: function() {
 		this._current = null;
 		if (this._timer) {
-			clearInterval(this._timer);
+			Timers.killTimer(this._timer);
 			delete this._timer;
 		}
 	},

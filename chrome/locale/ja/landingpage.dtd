@@ -11,11 +11,11 @@
 <!ENTITY amo.description.intro "DownThemAll! はダウンロードマネージャーからダウンロードを制御できます: アクセラレーションを使用した 4 倍速のダウンロードや、ダウンロードの一時停止と再開ができます。">
 <!ENTITY amo.description.feat2 "DownThemAll は簡単に扱えるだけでなく、高速で頼りになるダウンローダーです! ウェブページに含まれるリンクや画像をすべてダウンロードできます: カスタマイズ機能を使用してあなたが必要とするものだけをダウンロードすることもできます。また、ダウンロード速度やサーバーへの同時接続数等も制御できます。メタリンクやミラーリングを使用すると異なるサーバーから同時にファイルをダウンロードできます。">
 <!ENTITY amo.description.free2 "DownThemAll はオープンソースのフリーウェアです。アドウェアもスパイウェアも追跡もありません。しかも無料で使い続けることができます！">
-<!ENTITY amo.description.more "その他の詳細な情報は <a href='http://www.downthemall.net/howto/features/'>ホームページ</a> をご覧ください。">
+<!ENTITY amo.description.more "その他の詳細な情報は <a href='https://www.downthemall.org/howto/features/'>ホームページ</a> をご覧ください。">
 <!ENTITY lp.title "DownThemAll! について">
 <!ENTITY lp.welcome "DownThemAll! のご使用ありがとうございます">
 <!ENTITY lp.info "DownThemAll! の使い方、プライバシーとあなたの権利について、ビデオで学んでください">
-<!ENTITY lp.moreinfo "その他の詳しい情報は <a href='http://www.downthemall.net/howto/features/'>機能紹介のページ</a> をご覧ください。">
+<!ENTITY lp.moreinfo "その他の詳しい情報は <a href='https://www.downthemall.org/howto/features/'>機能紹介のページ</a> をご覧ください。">
 <!ENTITY lp.gettingstarted "スタートガイド">
 <!ENTITY lp.toolbar "ツールバーボタン">
 <!ENTITY lp.privacy "プライバシー">
@@ -86,7 +86,7 @@
 <!ENTITY lp.language.babelzilla "複数の言語に堪能な方は、<a href='http://babelzilla.org'>babelzilla.org</a> に参加して DownThemAll!! の他の言語への翻訳にご協力ください。">
 <!ENTITY lp.yr.licensetitle "著作権とライセンス">
 <!ENTITY lp.yr.licensed "DownThemAll! は <a href='http://www.gnu.org/licenses/old-licenses/gpl-2.0.html'>GPL 2.0</a> の下でライセンスされています。ライセンスに関する詳細は GPL ファイルをご覧ください。 このライセンスはすべてのソースコードファイルに対して適用されます。">
-<!ENTITY lp.yr.morelicense3 "ソースコード以外のファイルの中には異なるライセンスや追加のライセンスを適用している場合があります。詳しくは <a href='http://code.downthemall.net/repos/'>http://code.downthemall.net/repos/</a> リポジトリから個々のファイルを確認してください。多くのファイルが GPL/LGPL と互換性のある MPL 2.0　か MPL 1.1/GPL 2.0/LGPL 2.1 のトリプルライセンスで提供されいます。各ライセンスについては MPL、GPL、LGPL のファイルをご覧ください。">
+<!ENTITY lp.yr.morelicense3 "ソースコード以外のファイルの中には異なるライセンスや追加のライセンスを適用している場合があります。詳しくは <a href='https://code.downthemall.org/repos/'>https://code.downthemall.org/repos/</a> リポジトリから個々のファイルを確認してください。多くのファイルが GPL/LGPL と互換性のある MPL 2.0　か MPL 1.1/GPL 2.0/LGPL 2.1 のトリプルライセンスで提供されいます。各ライセンスについては MPL、GPL、LGPL のファイルをご覧ください。">
 <!ENTITY lp.yr.gplintro "GPL 2.0 重要な一部分 (無保証と免責事項) を抜粋して以下に表示します:">
 <!ENTITY lp.yr.icons "アートワーク、アイコンとボタン">
 <!ENTITY lp.yr.iconsbased4 "は、Mike Matas, Mark James, Noun Project および Tango project の作品を基にしています">
@@ -95,7 +95,7 @@
 <!ENTITY lp.yr.logo3 "DownThemAll! ロゴデザイン: Copyright © 2004-2013 by Stefano Verna.">
 <!ENTITY lp.yr.logopermissions "The DownThemAll! name and logo cannot be used without permission in any derivative work, with exception of credits and license-related notices.">
 <!ENTITY lp.ct.bugstitle "バグの報告と新しい機能の提案">
-<!ENTITY lp.ct.bugs2 "不具合や要望は、私たちの <a href='https://bugs.downthemall.net/'>bug tracker</a> に報告してください。">
+<!ENTITY lp.ct.bugs2 "不具合や要望は、私たちの <a href='https://bugs.downthemall.org/'>bug tracker</a> に報告してください。">
 <!ENTITY lp.ct.contactstitle "連絡先">
 <!ENTITY lp.ct.contactsfeed2 "あなたからのフィードバックや提案、協力の申し出をお待ちしております。">
-<!ENTITY lp.ct.contacts "詳しくは <a href='http://www.downthemall.net/main/contacts/'>連絡先ページ</a> をご覧ください。">
+<!ENTITY lp.ct.contacts "詳しくは <a href='https://www.downthemall.org/main/contacts/'>連絡先ページ</a> をご覧ください。">

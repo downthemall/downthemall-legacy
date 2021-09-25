@@ -8,6 +8,7 @@ const {memoize} = require("./memoize");
 const rbc_u = /[\n\r\v?:<>*|"]/g;
 const rbc_w = /%(?:25)?20/g;
 const rsl_r = /[\/\\]/g;
+const gufn_u = /\?.*$/;
 
 const SYSTEMSLASH = (function() {
 	let f = Services.dirsvc.get("TmpD", Ci.nsIFile);

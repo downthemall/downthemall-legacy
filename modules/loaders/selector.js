@@ -5,6 +5,125 @@
 
 /* globals addEventListener, removeEventListener, setTimeout, content */
 
+function Selector(bgimages, handler) {
+	this._callback = evt => {
+		return this.onClickOneClick(evt);
+	};
+	this._handler = handler;
+
+	addEventListener('click', this._callback, true);
+	addEventListener('mouseup', this._callback, false);
+	addEventListener('mousemove', this._callback, false);
+	this.observe(bgimages);
+}
+
+Selector.prototype = {
+	dispose: function() {
+		removeEventListener('click', this._callback, true);
+		removeEventListener('mouseup', this._callback, false);
+		removeEventListener('mousemove', this._callback, false);
+		this.detachHilight();
+	},
+	detachHilight: function () {
+		if (this._hilight) {
+			this._hilight.hide();
+			delete this._hilight;
+		}
+	},
+	getBgImage: function(e) {
+		if (!e || !e.ownerDocument) {
+			return null;
+		}
+		let url = e.ownerDocument.defaultView.getComputedStyle(e, "").getPropertyCSSValue('background-image');
+		if (url && url.primitiveType === content.CSSPrimitiveValue.CSS_URI) {
+			return {elem: e, url: url.getStringValue()};
+		}
+		return this.getBgImage(e.parentNode);
+	},
+	findElemUnderCursor: function (e, n, a) {
+		if (n === 'bgimg') {
+			return this.getBgImage(e);
+		}
+		if (!e || !e.localName) {
+			return null;
+		}
+		if (e.localName.toLowerCase() === n && e[a]) {
+			if (n === "a") {
+				return {elem: e, url: e[a], download: e.getAttribute("download")};
+			}
+			return {elem: e, url: e[a] };
+		}
+		return this.findElemUnderCursor(e.parentNode, n, a);
+	},
+	cancelEvent: function (evt) {
+		if (!evt.cancelable) {
+			return;
+		}
+		evt.preventDefault();
+		evt.stopPropagation();
+	},
+	onClickOneClick: function(evt) {
+		let target = evt.target;
+		let doc = target.ownerDocument;
+
+		function processRegular(e) {
+			let m = this.findElemUnderCursor(target, e[0], e[1]);
+			if (!m) {
+				return false;
+			}
+			try {
+				if (!this._handler(doc, m)) {
+					return false;
+				}
+				this.detachHilight();
+				new Flasher(m.elem).hide();
+				return true;
+			}
+			catch (ex) {
+				log(LOG_ERROR, "processRegular", ex);
+			}
+			return false;
+		}
+		function highlightElement(e) {
+			let m = this.findElemUnderCursor(target, e[0], e[1]);
+			if (!m) {
+				return false;
+			}
+			if (this._hilight && this._hilight.elem === m.elem) {
+				return true;
+			}
+			this.detachHilight();
+			this._hilight = new Highlighter(m.elem);
+			return true;
+		}
+
+		if (evt.type === 'click') {
+			if (evt.button === 0 && !!target &&
+				target.nodeType === 1 &&
+				(!target.namespaceURI || target.namespaceURI === 'http://www.w3.org/1999/xhtml')) {
+				if (this._searchee.some(processRegular, this)) {
+					this.cancelEvent(evt);
+				}
+			}
+		}
+		else if (evt.type === 'mousemove') {
+			if (!this._searchee.some(highlightElement, this)) {
+				this.detachHilight();
+			}
+		}
+	},
+	observe: function(bgimgs) {
+		let searchee = [
+			['a', 'href'],
+			['img', 'src']
+		];
+		if (bgimgs) {
+			searchee.push(['bgimg', 'bgimg']);
+		}
+		this._searchee = searchee;
+	}
+};
+
 function Flasher(elem) {
 	this.elem = elem;
 	this.doc = elem.ownerDocument;
@@ -166,126 +285,6 @@ Highlighter.prototype = {
 		for (let div of this._divs) {
 			div.parentNode.removeChild(div);
 		}
-	}
-};
-
-
-function Selector(bgimages, handler) {
-	this._callback = evt => {
-		return this.onClickOneClick(evt);
-	};
-	this._handler = handler;
-
-	addEventListener('click', this._callback, true);
-	addEventListener('mouseup', this._callback, false);
-	addEventListener('mousemove', this._callback, false);
-	this.observe(bgimages);
-}
-
-Selector.prototype = {
-	dispose: function() {
-		removeEventListener('click', this._callback, true);
-		removeEventListener('mouseup', this._callback, false);
-		removeEventListener('mousemove', this._callback, false);
-		this.detachHilight();
-	},
-	detachHilight: function () {
-		if (this._hilight) {
-			this._hilight.hide();
-			delete this._hilight;
-		}
-	},
-	getBgImage: function(e) {
-		if (!e || !e.ownerDocument) {
-			return null;
-		}
-		let url = e.ownerDocument.defaultView.getComputedStyle(e, "").getPropertyCSSValue('background-image');
-		if (url && url.primitiveType === content.CSSPrimitiveValue.CSS_URI) {
-			return {elem: e, url: url.getStringValue()};
-		}
-		return this.getBgImage(e.parentNode);
-	},
-	findElemUnderCursor: function (e, n, a) {
-		if (n === 'bgimg') {
-			return this.getBgImage(e);
-		}
-		if (!e || !e.localName) {
-			return null;
-		}
-		if (e.localName.toLowerCase() === n && e[a]) {
-			if (n === "a") {
-				return {elem: e, url: e[a], download: e.getAttribute("download")};
-			}
-			return {elem: e, url: e[a] };
-		}
-		return this.findElemUnderCursor(e.parentNode, n, a);
-	},
-	cancelEvent: function (evt) {
-		if (!evt.cancelable) {
-			return;
-		}
-		evt.preventDefault();
-		evt.stopPropagation();
-	},
-	onClickOneClick: function(evt) {
-		let target = evt.target;
-		let doc = target.ownerDocument;
-
-		function processRegular(e) {
-			let m = this.findElemUnderCursor(target, e[0], e[1]);
-			if (!m) {
-				return false;
-			}
-			try {
-				if (!this._handler(doc, m)) {
-					return false;
-				}
-				this.detachHilight();
-				new Flasher(m.elem).hide();
-				return true;
-			}
-			catch (ex) {
-				log(LOG_ERROR, "processRegular", ex);
-			}
-			return false;
-		}
-		function highlightElement(e) {
-			let m = this.findElemUnderCursor(target, e[0], e[1]);
-			if (!m) {
-				return false;
-			}
-			if (this._hilight && this._hilight.elem === m.elem) {
-				return true;
-			}
-			this.detachHilight();
-			this._hilight = new Highlighter(m.elem);
-			return true;
-		}
-
-		if (evt.type === 'click') {
-			if (evt.button === 0 && !!target &&
-				target.nodeType === 1 &&
-				(!target.namespaceURI || target.namespaceURI === 'http://www.w3.org/1999/xhtml')) {
-				if (this._searchee.some(processRegular, this)) {
-					this.cancelEvent(evt);
-				}
-			}
-		}
-		else if (evt.type === 'mousemove') {
-			if (!this._searchee.some(highlightElement, this)) {
-				this.detachHilight();
-			}
-		}
-	},
-	observe: function(bgimgs) {
-		let searchee = [
-			['a', 'href'],
-			['img', 'src']
-		];
-		if (bgimgs) {
-			searchee.push(['bgimg', 'bgimg']);
-		}
-		this._searchee = searchee;
 	}
 };
 

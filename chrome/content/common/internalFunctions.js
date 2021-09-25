@@ -4,8 +4,8 @@
 
 /* dTa-only code! - DO NOT include in overlays or such! */
 "use strict";
-/* jshint browser:true */
-/* global _, Cc:true, Ci:true, Cu:true, Cr:true, ctor:true, Exception:true */
+/* jshint strict:true, globalstrict:true, browser:true */
+/* global _, Cc:true, Ci:true, Cr:true, Cu:true, ctor:true, Exception:true */
 var Cc = Components.classes;
 var Ci = Components.interfaces;
 var Cr = Components.results;
@@ -48,8 +48,7 @@ var getLargeIcon = (function() {
 var getFavIcon = (function() {
 	const RE_HTML = /html?$|aspx?$|php\d?$|py$|\/[^.]*$/i;
 	return function getFavIcon(uri, cb, tp) {
-		const path = uri.path || uri.pathQueryRef;
-		if (!RE_HTML.test(path)) {
+		if (!RE_HTML.test(uri.path)) {
 			cb.call(tp, getIcon(uri), false);
 			return;
 		}
@@ -65,18 +64,18 @@ var getFavIcon = (function() {
  * @return Either the element when there was just one parameter, or an array of
  *         elements.
  */
-function $(...args) {
-	if (args.length === 1) {
-		return document.getElementById(args[0]);
+function $() {
+	if (arguments.length === 1) {
+		return document.getElementById(arguments[0]);
 	}
 	let elements = [];
-	for (let i = 0, e = args.length; i < e; ++i) {
-		let element = document.getElementById(args[i]);
+	for (let i = 0, e = arguments.length; i < e; ++i) {
+		let element = document.getElementById(arguments[i]);
 		if (element) {
 			elements.push(element);
 		}
 		else {
-			log(LOG_ERROR, "requested a non-existing element: " + args[i]);
+			log(LOG_ERROR, "requested a non-existing element: " + arguments[i]);
 		}
 	}
 	return elements;
@@ -207,7 +206,7 @@ var Utils = {
 		if (!isFinite(aNumber)) {
 			return 'NaN';
 		}
-		return _('sizeKB', [aNumber.toFixed(decimalPlace || 1)]);
+		return _('sizeKB', [aNumber.toFixed(arguments.length > 1 ? decimalPlace : 1)]);
 	},
 
 	formatConflictName: function(basename, conflicts) {
@@ -228,8 +227,7 @@ var Utils = {
 		const sunits = units;
 		const nunits = sunits.length;
 		const s = scale;
-		const {memoize} = require("support/memoize");
-		return memoize(function(val, decimalPlace) {
+		return function(val, decimalPlace) {
 			var rv = val;
 			if (!isFinite(rv)) {
 				return 'NaN';
@@ -239,9 +237,9 @@ var Utils = {
 				rv /= 1024;
 			}
 			const unit = sunits[i];
-			decimalPlace = isFinite(decimalPlace) ? decimalPlace : unit[1];
+			decimalPlace = arguments.length > 1 ? decimalPlace : unit[1];
 			return _(unit[0], [rv.toFixed(decimalPlace)], unit[2] && Math.floor(rv));
-		}, 50);
+		};
 	}
 	Utils.formatBytes = createFormatter(
 		[['sizeB.2', 0, true], ['sizeKB', 1], ['sizeMB', 2], ['sizeGB', 2], ['sizeTB', 3]],
@@ -268,11 +266,11 @@ requireJoined(Utils, "support/stringfuncs");
  */
 XPCOMUtils.defineLazyGetter(window, "_", function() {
 	let bundles = new Utils.StringBundles(document);
-	return function(...args) {
-		if (args.length === 1) {
-			return bundles.getString(args[0]);
+	return function() {
+		if (arguments.length === 1) {
+			return bundles.getString(arguments[0]);
 		}
-		return bundles.getFormattedString(...args);
+		return bundles.getFormattedString.apply(bundles, arguments);
 	};
 });
 

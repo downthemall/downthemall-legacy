@@ -3,26 +3,26 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
+/* global BUFFER_SIZE, MAX_PENDING_SIZE */
 requireJoined(this, "constants");
-const {setTimeout, clearTimeout} = require("support/defer");
+const {TimerManager} = require("support/timers");
 const pressure = require("support/memorypressure");
 
-class MemoryReporter {
-	constructor() {
-		this.explicitNonHeap = 0;
-		this.process = "";
-		this.chunks = new Set();
-		this.session = {
-			chunks: 0,
-			written: 0
-		};
-		this._calc();
-		this.memoryPressure = 0;
-		this.timer = null;
-		return Object.seal(this);
-	}
+const Timers = new TimerManager();
 
-	_calc(force) {
+function MemoryReporter() {
+	this.chunks = new Set();
+	this.session = {
+		chunks: 0,
+		written: 0
+	};
+	this._calc();
+	this.memoryPressure = 0;
+	return Object.seal(this);
+}
+MemoryReporter.prototype = {
+	process: "",
+	_calc: function(force) {
 		if (!this._generation) {
 			this._generation = 10;
 		}
@@ -37,6 +37,7 @@ class MemoryReporter {
 		this._chunksActive = 0;
 
 		for (let c of this.chunks) {
+			let bs = c.buffer_size;
 			this._pendingBytes += c.buffered;
 			if (c._req) {
 				++this._chunksScheduled;
@@ -45,16 +46,16 @@ class MemoryReporter {
 				++this._chunksActive;
 			}
 		}
-	}
+	},
 	get pendingBytes() {
 		this._calc();
 		return this._pendingBytes;
-	}
+	},
 	get cachedBytes() {
 		this._calc();
 		return this._cachedBytes;
-	}
-	collectReports(callback, closure) {
+	},
+	collectReports: function(callback, closure) {
 		this._calc(true);
 
 		// As per :njn, add-ons should not use anything other than
@@ -113,18 +114,19 @@ class MemoryReporter {
 			"Total bytes received during this session.",
 			closure
 			);
-	}
-	noteBytesWritten(bytes) {
+	},
+	explicitNonHeap: 0,
+	noteBytesWritten: function(bytes) {
 		this.session.written += bytes;
-	}
-	registerChunk(chunk) {
+	},
+	registerChunk: function(chunk) {
 		this.chunks.add(chunk);
 		++this.session.chunks;
-	}
-	unregisterChunk(chunk) {
+	},
+	unregisterChunk: function(chunk) {
 		this.chunks.delete(chunk);
-	}
-	unload() {
+	},
+	unload: function() {
 		pressure.remove(this);
 		try {
 			if ("unregisterStrongReporter" in Services.memrm) {
@@ -133,15 +135,10 @@ class MemoryReporter {
 			else {
 				Services.memrm.unregisterReporter(this);
 			}
-		} catch (ex) {
-			// ignored
-		}
-		if (this.timer) {
-			clearTimeout(this.timer);
-			this.timer = null;
-		}
-	}
-	observe(s, topic, data) {
+		} catch (ex) {}
+		Timers.killAllTimers();
+	},
+	observe: function(s, topic, data) {
 		if (topic === "memory-pressure") {
 			if (data === "low-memory") {
 				this.memoryPressure += 25;
@@ -152,8 +149,8 @@ class MemoryReporter {
 			this.schedulePressureDecrement();
 			return;
 		}
-	}
-	decrementPressure() {
+	},
+	decrementPressure: function() {
 		--this.memoryPressure;
 		if (this.memoryPressure <= 0) {
 			this.memoryPressure = 0;
@@ -161,17 +158,11 @@ class MemoryReporter {
 			return;
 		}
 		this.schedulePressureDecrement();
+	},
+	schedulePressureDecrement: function() {
+		Timers.createOneshot(100, this.decrementPressure, this);
 	}
-	schedulePressureDecrement() {
-		if (this.timer) {
-			return;
-		}
-		this.timer = setTimeout(() => {
-			this.timer = null;
-			this.decrementPressure();
-		}, 100);
-	}
-}
+};
 Object.seal(MemoryReporter.prototype);
 const memoryReporter = exports.memoryReporter = new MemoryReporter();
 

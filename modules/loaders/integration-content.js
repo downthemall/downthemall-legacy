@@ -14,7 +14,6 @@ if (!("setTimeout" in this)) {
 const {classes: Cc, interfaces: Ci, utils: Cu} = Components;
 
 let {Services} = Cu.import("resource://gre/modules/Services.jsm", {});
-let {XPCOMUtils} = Cu.import("resource://gre/modules/XPCOMUtils.jsm", {});
 let isWindowPrivate = () => false;
 try {
 	let {PrivateBrowsingUtils} = Cu.import("resource://gre/modules/PrivateBrowsingUtils.jsm", {});
@@ -53,22 +52,15 @@ const require = function require_mini(m) {
 		LOG_INFO: LOG_INFO,
 		LOG_ERROR: LOG_ERROR,
 		Services: Services,
-		XPCOMUtils: XPCOMUtils,
-		require: require,
 		unload: function() {
 			log(LOG_DEBUG, "unload stub called");
 		},
 
 		exports: {}
 	};
-	scope.module = {
-		exports: scope.exports,
-		loaded: false,
-		require: scope.require
-		};
 	let module = "chrome://dta-modules/content/" + m + ".js";
 	Services.scriptloader.loadSubScript(module, scope);
-	return (scope.module && scope.module.exports) || scope.exports;
+	return scope.exports;
 };
 
 const TextLinks = require("support/textlinks");
