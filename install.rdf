@@ -4,7 +4,7 @@
 		<em:id>{DDC359D1-844A-42a7-9AA1-88A850A938A8}</em:id>
 		<em:name>DownThemAll!</em:name>
 		<em:description>The mass downloader for Firefox.</em:description>
-		<em:version>3.0.9</em:version>
+		<em:version>3.0.9.1</em:version>
 		<em:bootstrap>true</em:bootstrap>
 		<em:multiprocessCompatible>true</em:multiprocessCompatible>
 		<em:type>2</em:type>
@@ -35,7 +35,7 @@
 			<Description>
 				<em:id>{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}</em:id>
 				<em:minVersion>2.40</em:minVersion>
-				<em:maxVersion>2.49.*</em:maxVersion>
+				<em:maxVersion>2.53.9.*</em:maxVersion>
 			</Description>
 		</em:targetApplication>
 
