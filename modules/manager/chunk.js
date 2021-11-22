@@ -214,8 +214,12 @@ Chunk.prototype = {
 				try {
 					yield makeDir(file.parent, Prefs.dirPermissions, true);
 				}
-				catch (ex if ex.becauseExists) {
-					// no op
+				catch (ex) {
+				    if (!(ex.becauseExists)) {
+				        throw ex;
+			        } /* else {
+    					// no op
+					} */
 				}
 				let outStream = this._fileOutputStream = new Instances.FileOutputStream(
 					file,
@@ -422,8 +426,12 @@ Chunk.prototype = {
 				try {
 					written = this._outStream.writeFrom(aInputStream, bytes);
 				}
-				catch (ex if ex.result == Cr.NS_BASE_STREAM_WOULD_BLOCK || ex == Cr.NS_BASE_STREAM_WOULD_BLOCK) {
-					// aka still nothing written
+				catch (ex) {
+				    if (!(ex.result == Cr.NS_BASE_STREAM_WOULD_BLOCK || ex == Cr.NS_BASE_STREAM_WOULD_BLOCK)) {
+				        throw ex;
+			        } /* else {
+    					// aka still nothing written
+					} */
 				}
 				/* jshint +W116 */
 				let remain = bytes - written;
@@ -474,8 +482,12 @@ Chunk.prototype = {
 				try {
 					written = this._outStream.writeFrom(instream, avail);
 				}
-				catch (ex if ex.result == Cr.NS_BASE_STREAM_WOULD_BLOCK || ex == Cr.NS_BASE_STREAM_WOULD_BLOCK) {
-					// nothing written
+				catch (ex) {
+				    if (!(ex.result == Cr.NS_BASE_STREAM_WOULD_BLOCK || ex == Cr.NS_BASE_STREAM_WOULD_BLOCK)) {
+				        throw ex;
+			        } /* else {
+    					// nothing written
+					} */
 				}
 				/* jshint +W116 */
 				avail -= written;

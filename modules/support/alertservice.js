@@ -118,13 +118,19 @@ exports.show = function alertservice_show(title, msg, callback, icon) {
 			"@downthemall.net/" + Date.now().toString()
 			);
 	}
-	catch (ex if ex.result === Cr.NS_ERROR_NOT_IMPLEMENTED) {
-		log(LOG_DEBUG, "alertsservice not available after all", ex);
-	}
-	catch (ex if ex.result === Cr.NS_ERROR_NOT_AVAILABLE) {
-		log(LOG_DEBUG, "alertsservice (temporarily) not available", ex);
-	}
 	catch (ex) {
-		log(LOG_ERROR, "alertsservice unexpectedly failed", ex);
+	    switch (ex.result) {
+	        case Cr.NS_ERROR_NOT_IMPLEMENTED: {
+		        log(LOG_DEBUG, "alertsservice not available after all", ex);
+		        break;
+	        }
+	        case Cr.NS_ERROR_NOT_AVAILABLE: {
+		        log(LOG_DEBUG, "alertsservice (temporarily) not available", ex);
+		        break;
+	        }
+	        default: {
+		        log(LOG_ERROR, "alertsservice unexpectedly failed", ex);
+	        }
+	    }
 	}
 };

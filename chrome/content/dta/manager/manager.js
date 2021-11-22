@@ -2071,8 +2071,12 @@ QueueItem.prototype = {
 				try {
 					yield OS.File.remove(file.path);
 				}
-				catch (ex if ex.becauseNoSuchFile) {
-					// no op
+				catch (ex) {
+				    if (!(ex.becauseNoSuchFile)) {
+				        throw ex;
+				    } /* else {
+					    // no op
+					} */
 				}
 			}
 
@@ -2438,8 +2442,12 @@ QueueItem.prototype = {
 				try {
 					yield Utils.makeDir(file.parent, Prefs.dirPermissions);
 				}
-				catch (ex if ex.becauseExists) {
+				catch (ex) {
+				    if (!(ex.becauseExists)) {
+				        throw ex;
+				    } /* else {
 					// no op
+					} */
 				}
 				try {
 					if (this.totalSize === (yield OS.File.stat(file.path)).size) {
@@ -2447,8 +2455,12 @@ QueueItem.prototype = {
 						return;
 					}
 				}
-				catch (ex if ex.becauseNoSuchFile) {
+				catch (ex) {
+				    if (!(ex.becauseNoSuchFile)) {
+				        throw ex;
+				    } /* else {
 					// no op
+					} */
 				}
 				let pa = Preallocator.prealloc(
 					file,
@@ -2486,8 +2498,12 @@ QueueItem.prototype = {
 		Task.spawn(function*() {
 			try {
 				yield OS.File.remove(tmpFile.path);
-			} catch (ex if ex.becauseNoSuchFile) {
-				// no op
+			} catch (ex) {
+			    if (!(ex.becauseNoSuchFile)) {
+			        throw ex;
+			    } /* else {
+				    // no op
+				} */
 			}
 		}).then(null, function(ex) {
 			log(LOG_ERROR, "failed to remove tmpfile: " + tmpFile.path, ex);

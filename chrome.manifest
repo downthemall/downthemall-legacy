@@ -8,6 +8,7 @@ content dta-public	chrome/public/ contentaccessible
 skin	dta-public	classic/1.0 chrome/public/
 
 ## aux packages ##
+content dta-tests tests/
 content	dta-modules	modules/
 
 ## additional locales
@@ -33,14 +34,15 @@ locale dta zh-CN chrome/locale/zh-CN/
 locale dta zh-TW chrome/locale/zh-TW/
 
 ## platform package ##
-content dta-platform	chrome/content/ platform
-skin	dta-platform	classic/1.0 chrome/skin/
+content dta-platform	chrome/content/unix/
+content dta-platform	chrome/content/mac/ os=Darwin
+content dta-platform	chrome/content/win/ os=WINNT
+skin dta-platform	classic/1.0 chrome/skin/unix/
+skin dta-platform	classic/1.0 chrome/skin/mac/ os=Darwin
+skin dta-platform	classic/1.0 chrome/skin/win/ os=WINNT
 
 override chrome://dta/content/dta/manager.xul chrome://dta/content/dta/manager-aero.xul os=WINNT osversion=6
 override chrome://dta/content/dta/manager.xul chrome://dta/content/dta/manager-newer.xul os=WINNT osversion>6
 override chrome://dta/content/dta/manager.xul chrome://dta/content/dta/manager-aero.xul os=WINNT osversion=6.1
 override chrome://dta-platform/skin/common.css chrome://dta-platform/skin/common-aero.css os=WINNT osversion>=6
 override chrome://dta/skin/manager/netstatus.png chrome://dta-platform/skin/netstatus-aero.png os=WINNT osversion>=6
-
-# Hack to prevent .Net Framework Assistant from messing up the browser, courtesy of AdBlock Plus
-override chrome://dotnetassistant/content/bootstrap.xul data:text/xml,<nada/>
