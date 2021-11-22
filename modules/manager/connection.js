@@ -18,7 +18,7 @@ const {formatNumber, StringBundles, getTimestamp} = require("utils");
 const {modifyURL, modifyHttp} = require("support/requestmanipulation");
 const Preferences = require("preferences");
 const DomainPrefs = require("support/domainprefs");
-const {ProxyManager} = require("support/proxyprovider");
+const {Task} = requireJSM("resource://gre/modules/Task.jsm");
 
 const {
 	getUsableFileName,
@@ -33,30 +33,54 @@ const DISCONNECTION_CODES = [
 	NS_ERROR_NET_RESET
 ];
 
-function canPrivate(chan) {
-	return ("nsIPrivateBrowsingChannel" in Ci) && (chan instanceof Ci.nsIPrivateBrowsingChannel);
-}
-
-const _ = (function() {
+const _ = (function(global) {
 	let bundles = new StringBundles(["chrome://dta/locale/manager.properties"]);
-	return function(...args) {
-		if (args.length === 1) {
-			return bundles.getString(args[0]);
+	return function() {
+		if (arguments.length === 1) {
+			return bundles.getString(arguments[0]);
 		}
-		return bundles.getFormattedString(...args);
+		return bundles.getFormattedString.apply(bundles, arguments);
 	};
 })(this);
 
 const cleanRequest = Symbol.for("cleanRequest");
+
+let proxyInfo = null;
+const proxyObserver = {
+	observe: function() {
+		let type = Preferences.getExt("proxy.type", "");
+		let host = Preferences.getExt("proxy.host", "");
+		let port = Preferences.getExt("proxy.port", 0);
+		let resolve = Preferences.getExt("proxy.resolve", true);
+		if (!type || !host || !port) {
+			log(LOG_DEBUG, "no proxy info");
+			proxyInfo = null;
+			return;
+		}
+		try {
+			let flags = 0;
+			if (resolve) {
+				flags |= Ci.nsIProxyInfo.TRANSPARENT_PROXY_RESOLVES_HOST;
+			}
+			proxyInfo = Services.pps.newProxyInfo(type, host, port, flags, 0xffffffff, null);
+			log(LOG_DEBUG, "created proxy info");
+		}
+		catch (ex) {
+			log(LOG_ERROR, "Failed to create proxy info", ex);
+			proxyInfo = null;
+		}
+	}
+};
+Preferences.addObserver("extensions.dta.proxy", proxyObserver);
+proxyObserver.observe();
 
 function maybeTempBlacklisted(conn, item, httpchan) {
 	try {
 		let server = httpchan.getResponseHeader("Server");
 		if (server.includes("cloudflare")) {
 			item.cleanRequest = true;
-			let priv = canPrivate(httpchan) && httpchan.isChannelPrivate;
-			DomainPrefs.setTLD(conn.origURL, cleanRequest, true, priv);
-			DomainPrefs.setTLD(httpchan.URI, cleanRequest, true, priv);
+			DomainPrefs.setTLD(conn.origURL, cleanRequest, true);
+			DomainPrefs.setTLD(httpchan.URI, cleanRequest, true);
 			return true;
 		}
 		return false;
@@ -80,9 +104,9 @@ function Connection(d, c, isInfoGetter) {
 	let referrer = d.referrer;
 	log(LOG_INFO, "starting: " + url.spec);
 
-	this._chan = Services.oldio.newProxiedChannel(url, ProxyManager.getFor(url));
+	this._chan = Services.oldio.newProxiedChannel(url, proxyInfo);
 	let r = Ci.nsIRequest;
-	let loadFlags = r.LOAD_NORMAL | Ci.nsIChannel.LOAD_EXPLICIT_CREDENTIALS;
+	let loadFlags = r.LOAD_NORMAL;
 	if (!Preferences.getExt('useCache', false)) {
 		loadFlags = loadFlags | r.LOAD_BYPASS_CACHE;
 	}
@@ -93,7 +117,7 @@ function Connection(d, c, isInfoGetter) {
 	this._chan.notificationCallbacks = this;
 
 	if (d.isPrivate) {
-		if (canPrivate(this._chan)) {
+		if (("nsIPrivateBrowsingChannel" in Ci) && (this._chan instanceof Ci.nsIPrivateBrowsingChannel)) {
 			try {
 				this._chan.setPrivate(d.isPrivate);
 				log(LOG_DEBUG, url.spec + ": setPrivate");
@@ -138,7 +162,12 @@ function Connection(d, c, isInfoGetter) {
 	this.prepareChannel(this._chan);
 
 	c.running = true;
-	this.open();
+	c.open().then(() => {
+		this._chan.asyncOpen(this, null);
+		log(LOG_INFO, `chunk ${c} ${isInfoGetter ? "InfoGetter" : "Regular"} is now open!`);
+	}).catch(ex => {
+		this.writeFailed(ex);
+	});
 }
 
 Connection.prototype = {
@@ -156,17 +185,6 @@ Connection.prototype = {
 	],
 
 	cantCount: false,
-
-	open: async function() {
-		try {
-			await this.c.open();
-			this._chan.asyncOpen(this, null);
-			log(LOG_INFO, `chunk ${this.c} ${this.isInfoGetter ? "InfoGetter" : "Regular"} is now open!`);
-		}
-		catch (ex) {
-			this.writeoFailed(ex);
-		}
-	},
 
 	prepareChannel: function(chan) {
 		let d = this.d;
@@ -190,7 +208,7 @@ Connection.prototype = {
 
 				if (!d.cleanRequest &&
 						!Preferences.getExt("usecleanrequests", false) &&
-						!DomainPrefs.getTLD(chan.URI, cleanRequest, canPrivate(chan) && chan.isChannelPrivate)) {
+						!DomainPrefs.getTLD(chan.URI, cleanRequest)) {
 					log(LOG_DEBUG, `setting up ${chan.URI.spec}`);
 					// Cannot hash when compressed
 					chan.setRequestHeader("Accept-Encoding", "", false);
@@ -295,6 +313,7 @@ Connection.prototype = {
 	contractID: null,
 	classDescription: "DownThemAll! connection",
 	classID: null,
+	implementationLanguage: Ci.nsIProgrammingLanguage.JAVASCRIPT,
 	flags: Ci.nsIClassInfo.MAIN_THREAD_ONLY,
 
 	// nsIChannelEventSink
@@ -473,22 +492,18 @@ Connection.prototype = {
 			}
 		}
 		catch (ex) {
-			if (ex !== NS_ERROR_BINDING_ABORTED && ex.result !== NS_ERROR_BINDING_ABORTED) {
-				log(LOG_ERROR, 'onDataAvailable', ex);
-				this.writeFailed(ex);
-				return;
-			}
-			throw ex;
+		    if (ex !== NS_ERROR_BINDING_ABORTED && ex.result !== NS_ERROR_BINDING_ABORTED) {
+    			log(LOG_ERROR, 'onDataAvailable', ex);
+	    		this.writeFailed(ex);
+    		} else {
+    		    throw ex;
+		    }
 		}
 	},
 
 	writeFailed: function(ex) {
+		log(LOG_DEBUG, "write failed invoked!", ex);
 		let d = this.d;
-		if (!d || !d.chunks || d.chunks.indexOf(this.c) < 0) {
-			log(LOG_DEBUG, "write failed invoked, but ignored (not registered chunk)!", ex, true);
-			return;
-		}
-		log(LOG_DEBUG, "write failed invoked!", ex, true);
 		if ((ex.result || ex) === Cr.NS_ERROR_FILE_NO_DEVICE_SPACE) {
 			d.pauseAndRetry();
 			d.status = _("freespace");
@@ -803,9 +818,7 @@ Connection.prototype = {
 				let file = d.fileName.length > 50 ? d.fileName.substring(0, 50) + "..." : d.fileName;
 				if (~[401, 402, 407, 500, 502, 503, 504].indexOf(code) ||
 					(Preferences.getExt('recoverallhttperrors', false) && code !== 404) ||
-					(code === 403 &&
-						aChannel instanceof Ci.nsIHttpChannel &&
-						maybeTempBlacklisted(this, d, aChannel))) {
+					(code === 403 && aChannel instanceof Ci.nsIHttpChannel && maybeTempBlacklisted(this, d, aChannel))) {
 					log(LOG_DEBUG, "we got temp failure!", code);
 					d.pauseAndRetry();
 					d.status = code >= 500 ? _('temperror') : _("error", [formatNumber(code, 3)]);
@@ -985,7 +998,7 @@ Connection.prototype = {
 		}
 
 		try {
-			d.visitors.visit(aChannel.QueryInterface(Ci.nsIChannel));
+			let visitor = d.visitors.visit(aChannel.QueryInterface(Ci.nsIChannel));
 		}
 		catch (ex) {
 			log(LOG_ERROR, "header failed! " + d, ex);
@@ -1050,13 +1063,7 @@ Connection.prototype = {
 			return;
 		}
 		if (!~d.chunks.indexOf(c)) {
-			log(LOG_DEBUG,
-				"invalid connection state (chunk index): " +
-				d.chunks.indexOf(c) +
-				" / " +
-				JSON.stringify(c) +
-				" / " +
-				JSON.stringify(d.chunks));
+			log(LOG_DEBUG, "invalid connection state (chunk index): " + d.chunks.indexOf(c) + " / " + JSON.stringify(c) + " / " + JSON.stringify(d.chunks));
 			return;
 		}
 
@@ -1112,7 +1119,7 @@ Connection.prototype = {
 			return;
 		}
 	},
-	onStopRequest: async function(aRequest, aContext, aStatusCode) {
+	onStopRequest: function(aRequest, aContext, aStatusCode) {
 		try {
 			log(LOG_INFO, 'StopRequest');
 		}
@@ -1123,161 +1130,146 @@ Connection.prototype = {
 		let c = this.c;
 		let d = this.d;
 
-		if (d) {
-			d.critical();
-		}
-		try {
+		log(LOG_DEBUG, "closing");
+		Task.spawn(function*() {
+			if (d) {
+				d.critical();
+			}
 			try {
-				await c.close();
+				yield c.close();
+				log(LOG_DEBUG, "closed");
+				if (!d || !d.chunks || !~d.chunks.indexOf(c)) {
+					log(LOG_INFO, "chunk unknown");
+					return;
+				}
+				if (c.errored || d.state === CANCELED) {
+					return; // already handled
+				}
+
+				// update flags and counters
+				d.refreshPartialSize();
+				--d.activeChunks;
+
+				// If automatic creation of new chunks is disabled we reduce maxChunks for
+				// every complete chunk so that no new chunk is generated.
+				// Manual addidition of new chunks is not affected by this.
+				if (!Preferences.getExt('autosegments', true) && d.maxChunks > 1) {
+					--d.maxChunks;
+				}
+
+				const isRunning = d.state === RUNNING;
+
+				if (c.starter && ~DISCONNECTION_CODES.indexOf(aStatusCode)) {
+					if (!d.urlManager.markBad(this.url)) {
+						log(LOG_ERROR, d + ": Server error or disconnection", "(type 3)");
+						d.pauseAndRetry();
+						d.status = _("servererror");
+					}
+					else {
+						log(LOG_ERROR, "caught bad server", d.toString());
+						d.safeRetry();
+					}
+					return;
+				}
+
+				// work-around for ftp crap
+				// nsiftpchan for some reason assumes that if RETR fails it is a directory
+				// and tries to advance into said directory
+				if (aStatusCode === NS_ERROR_FTP_CWD) {
+					log(LOG_DEBUG, "Cannot change to directory :p", aStatusCode);
+					if (!this.handleError()) {
+						d.fail(_('servererror'), _('ftperrortext'), _('servererror'));
+					}
+					return;
+				}
+
+				// routine for normal chunk
+				log(LOG_INFO, this.url + ": Chunk " + c.start + "-" + c.end + " finished.");
+
+				// rude way to determine disconnection: if connection is closed before
+				// download is started we assume a server error/disconnection
+				if (c.starter && isRunning && !c.written) {
+					if (!d.urlManager.markBad(this.url)) {
+						log(LOG_ERROR, d + ": Server error or disconnection", "(type 2)");
+						d.pauseAndRetry();
+						d.status = _("servererror");
+					}
+					else {
+						log(LOG_ERROR, "caught bad server", d.toString());
+						d.safeRetry();
+					}
+					return;
+				}
+
+				// Server did not return any data.
+				// Try to mark the URL bad
+				// else pause + autoretry
+				if (!c.written && !!c.remainder) {
+					if (!d.urlManager.markBad(this.url)) {
+						log(LOG_ERROR, d + ": Server error or disconnection", "(type 1)");
+						d.pauseAndRetry();
+						d.status = _("servererror");
+					}
+					return;
+				}
+
+				// check if we're complete now
+				if (isRunning && d.chunks.every(e => e.complete)) {
+					if (!d.resumeDownload()) {
+						log(LOG_INFO, d + ": Download is complete!");
+						d.finishDownload();
+						return;
+					}
+				}
+
+				// size mismatch
+				if (!d.isOf(PAUSED | CANCELED | FINISHING) && d.chunks.length === 1 && d.chunks[0] === c) {
+					if (d.relaxSize && c.remainder < 250) {
+						log(LOG_INFO, d + ": Download is complete!");
+						d.setState(FINISHING);
+						d.finishDownload();
+						return;
+					}
+					if (d.resumable && c.sessionBytes > 0) {
+						// fast retry unless we didn't actually receive something
+						d.resumeDownload();
+					}
+					else if (d.resumable || Preferences.getExt('resumeonerror', false)) {
+						d.pauseAndRetry();
+						d.status = _('errmismatchtitle');
+					}
+					else {
+						d.fail(
+							_('errmismatchtitle'),
+							_('errmismatchtext', [d.partialSize, d.totalSize]),
+							_('errmismatchtitle')
+						);
+					}
+					return;
+				}
+
+				if (!d.isOf(PAUSED | CANCELED)) {
+					d.resumeDownload();
+				}
+			}
+			catch (ex) {
+				log(LOG_ERROR, "Failed onStopRequest", ex);
 			}
 			finally {
+				delete this.c;
+				delete this._chan;
 				if (d) {
 					d.uncritical();
 				}
 			}
-			log(LOG_DEBUG, "closed");
-			if (!d || !d.chunks || !~d.chunks.indexOf(c)) {
-				log(LOG_INFO, "chunk unknown");
-				return;
-			}
-			if (c.errored || d.state === CANCELED) {
-				return; // already handled
-			}
-
-			// update flags and counters
-			d.refreshPartialSize();
-			--d.activeChunks;
-
-			// If automatic creation of new chunks is disabled we reduce maxChunks for
-			// every complete chunk so that no new chunk is generated.
-			// Manual addidition of new chunks is not affected by this.
-			if (!Preferences.getExt('autosegments', true) && d.maxChunks > 1) {
-				--d.maxChunks;
-			}
-
-			const isRunning = d.state === RUNNING;
-
-			if (c.starter && ~DISCONNECTION_CODES.indexOf(aStatusCode)) {
-				if (!d.urlManager.markBad(this.url)) {
-					log(LOG_ERROR, d + ": Server error or disconnection", "(type 3)");
-					d.pauseAndRetry();
-					d.status = _("servererror");
-				}
-				else {
-					log(LOG_ERROR, "caught bad server", d.toString());
-					d.safeRetry();
-				}
-				return;
-			}
-
-			// work-around for ftp crap
-			// nsiftpchan for some reason assumes that if RETR fails it is a directory
-			// and tries to advance into said directory
-			if (aStatusCode === NS_ERROR_FTP_CWD) {
-				log(LOG_DEBUG, "Cannot change to directory :p", aStatusCode);
-				if (!this.handleError()) {
-					d.fail(_('servererror'), _('ftperrortext'), _('servererror'));
-				}
-				return;
-			}
-
-			// routine for normal chunk
-			log(LOG_INFO, this.url + ": Chunk " + c.start + "-" + c.end + " finished.");
-
-			// rude way to determine disconnection: if connection is closed before
-			// download is started we assume a server error/disconnection
-			if (c.starter && isRunning && !c.written) {
-				if (!d.urlManager.markBad(this.url)) {
-					log(LOG_ERROR, d + ": Server error or disconnection", "(type 2)");
-					d.pauseAndRetry();
-					d.status = _("servererror");
-				}
-				else {
-					log(LOG_ERROR, "caught bad server", d.toString());
-					d.safeRetry();
-				}
-				return;
-			}
-
-			// Server did not return any data.
-			// Try to mark the URL bad
-			// else pause + autoretry
-			if (!c.written && !!c.remainder) {
-				if (!d.urlManager.markBad(this.url)) {
-					log(LOG_ERROR, d + ": Server error or disconnection", "(type 1)");
-					d.pauseAndRetry();
-					d.status = _("servererror");
-				}
-				return;
-			}
-
-			// check if we're complete now
-			if (isRunning && d.chunks.every(e => e.complete)) {
-				if (!d.resumeDownload()) {
-					if (d.chunks.some(e => e.errored)) {
-						log(LOG_ERROR, d + ": Server error or disconnection", "(type 1)");
-						d.pauseAndRetry();
-						d.status = _("servererror");
-						return;
-					}
-					log(LOG_INFO, d + ": Download is complete!");
-					d.finishDownload();
-					return;
-				}
-			}
-
-			// size mismatch
-			if (!d.isOf(PAUSED | CANCELED | FINISHING) && d.chunks.length === 1 && d.chunks[0] === c) {
-				if (d.relaxSize && c.remainder < 250) {
-					log(LOG_INFO, d + ": Download is complete!");
-					d.setState(FINISHING);
-					d.finishDownload();
-					return;
-				}
-
-				if (d.resumable && c.sessionBytes > 0) {
-					// fast retry unless we didn't actually receive something
-					if (d.resumeDownload()) {
-						return;
-					}
-				}
-
-				if (d.resumable || Preferences.getExt('resumeonerror', false)) {
-					d.pauseAndRetry();
-					d.status = _('errmismatchtitle');
-				}
-				else {
-					d.fail(
-						_('errmismatchtitle'),
-						_('errmismatchtext', [d.partialSize, d.totalSize]),
-						_('errmismatchtitle')
-					);
-				}
-				return;
-			}
-
-			if (!d.isOf(PAUSED | CANCELED)) {
-				if (!d.resumeDownload() && !d.chunks.every(e => e.complete || e.running)) {
-					d.dumpScoreBoard();
-					log(LOG_ERROR, "Failed to resume although not complete yet", null, true);
-					d.pauseAndRetry();
-					d.status = _('errmismatchtitle');
-				}
-			}
-		}
-		catch (ex) {
-			log(LOG_ERROR, "Failed onStopRequest", ex, true);
-		}
-		finally {
-			delete this.c;
-			delete this._chan;
-		}
+		}.bind(this));
 	},
 
 	// nsIProgressEventSink
 	onProgress: function(aRequest, aContext, aProgress, aProgressMax) {
 		try {
 			// shortcuts
+			let c = this.c;
 			let d = this.d;
 
 			if (this.reexamine) {

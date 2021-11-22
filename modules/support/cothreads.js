@@ -5,14 +5,13 @@
 
 const {defer} = require("./defer");
 
-class CoThreadBase {
-	constructor(func, yieldEvery, thisCtx) {
-		this._idx = 0;
-		this._ran = false;
-		this._finishFunc = null;
-		this._thisCtx = thisCtx ? thisCtx : this;
-		this._terminated = false;
+const CoThreadBase = {
+	_idx: 0,
+	_ran: false,
+	_finishFunc: null,
 
+	init: function CoThreadBase_init(func, yieldEvery, thisCtx) {
+		this._thisCtx = thisCtx ? thisCtx : this;
 
 		// default to 0 (adjust)
 		this._yieldEvery = typeof yieldEvery === 'number' ? Math.floor(yieldEvery) : 0;
@@ -22,18 +21,22 @@ class CoThreadBase {
 		}
 		this._func = func;
 		this.init = function() {};
-	}
+	},
 
-	start(finishFunc) {
+	start: function CoThreadBase_run(finishFunc) {
 		if (this._ran) {
 			throw new Error("You cannot run a CoThread/CoThreadListWalker instance more than once.");
 		}
 		this._finishFunc = finishFunc;
 		this._ran = true;
 		defer(this, 0);
-	}
+	},
 
-	run() {
+	QueryInterface: XPCOMUtils.generateQI([Ci.nsISupports, Ci.nsICancelable, Ci.nsIRunnable]),
+
+	_terminated: false,
+
+	run: function CoThreadBase_run() {
 		if (this._terminated) {
 			return;
 		}
@@ -89,9 +92,9 @@ class CoThreadBase {
 		catch (ex) {
 			this.cancel();
 		}
-	}
+	},
 
-	cancel() {
+	cancel: function CoThreadBase_cancel() {
 		if (this._terminated) {
 			return;
 		}
@@ -100,11 +103,7 @@ class CoThreadBase {
 			this._finishFunc.call(this._thisCtx, this._yieldEvery);
 		}
 	}
-}
-Object.assign(CoThreadBase.prototype, {
-	QueryInterface: XPCOMUtils.generateQI([Ci.nsISupports, Ci.nsICancelable, Ci.nsIRunnable]),
-});
-
+};
 
 /**
  * Constructs a new CoThread (aka. pseudo-thread).
@@ -132,20 +131,23 @@ Object.assign(CoThreadBase.prototype, {
  *                 Optional. The function will be called in the scope of this object
  *                 (or if omitted in the scope of the CoThread instance)
  */
-exports.CoThread = class CoThread extends CoThreadBase {
-	constructor(func, yieldEvery, thisCtx) {
-		super(func, yieldEvery, thisCtx);
-		// fake generator so we may use a common implementation. ;)
-		this._generator = (function*() {
-			for(;;) {
-				yield null;
-			}
-		})();
-	}
-	_callf(ctx, i, idx, fn) {
-		return fn.call(ctx, idx);
-	}
+exports.CoThread = function CoThread(func, yieldEvery, thisCtx) {
+	this.init(func, yieldEvery, thisCtx);
+	// fake generator so we may use a common implementation. ;)
+	this._generator = (function*() {
+		for(;;) {
+			yield null;
+		}
+	})();
 };
+exports.CoThread.prototype = Object.create(CoThreadBase, {
+	_callf: {
+		value: function CoThread__callf(ctx, i, idx, fn) {
+			return fn.call(ctx, idx);
+		},
+		enumerable: true
+	}
+});
 
 /**
  * Constructs a new CoThreadInterleaved (aka. pseudo-thread).
@@ -177,15 +179,16 @@ exports.CoThread = class CoThread extends CoThreadBase {
  *                 Optional. The function will be called in the scope of this object
  *                 (or if omitted in the scope of the CoThread instance)
  */
-exports.CoThreadInterleaved = class CoThreadInterleaved extends CoThreadBase {
-	constructor (generator, yieldEvery, thisCtx) {
-		super(() => true, yieldEvery, thisCtx);
-		this._generator = typeof(generator) === "function" ? generator() : generator;
-	}
-	_callf() {
-		return true;
-	}
+exports.CoThreadInterleaved = function CoThreadInterleaved(generator, yieldEvery, thisCtx) {
+	this.init(() => true, yieldEvery, thisCtx);
+	this._generator = typeof(generator) === "function" ? generator() : generator;
 };
+exports.CoThreadInterleaved.prototype = Object.create(CoThreadBase, {
+	_callf: {
+		value: function() { return true; },
+		enumerable: true
+	}
+});
 
 /**
  * Constructs a new CoThreadListWalker (aka. pseudo-thread).
@@ -219,27 +222,30 @@ exports.CoThreadInterleaved = class CoThreadInterleaved extends CoThreadBase {
  *                 Optional. The function will be called in the scope of this object
  *                  (or if omitted in the scope of the CoThread instance)
  */
-exports.CoThreadListWalker = class CoThreadListWalker extends CoThreadBase {
-	constructor(func, arrayOrGenerator, yieldEvery, thisCtx) {
-		super(func, yieldEvery, thisCtx);
+exports.CoThreadListWalker = function CoThreadListWalker(func, arrayOrGenerator, yieldEvery, thisCtx) {
+	this.init(func, yieldEvery, thisCtx);
 
-		if (Array.isArray(arrayOrGenerator)) {
-			// make a generator
-			this._generator = (function*() {
-				for (let i of arrayOrGenerator) {
-					yield i;
-				}
-			})();
-		}
-		else {
-			this._generator = arrayOrGenerator;
-		}
-
-		if (this._lastFunc && (typeof func !== 'function' && !(func instanceof Function))) {
-			throw Cr.NS_ERROR_INVALID_ARG;
-		}
+	if (Array.isArray(arrayOrGenerator)) {
+		// make a generator
+		this._generator = (function*() {
+			for (let i of arrayOrGenerator) {
+				yield i;
+			}
+		})();
 	}
-	_callf(ctx, item, idx, fn) {
-		return fn.call(ctx, item, idx);
+	else {
+		this._generator = arrayOrGenerator;
+	}
+
+	if (this._lastFunc && (typeof func !== 'function' && !(func instanceof Function))) {
+		throw Cr.NS_ERROR_INVALID_ARG;
 	}
 };
+exports.CoThreadListWalker.prototype = Object.create(CoThreadBase, {
+	_callf: {
+		value: function CoThreadListWalker__callf(ctx, item, idx, fn) {
+			return fn.call(ctx, item, idx);
+		},
+		enumerable: true
+	}
+});

@@ -54,9 +54,9 @@
 
 		<command id="cmdGetInfo" oncommand="Tree.showInfo();" />
 
-		<command id="cmdLaunch" oncommand="Tree.openFile();" />
-		<command id="cmdDelete" oncommand="Tree.deleteFile();" />
-		<command id="cmdOpenFolder" oncommand="Tree.openFolder();" />
+		<command id="cmdLaunch" oncommand="FileHandling.openFile();" />
+		<command id="cmdDelete" oncommand="FileHandling.deleteFile();" />
+		<command id="cmdOpenFolder" oncommand="FileHandling.openFolder();" />
 		<command id="cmdRename" oncommand="Tree.startRename()"/>
 
 		<command id="cmdResume" oncommand="Tree.resume();" />
@@ -293,7 +293,7 @@
 		</notificationbox>
 	</hbox>
 	<box id="footer" chromedir="&locale.dir;">
-		<statusbarpanel class="statusbarpanel-iconic" id="netstatus" command="cmdToggleOffline" tooltiptext="&offline.tooltip;"/>
+		<statusbarpanel class="statusbarpanel-iconic" id="netstatus" command="cmdToggleOffline" tooltiptext="Online/Offline"/><!-- XXX l10n #28 -->
 		<statusbarpanel id="statusSearch" flex="1" pack="start">
 			<textbox id="search" emptytext="&search.placeholder;" placeholder="&search.placeholder;"/>
 			<spacer flex="1"/>

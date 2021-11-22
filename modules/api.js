@@ -30,56 +30,54 @@ function _decodeCharset(text, charset) {
 	}
 	return rv;
 }
-class URL {
-	constructor(url, preference, _fast) {
-		this.preference = preference || 100;
+function URL(url, preference, _fast) {
+	this.preference = preference || 100;
 
-		if (!(url instanceof Ci.nsIURL)) {
-			throw new Exception("You must pass a nsIURL");
-		}
-		if (!_fast && URL.schemes.indexOf(url.scheme) === -1) {
-			throw new Exception("Not a supported URL");
-		}
-
-		this._url = url.clone();
-		if (!_fast) {
-			let hash = exports.getLinkPrintHash(this._url);
-			this._url.ref = '';
-			if (hash) {
-				this.hash = hash;
-			}
-		}
-		lazy(this, "urlCharset", this._getCharset);
-		lazy(this, "spec", this._getSpec);
-		lazy(this, "usable", this._getUsable);
+	if (!(url instanceof Ci.nsIURL)) {
+		throw new Exception("You must pass a nsIURL");
+	}
+	if (!_fast && URL.schemes.indexOf(url.scheme) === -1) {
+		throw new Exception("Not a supported URL");
 	}
 
-	_getCharset() {
+	this._url = url.clone();
+	if (!_fast) {
+		let hash = exports.getLinkPrintHash(this._url);
+		this._url.ref = '';
+		if (hash) {
+			this.hash = hash;
+		}
+	}
+	lazy(this, "urlCharset", this._getCharset);
+	lazy(this, "spec", this._getSpec);
+	lazy(this, "usable", this._getUsable);
+}
+URL.schemes = ['http', 'https', 'ftp'];
+URL.prototype = Object.freeze({
+	_getCharset: function() {
 		return this._url.originCharset;
-	}
-	_getSpec() {
+	},
+	_getSpec: function() {
 		return this._url.spec;
-	}
-	_getUsable() {
+	},
+	_getUsable: function() {
 		return _decodeCharset(this.spec, this._urlCharset);
-	}
+	},
 
 	get url() {
 		return this._url;
-	}
-	toJSON() {
+	},
+	toJSON: function() {
 		return {
 			url: this.spec,
 			charset: this.urlCharset,
 			preference: this.preference
 		};
-	}
-
-	toString() {
+	},
+	toString: function() {
 		return this.usable;
 	}
-};
-URL.schemes = ['http', 'https', 'ftp'];
+});
 exports.URL = Object.freeze(URL);
 
 /**
@@ -121,109 +119,95 @@ exports.WANT_DIGEST_STRING = (function() {
 	return rv.toString();
 })();
 
-class Hash {
-	constructor(hash, type) {
-		if (typeof(hash) !== 'string' && !(hash instanceof String)) {
-			throw new Error("hash is invalid");
-		}
-		if (typeof(type) !== 'string' && !(type instanceof String)) {
-			throw new Error("hashtype is invalid");
-		}
-
-		type = type.toUpperCase().replace(/[\s-]/g, '');
-		if (!(type in SUPPORTED_HASHES_ALIASES)) {
-			throw new Error("hashtype is invalid: " + type);
-		}
-		this.type = SUPPORTED_HASHES_ALIASES[type];
-		this.sum = hash.toLowerCase().replace(/\s/g, '');
-		let h = SUPPORTED_HASHES[this.type];
-		if (h.l !== this.sum.length || isNaN(parseInt(this.sum, 16))) {
-			throw new Error("hash is invalid");
-		}
-		this._q = h.q;
+function Hash(hash, type) {
+	if (typeof(hash) !== 'string' && !(hash instanceof String)) {
+		throw new Exception("hash is invalid");
+	}
+	if (typeof(type) !== 'string' && !(type instanceof String)) {
+		throw new Exception("hashtype is invalid");
 	}
 
+	type = type.toUpperCase().replace(/[\s-]/g, '');
+	if (!(type in SUPPORTED_HASHES_ALIASES)) {
+		throw new Exception("hashtype is invalid: " + type);
+	}
+	this.type = SUPPORTED_HASHES_ALIASES[type];
+	this.sum = hash.toLowerCase().replace(/\s/g, '');
+	let h = SUPPORTED_HASHES[this.type];
+	if (h.l !== this.sum.length || isNaN(parseInt(this.sum, 16))) {
+		throw new Exception("hash is invalid");
+	}
+	this._q = h.q;
+}
+Hash.prototype = Object.freeze({
 	get q() {
 		return this._q;
-	}
-
-	toString() {
-		return `[Hash(${this.type}, ${this.sum})]`;
-	}
-
-	toJSON() {
+	},
+	toString: function() {
+		return this.type + " [" + this.sum + "]";
+	},
+	toJSON: function() {
 		return {
 			type: this.type,
 			sum: this.sum
 		};
 	}
-}
+});
 exports.Hash = Object.freeze(Hash);
 
 /**
  * Collection of hashes (checksums) about a single download
  * @param fullHash Full hash covering the whole download
  */
-class HashCollection {
-	constructor(fullHash) {
-		if (!(fullHash instanceof Hash)) {
-			throw new Error("Cannot init empty HashCollection");
-		}
-		this.full = fullHash;
-		this.parLength = 0;
-		this.partials = [];
-		this._serialize();
+function HashCollection(fullHash) {
+	if (!(fullHash instanceof Hash)) {
+		throw new Exception("Cannot init empty HashCollection");
 	}
+	this.full = fullHash;
+	this.partials = [];
+	this._serialize();
+}
+/**
+ * Load HashCollection from a serialized object
+ * (Static)
+ * @see serialize
+ * @param obj (object) Serialized object
+ */
+HashCollection.load = function(obj) {
+	let rv = new HashCollection(new Hash(obj.full.sum, obj.full.type));
+	rv.parLength = obj.parLength ? obj.parLength : 0;
+	rv.partials = obj.partials.map(e => new Hash(e.sum, e.type));
+	rv._serialize();
+	return rv;
+};
 
-	/**
-	 * Load HashCollection from a serialized object
-	 * @see serialize
-	 * @param obj (object) Serialized object
-	 */
-	static load(obj) {
-		let rv = new HashCollection(new Hash(obj.full.sum, obj.full.type));
-		rv.parLength = obj.parLength || 0;
-		for (let e of obj.partials) {
-			rv.add(new Hash(e.sum, e.type));
-		}
-		rv._serialize();
-		return rv;
-	}
-
+HashCollection.prototype = Object.freeze({
 	/**
 	 * HashCollection has parital hashes
 	 */
-	get hasPartials() {
-		return !!this.partials.length;
-	}
-
-	add(hash) {
+	get hasPartials() { return !!this.partials.length; },
+	add: function(hash) {
 		if (!(hash instanceof Hash)) {
 			throw new Exception("Must supply hash");
 		}
 		this.partials.push(hash);
 		this._serialize();
-	}
-
+	},
 	/**
 	 * Serializes HashCollection
 	 * @return (object) Serialized HashCollection
 	 */
-	toJSON() {
+	toJSON: function() {
 		return this._serialized;
-	}
-	_serialize() {
+	},
+	_serialize: function() {
 		this._serialized = {
 			full: this.full,
 			parLength: this.parLength,
 			partials: this.partials
 		};
 	}
-
-	toString() {
-		return `[HashCollection(${this.toJSON()})]`;
-	}
-}
+});
 exports.HashCollection = Object.freeze(HashCollection);
 
 const _rglph = /^hash\((md5|sha(?:-?(?:1|256|384|512))?):([\da-f]+)\)$/i;
@@ -463,8 +447,6 @@ exports.turboSaveLinkArray = function turboSaveLinkArray(window, urls, images, c
 
 var isManagerPending = false;
 var managerRequests = [];
-
-// jshint -W003
 function openManagerCallback(event) {
 	log(LOG_DEBUG, "manager ready; pushing queued items");
 	event.target.removeEventListener("DTA:dieEarly", openManagerDiedCallback, true);
@@ -475,7 +457,6 @@ function openManagerCallback(event) {
 	managerRequests.length = 0;
 	isManagerPending = false;
 }
-
 function openManagerDiedCallback(event) {
 	event.target.removeEventListener("DTA:dieEarly", openManagerDiedCallback, true);
 	event.target.removeEventListener("DTA:ready", openManagerCallback, true);
@@ -486,7 +467,6 @@ function openManagerDiedCallback(event) {
 		exports.openManager();
 	}
 }
-// jshint +W003
 
 exports.openManager = function openManager(window, quiet, cb) {
 	try {

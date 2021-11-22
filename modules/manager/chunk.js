@@ -3,15 +3,18 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
-/* global PIPE_SEGMENT_SIZE, MAX_PIPE_SEGMENTS */
+/* global BUFFER_SIZE, PIPE_SEGMENT_SIZE, MAX_PIPE_SEGMENTS */
 requireJoined(this, "constants");
 const Prefs = require("preferences");
 const {ByteBucketTee} = require("support/bytebucket");
 const {GlobalBucket} = require("./globalbucket");
+const {TimerManager} = require("support/timers");
 const Limits = require("support/serverlimits");
 const {getTimestamp, formatNumber, makeDir, randint} = require("utils");
+const {Task} = requireJSM("resource://gre/modules/Task.jsm");
 const {memoryReporter} = require("./memoryreporter");
-const {setTimeout} = require("support/defer");
+
+const Timers = new TimerManager();
 
 const _thread = (function() {
 	// Use a dedicated thread, so that we have serialized writes.
@@ -49,18 +52,14 @@ unload(() => {
 	try {
 		_thread.shutdown();
 	}
-	catch (ex) {
-		// ignored
-	}
+	catch (ex) {}
 });
 
-exports.hintChunkBufferSize = function() {
+exports.hintChunkBufferSize = function(bs) {
 };
 
 const Observer = {
-    /* eslint-disable no-unused-vars */
 	observe: function(s, topic, data) {
-    /* eslint-enable no-unused-vars */
 		let perms = Prefs.permissions = Prefs.getExt("permissions", 384);
 		if (perms & 384) {
 			perms |= 64;
@@ -87,9 +86,7 @@ function asyncCopy(instream, outstream, close) {
 		);
 	return new Promise(function(resolve, reject) {
 		copier.asyncCopy({
-			/* eslint-disable no-unused-vars */
 			onStartRequest: function(req, context) {},
-			/* eslint-enable no-unused-vars */
 			onStopRequest: function(req, context, status) {
 				if (!Components.isSuccessCode(status)) {
 					reject(status);
@@ -102,46 +99,44 @@ function asyncCopy(instream, outstream, close) {
 	});
 }
 
-class Chunk {
-	constructor(download, start, end, written) {
-		// safeguard against null or strings and such
-		this._parent = download;
-		this._start = start;
-		this._written = written > 0 ? written : 0;
-		this._sessionBytes = 0;
-		this.errored = false;
-		this.running = false;
+function Chunk(download, start, end, written) {
+	// safeguard against null or strings and such
+	this._parent = download;
+	this._start = start;
+	this._written = written > 0 ? written : 0;
+	this._sessionBytes = 0;
 
-		this.end = end;
-		this.startBytes = this.safeBytes = this._written;
-		this.wasOpened = false;
+	this.end = end;
+	this.safeBytes = this._written;
 
-		log(LOG_INFO, "chunk created: " + this);
-	}
+	log(LOG_INFO, "chunk created: " + this);
+}
 
-	clone() {
-		return new Chunk(this._parent, this.start, this.end, this.safeBytes);
-	}
+Chunk.prototype = {
+	_written: 0,
+
+	running: false,
+	safeBytes: 0,
 
 	get starter() {
 		return this.end <= 0;
-	}
+	},
 	get start() {
 		return this._start;
-	}
+	},
 	get end() {
 		return this._end;
-	}
+	},
 	set end(nv) {
 		this._end = nv;
 		this._total = this.end && (this._end - this._start + 1);
-	}
+	},
 	get total() {
 		return this._total;
-	}
+	},
 	get written() {
 		return this._written;
-	}
+	},
 	get buffered() {
 		let rv = 0;
 		try {
@@ -165,25 +160,26 @@ class Chunk {
 			rv += PIPE_SEGMENT_SIZE;
 		}
 		return rv;
-	}
+	},
 	get currentPosition() {
 		return this.start + this.written;
-	}
+	},
 	get remainder() {
 		return this._total - this._written;
-	}
+	},
 	get complete() {
 		if (this._end <= 0) {
 			return this.written !== 0;
 		}
 		return this._total === this.written;
-	}
+	},
 	get parent() {
 		return this._parent;
-	}
+	},
 	get sessionBytes() {
 		return this._sessionBytes;
-	}
+	},
+
 	get buckets() {
 		if (this._buckets) {
 			return this._buckets;
@@ -194,69 +190,194 @@ class Chunk {
 			GlobalBucket
 			);
 		return this._buckets;
-	}
+	},
 
-	open() {
-		if (this.wasOpened) {
-			throw new Error("No recylcing");
-		}
+	open: function() {
 		if (this._openPromise) {
-			log(LOG_DEBUG, `opening ${this}: already pending`);
 			return this._openPromise;
 		}
 
 		const file = this.parent.tmpFile;
 		let pos = this.start + this.safeBytes;
-		log(LOG_DEBUG, `opening ${this}: ${file.path} at ${pos}`);
-		this.wasOpened = true;
-		return this._openPromise = this._openAsync(file, pos);
-	}
+		log(LOG_DEBUG, "opening " + file.path + " at: " + pos);
+		return this._openPromise = Task.spawn(function*() {
+			if (this._closing) {
+				// still pending?
+				yield this._closing;
+			}
 
-	_noteBytesWritten(bytes) {
+			this.errored = false;
+			this._sessionBytes = 0;
+			memoryReporter.registerChunk(this);
+
+			try {
+				try {
+					yield makeDir(file.parent, Prefs.dirPermissions, true);
+				}
+				catch (ex) {
+				    if (!(ex.becauseExists)) {
+				        throw ex;
+			        } /* else {
+    					// no op
+					} */
+				}
+				let outStream = this._fileOutputStream = new Instances.FileOutputStream(
+					file,
+					0x02 | 0x08,
+					Prefs.permissions,
+					Ci.nsIFileOutputStream.DEFER_OPEN
+					);
+				if (pos) {
+					let seekable = outStream.QueryInterface(Ci.nsISeekableStream);
+					seekable.seek(0x00, pos);
+				}
+				this._pipe = new Instances.Pipe(
+					true,
+					true,
+					PIPE_SEGMENT_SIZE,
+					MAX_PIPE_SEGMENTS);
+				this._inStream = this._pipe.inputStream;
+				this._outStream = this._pipe.outputStream;
+				this._copier = asyncCopy(this._inStream, outStream, true);
+				this._copier.catch(status => {
+					this.errored = true;
+					this.download.writeFailed(status);
+				});
+			}
+			finally {
+				delete this._openPromise;
+			}
+		}.bind(this));
+	},
+	_noteBytesWritten: function(bytes) {
 		this._written += bytes;
 		this._sessionBytes += bytes;
-		this.safeBytes =  Math.max(this.startBytes, this._written - this.buffered);
+		this.safeBytes =  Math.max(this.safeBytes, this._written - this.buffered);
 		memoryReporter.noteBytesWritten(bytes);
 
 		this.parent.timeLastProgress = getTimestamp();
-	}
-
-	close() {
-		log(LOG_DEBUG, `closing ${this}`);
+	},
+	close: function() {
 		if (this._closing) {
 			return this._closing;
 		}
 		this.running = false;
-		this._closing = this._closeAsync();
-	}
+		return (this._closing = Task.spawn(function*() {
+			try {
+				if (this._openPromise) {
+					yield this._openPromise;
+				}
+				// drain the overflowPipe, if any
+				if (this._overflowPipe && !this.errored) {
+					log(LOG_DEBUG, "draining overflow");
+					try {
+						yield asyncCopy(this._overflowPipe.inputStream, this._outStream, false);
+					}
+					catch (status) {
+						this.download.writeFailed(status);
+					}
+				}
+				if (this._overflowPipe) {
+					// Still got an overflow pipe, meaning we failed a write
+					// Since we kill the pipe now, we need to adjust written sizes
+					// beforehand accordingly so saveBytes and rollback() are still
+					// correct
+					try {
+						let pending = this._overflowPipe.inputStream.available();
+						this._written -= pending;
+						this._sessionBytes -= pending;
+					}
+					catch (ex) {
+						log(LOG_DEBUG, "failed to substract overflow, which is probably OK", ex);
+					}
+					this._overflowPipe.outputStream.close();
+					this._overflowPipe.inputStream.close();
+					delete this._overflowPipe;
+				}
+				// we are done writing to the pipe
+				if (this._outStream) {
+					this._outStream.close();
+					delete this._pipe;
+					delete this._outStream;
+				}
+				// but still need to wait for the copy into the file
+				if (this._copier) {
+					try {
+						yield this._copier;
+					}
+					catch (ex) {
+						// ignore here!
+					}
+					delete this._copier;
+				}
 
-	merge(ch) {
+				// upate the counters one last time
+				this._noteBytesWritten(0);
+				// and close the input stream end of the pipe
+				if (this._inStream) {
+					try {
+						this._inStream.close();
+					}
+					catch (ex) {
+						// no op
+					}
+					delete this._inStream; // ... before deleting the instream
+				}
+
+				// and do some cleanup
+				if (this._buckets) {
+					delete this._buckets;
+				}
+				delete this._req;
+				memoryReporter.unregisterChunk(this);
+
+				this._sessionBytes = 0;
+				this._written = this.safeBytes;
+			}
+			catch (ex) {
+				log(LOG_ERROR, "Damn!", ex);
+			}
+			finally {
+				if (this._fileOutputStream) {
+					try {
+						this._fileOutputStream.close();
+					}
+					catch (ex) {
+						// might have been already closed
+					}
+				}
+				delete this._fileOutputStream;
+				delete this.download;
+				delete this._closing;
+			}
+		}.bind(this)));
+	},
+	merge: function(ch) {
 		if (!this.complete && !ch.complete) {
 			throw new Error("Cannot merge incomplete chunks this way!");
 		}
 		this.end = ch.end;
-		this.safeBytes += ch.safeBytes;
 		this._written += ch._written;
 		this.safeBytes += ch.safeBytes;
-	}
-
-	rollback() {
+	},
+	rollback: function() {
 		if (!this._sessionBytes || this._sessionBytes > this._written) {
 			return;
 		}
 		this._written -= this._sessionBytes;
 		this._sessionBytes = 0;
-	}
-
-	cancelChunk() {
+	},
+	cancelChunk: function() {
+		this.pauseChunk();
+	},
+	pauseChunk: function() {
 		this.running = false;
 		this.close();
 		if (this.download) {
 			this.download.cancel();
 		}
-	}
-
-	suspend(aRequest, pending) {
+	},
+	suspend: function(aRequest, pending) {
 		if (this._req) {
 			this._reqPending += pending;
 		}
@@ -266,13 +387,11 @@ class Chunk {
 			this._reqPending = pending;
 		}
 		this.schedule();
-	}
-
-	write(aRequest, aInputStream, aCount) {
+	},
+	write: function(aRequest, aInputStream, aCount) {
 		try {
 			// not running: do not write anything
-			if (!this.running || !this._inStream || !this._outStream) {
-				log(LOG_ERROR, "trying to write on a closed chunk");
+			if (!this.running) {
 				return -1;
 			}
 			let bytes = this.remainder;
@@ -283,14 +402,13 @@ class Chunk {
 				// we got what we wanted
 				return -1;
 			}
-			if (bytes < 0) {
-				throw new Error(`bytes negative: ${bytes} ${this.remainder} ${aCount}`);
-			}
 			let got = this.requestBytes(bytes);
-
 			// didn't get enough
 			if (got < bytes) {
 				this.suspend(aRequest, bytes - got);
+			}
+			if (bytes < 0) {
+				throw new Error("bytes negative: " + bytes + " " + this.remainder + " " + aCount);
 			}
 
 			// per e10n contract we must consume all bytes
@@ -304,19 +422,18 @@ class Chunk {
 			}
 			else {
 				let written = 0;
-				// jshint -W116
+				/* jshint -W116 */
 				try {
 					written = this._outStream.writeFrom(aInputStream, bytes);
 				}
 				catch (ex) {
-					if (ex.result == Cr.NS_BASE_STREAM_WOULD_BLOCK || ex == Cr.NS_BASE_STREAM_WOULD_BLOCK) {
-						// aka still nothing written
-					}
-					else {
-						throw ex;
-					}
+				    if (!(ex.result == Cr.NS_BASE_STREAM_WOULD_BLOCK || ex == Cr.NS_BASE_STREAM_WOULD_BLOCK)) {
+				        throw ex;
+			        } /* else {
+    					// aka still nothing written
+					} */
 				}
-				// jshint +W116
+				/* jshint +W116 */
 				let remain = bytes - written;
 				if (remain > 0) {
 					if (!this._overflowPipe) {
@@ -341,54 +458,47 @@ class Chunk {
 			log(LOG_ERROR, 'write: ' + this.parent.tmpFile.path, ex);
 			throw ex;
 		}
-	}
-
-	observe() {
+		return 0;
+	},
+	observe: function() {
 		this.run();
-	}
-
-	_substractOverflow(requested) {
-		let instream = this._overflowPipe.inputStream;
-		let avail = instream.available();
-		if (!avail) {
-			this._overflowPipe.outputStream.close();
-			this._overflowPipe.inputStream.close();
-			delete this._overflowPipe;
-			return requested;
-		}
-
-		log(LOG_DEBUG, `still overflow: ${avail}`);
-		// decreasing requested will put the stream into suspended mode, need
-		// to schedule
-		requested = Math.max(requested - avail, 0);
-		let written = 0;
-		// jshint -W116
-		try {
-			written = this._outStream.writeFrom(instream, avail);
-		}
-		catch (ex) {
-			if (ex.result == Cr.NS_BASE_STREAM_WOULD_BLOCK || ex == Cr.NS_BASE_STREAM_WOULD_BLOCK) {
-				// nothing written
+	},
+	requestBytes: function(requested) {
+		if (this._overflowPipe) {
+			let instream = this._overflowPipe.inputStream;
+			let avail = instream.available();
+			if (!avail) {
+				this._overflowPipe.outputStream.close();
+				this._overflowPipe.inputStream.close();
+				delete this._overflowPipe;
 			}
 			else {
-				throw ex;
+				log(LOG_DEBUG, `still overflow: ${avail}`);
+				// decreasing requested will put the stream into suspended mode, need
+				// to schedule
+				requested = Math.max(requested - avail, 0);
+				let written = 0;
+				/* jshint -W116 */
+				try {
+					written = this._outStream.writeFrom(instream, avail);
+				}
+				catch (ex) {
+				    if (!(ex.result == Cr.NS_BASE_STREAM_WOULD_BLOCK || ex == Cr.NS_BASE_STREAM_WOULD_BLOCK)) {
+				        throw ex;
+			        } /* else {
+    					// nothing written
+					} */
+				}
+				/* jshint +W116 */
+				avail -= written;
+				log(LOG_DEBUG, `overflow written: ${written} ${avail}`);
+				if (!avail) {
+					log(LOG_DEBUG, "overflow cleared");
+					this._overflowPipe.outputStream.close();
+					this._overflowPipe.inputStream.close();
+					delete this._overflowPipe;
+				}
 			}
-		}
-		// jshint +W116
-		avail -= written;
-		log(LOG_DEBUG, `overflow written: ${written} ${avail}`);
-		if (!avail) {
-			log(LOG_DEBUG, "overflow cleared");
-			this._overflowPipe.outputStream.close();
-			this._overflowPipe.inputStream.close();
-			delete this._overflowPipe;
-		}
-		return requested;
-	}
-
-	requestBytes(requested) {
-		if (this._overflowPipe) {
-			requested = this._substractOverflow(requested);
 		}
 
 		if (memoryReporter.memoryPressure > 0) {
@@ -398,25 +508,24 @@ class Chunk {
 			log(LOG_INFO, "Using instead: " + requested);
 		}
 		return this.buckets.requestBytes(requested);
-	}
-
-	schedule() {
+	},
+	schedule: function() {
 		if (this._schedTimer) {
 			return;
 		}
-		this._schedTimer = setTimeout(() => {
+		this._schedTimer = Timers.createOneshot(randint(10, 150), function() {
 			delete this._schedTimer;
 			this.run();
-		}, randint(0, 150));
-	}
-
-	run() {
+		}, this);
+	},
+	run: function() {
 		if (!this._req) {
 			return;
 		}
 		if (this._reqPending > 0) {
 			// Still have pending bytes?
-			let got = this.requestBytes(this._reqPending);
+			let requested = this._reqPending;
+			let got = this.requestBytes(requested);
 			if (!got) {
 				this.schedule();
 				return;
@@ -437,9 +546,8 @@ class Chunk {
 			this.parent.timeLastProgress = getTimestamp();
 			this.schedule();
 		}
-	}
-
-	toString() {
+	},
+	toString: function() {
 		let len = this.parent.totalSize ? String(this.parent.totalSize).length  : 10;
 		return formatNumber(this.start, len) +
 			"/" + formatNumber(this.end, len) +
@@ -448,164 +556,14 @@ class Chunk {
 			" written/remain/sb:" + formatNumber(this.written, len) +
 			"/" + formatNumber(this.remainder, len) +
 			"/" + formatNumber(this._sessionBytes, len);
-	}
-
-	toJSON() {
+	},
+	toJSON: function() {
 		return {
 			start: this.start,
 			end: this.end,
 			written: this.safeBytes
 			};
 	}
-	async _openAsync(file, pos) {
-		try {
-			try {
-				await makeDir(file.parent, Prefs.dirPermissions, true);
-			}
-			catch (ex) {
-				if (ex.becauseExists) {
-					// no op
-				}
-				else {
-					throw ex;
-				}
-			}
-			let outStream = new Instances.FileOutputStream(
-				file,
-				0x02 | 0x08,
-				Prefs.permissions,
-				Ci.nsIFileOutputStream.DEFER_OPEN
-				);
-			let closeStream = () => {
-				if (outStream) {
-					try {
-						outStream.close();
-					}
-					catch (ex) {
-						// might have been already closed
-					}
-				}
-				outStream = null;
-				this.close();
-			};
-			if (pos) {
-				let seekable = outStream.QueryInterface(Ci.nsISeekableStream);
-				seekable.seek(0x00, pos);
-			}
-			this._pipe = new Instances.Pipe(
-				true,
-				true,
-				PIPE_SEGMENT_SIZE,
-				MAX_PIPE_SEGMENTS);
-			this._inStream = this._pipe.inputStream;
-			this._outStream = this._pipe.outputStream;
-			this._copier = asyncCopy(this._inStream, outStream, true);
-			this._copier.then(closeStream);
-			this._copier.catch(status => {
-				this.errored = true;
-				try {
-					closeStream();
-				}
-				catch (ex) {
-					this.download.writeFailed(ex);
-					return;
-				}
-				this.download.writeFailed(status);
-			});
-		}
-		finally {
-			memoryReporter.registerChunk(this);
-			delete this._openPromise;
-		}
-	}
-	async _closeAsync() {
-		try {
-			if (this._openPromise) {
-				await this._openPromise;
-			}
-			// drain the overflowPipe, if any
-			if (this._overflowPipe && !this.errored) {
-				log(LOG_DEBUG, "draining overflow");
-				try {
-					await asyncCopy(this._overflowPipe.inputStream, this._outStream, false);
-				}
-				catch (status) {
-					this.errored = true;
-					this.download.writeFailed(status);
-				}
-			}
-
-			if (this._overflowPipe) {
-				// Still got an overflow pipe, meaning we failed a write
-				// Since we kill the pipe now, we need to adjust written sizes
-				// beforehand accordingly so saveBytes and rollback() are still
-				// correct
-				try {
-					let pending = this._overflowPipe.inputStream.available();
-					this._written -= pending;
-					this._sessionBytes -= pending;
-				}
-				catch (ex) {
-					log(LOG_DEBUG, "failed to substract overflow, which is probably OK", ex);
-				}
-				this._overflowPipe.outputStream.close();
-				this._overflowPipe.inputStream.close();
-				delete this._overflowPipe;
-			}
-			// we are done writing to the pipe
-			if (this._outStream) {
-				this._outStream.close();
-				delete this._pipe;
-				delete this._outStream;
-			}
-			// but still need to wait for the copy into the file
-			if (this._copier) {
-				try {
-					await this._copier;
-				}
-				catch (ex) {
-					this.errored = true;
-					// ignore here otherwise!
-				}
-				delete this._copier;
-			}
-
-			// upate the counters one last time
-			this._noteBytesWritten(0);
-			// and close the input stream end of the pipe
-			if (this._inStream) {
-				try {
-					this._inStream.close();
-				}
-				catch (ex) {
-					// no op
-				}
-				delete this._inStream; // ... before deleting the instream
-			}
-
-			// and do some cleanup
-			if (this._buckets) {
-				delete this._buckets;
-			}
-			delete this._req;
-
-			this._sessionBytes = 0;
-			if (this.errored || !this.complete) {
-				this.startBytes = this._written = Math.max(this.startBytes, this.safeBytes - 2048);
-			}
-			else {
-				this.startBytes = this._written = this.safeBytes;
-			}
-		}
-		catch (ex) {
-			log(LOG_ERROR, "Damn!", ex);
-		}
-		finally {
-			memoryReporter.unregisterChunk(this);
-			delete this.download;
-			delete this._closing;
-		}
-	}
-}
+};
 
 exports.Chunk = Chunk;

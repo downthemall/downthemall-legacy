@@ -15,12 +15,12 @@
 <!ENTITY amo.description.intro "DownThemAll is all you can desire from a download manager: it features an advanced accelerator that increases speed up to 4x and it allows you to pause and resume downloads at any time.">
 <!ENTITY amo.description.feat2 "DownThemAll is fast, reliable and easy-to-use! It lets you download all the links or images contained in a web page and much more: you can refine your downloads by fully customizable criteria to get only what you really want. Be in full control over your downloads, dedicated speed and number of parallel connections at any time. Use Metalinks or add mirrors manually to download a file from different servers at the same time.">
 <!ENTITY amo.description.free2 "DownThemAll is open-source and freeware. No Adware, no Spyware, no tracking, no costs at all!">
-<!ENTITY amo.description.more "For more information see our <a href='http://www.downthemall.net/howto/features/'>Features page</a>.">
+<!ENTITY amo.description.more "For more information see our <a href='https://www.downthemall.org/howto/features/'>Features page</a>.">
 
 <!ENTITY lp.title "About DownThemAll!">
 <!ENTITY lp.welcome "Welcome to DownThemAll!">
 <!ENTITY lp.info "Have a look at the videos showing how to use DownThemAll! and learn more about privacy and your rights">
-<!ENTITY lp.moreinfo "For more information visit our <a href='http://www.downthemall.net/howto/features/'>features page</a>.">
+<!ENTITY lp.moreinfo "For more information visit our <a href='https://www.downthemall.org/howto/features/'>features page</a>.">
 <!ENTITY lp.gettingstarted "Getting started">
 <!ENTITY lp.toolbar "Toolbar buttons">
 <!ENTITY lp.privacy "Privacy">
@@ -101,7 +101,7 @@
 
 <!ENTITY lp.yr.licensetitle "Copyright and License">
 <!ENTITY lp.yr.licensed "DownThemAll! is licensed under <a href='http://www.gnu.org/licenses/old-licenses/gpl-2.0.html'>GPL 2.0</a>. See the GPL file. This applies to all source code files.">
-<!ENTITY lp.yr.morelicense3 "Individual files may have additional and/or different licenses. See the corresponding repository files available from <a href='http://code.downthemall.net/repos/'>http://code.downthemall.net/repos/</a>. Most files are licensed under the GPL/LGPL-compatible MPL 2.0, or are tri-licensed under a MPL 1.1/GPL 2.0/LGPL 2.1 license. See the MPL, GPL, LGPL files respectively.">
+<!ENTITY lp.yr.morelicense3 "Individual files may have additional and/or different licenses. See the corresponding repository files available from <a href='https://code.downthemall.org/repos/'>https://code.downthemall.org/repos/</a>. Most files are licensed under the GPL/LGPL-compatible MPL 2.0, or are tri-licensed under a MPL 1.1/GPL 2.0/LGPL 2.1 license. See the MPL, GPL, LGPL files respectively.">
 <!ENTITY lp.yr.gplintro "Most important sections from the GPL 2.0, the no warranty and damages disclaimer, follow:">
 <!ENTITY lp.yr.icons "Artwork, icons and buttons">
 <!ENTITY lp.yr.iconsbased4 "are based on the works of Mike Matas, Mark James, the Noun Project and the Tango project">
@@ -111,8 +111,8 @@
 <!ENTITY lp.yr.logopermissions "The DownThemAll! name and logo cannot be used without permission in any derivative work, with exception of credits and license-related notices.">
 
 <!ENTITY lp.ct.bugstitle "Reporting bugs/Feature requests">
-<!ENTITY lp.ct.bugs2 "Please report any bugs and feature requests at our <a href='https://bugs.downthemall.net/'>bug tracker</a>.">
+<!ENTITY lp.ct.bugs2 "Please report any bugs and feature requests at our <a href='https://bugs.downthemall.org/'>bug tracker</a>.">
 
 <!ENTITY lp.ct.contactstitle "Contacts">
 <!ENTITY lp.ct.contactsfeed2 "We like to receive your feedback, suggestions and/or offers to help.">
-<!ENTITY lp.ct.contacts "Please see our <a href='http://www.downthemall.net/main/contacts/'>contact page</a>.">
+<!ENTITY lp.ct.contacts "Please see our <a href='https://www.downthemall.org/main/contacts/'>contact page</a>.">

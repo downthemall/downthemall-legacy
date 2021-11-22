@@ -703,9 +703,9 @@
 			<constructor><![CDATA[
 				function doAfterPaint(i) {
 					i = i || 8; // recalculate a few times here, as the bg images might be loaded asynchronously
-					window.addEventListener("MozAfterPaint", function paint() {
+					window.addEventListener("MozAfterPaint", function() {
 						if (--i == 0) {
-							window.removeEventListener("MozAfterPaint", paint, false);
+							window.removeEventListener("MozAfterPaint", arguments.callee, false);
 						}
 						try {
 							_rl();
@@ -774,7 +774,7 @@
 						let idata = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
 
 						// recursively extrapolate the best color
-						return (function reccolor(ref, l) {
+						return (function(ref, l) {
 							l = l || 0;
 							if (l > 4) {
 								return ref;
@@ -805,7 +805,7 @@
 							if (l && poorMansSimilarity(newRef, ref) < 5) {
 								return newRef;
 							}
-							return reccolor(newRef, ++l);
+							return arguments.callee(newRef, ++l);
 						})();
 					}
 

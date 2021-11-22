@@ -4,19 +4,21 @@
 "use strict";
 
 const {Atoms} = require("./atoms");
-const {setTimeout} = new require("./defer");
+const Timers = new (require("./timers").TimerManager)();
 const {getIcon} = require("./icons");
 const {getExtension} = require("./stringfuncs");
 const {identity} = require("./memoize");
 
-class FileExtensionSheet {
-	constructor(window, tree) {
-		this._tree = tree;
-		this._windowUtils = window.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIDOMWindowUtils);
-		this._entries = new Map();
-		this._toadd = [];
-	}
-	getAtom(fileName, metalink, invalidate) {
+function FileExtensionSheet(window, tree) {
+	this._tree = tree;
+	this._windowUtils = window.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIDOMWindowUtils);
+	this._entries = new Map();
+	this._toadd = [];
+}
+
+FileExtensionSheet.prototype = Object.freeze({
+	_atoms: new Atoms(),
+	getAtom: function(fileName, metalink, invalidate) {
 		let ext = getExtension(fileName);
 		if (!ext || ext.length > 10 || ext.indexOf(" ") > -1) {
 			ext = 'unknown';
@@ -43,22 +45,18 @@ treechildren::-moz-tree-image(iconic,${entry.toString()}) {
 }`;
 			this._toadd.push(rule);
 			if (!this._timer) {
-				this._timer = setTimeout(() => {
-					delete this._timer;
-					this.add(true);
-				}, 0);
+				this._timer = Timers.createOneshot(0, () => this.add(true));
 			}
 			this._entries.set(ext, entry);
 		}
 		return this._atoms.getAtom(entry);
-	}
-	add(invalidate) {
+	},
+	add: function(invalidate) {
+		this._timer = null;
 		if (!this._toadd.length) {
 			return;
 		}
-		let rule =
-			'data:text/css,@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");\n' +
-			this._toadd.join("\n");
+		let rule = `data:text/css,@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");\n${this._toadd.join("\n")}`;
 		this._toadd = [];
 		try {
 			log(LOG_DEBUG, "new sheet: " + rule);
@@ -71,6 +69,6 @@ treechildren::-moz-tree-image(iconic,${entry.toString()}) {
 			log(LOG_ERROR, "sheet: " + rule, ex);
 		}
 	}
-}
-FileExtensionSheet.prototype._atoms = new Atoms();
+});
+
 exports.FileExtensionSheet = Object.freeze(FileExtensionSheet);

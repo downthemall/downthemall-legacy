@@ -27,6 +27,8 @@ const {unique} = require("support/uniquelinks");
 const {unloadWindow} = require("support/overlays");
 const strfn = require("support/stringfuncs");
 
+const {Task} = requireJSM("resource://gre/modules/Task.jsm");
+
 var findLinksJob = 0;
 
 const MENU_ITEMS = [
@@ -122,28 +124,28 @@ function getSniffedInfoFromLocation(l) {
  */
 exports.load = function load(window, outerEvent) {
 	let document = window.document;
-	let setTimeoutOnlyFun = function(c, ...args) {
+	let setTimeoutOnlyFun = function(c) {
 		if (typeof(c) !== "function") {
 			throw new Error("do not call me with a string!");
 		}
-		return window.setTimeout.call(window, c, ...args);
+		return window.setTimeout.apply(window, arguments);
 	};
-	let setIntervalOnlyFun = function(c, ...args) {
+	let setIntervalOnlyFun = function(c) {
 		if (typeof(c) !== "function") {
 			throw new Error("do not call me with a string!");
 		}
-		return window.setInterval(c, ...args);
+		return window.setInterval.apply(window, arguments);
 	};
 	let clearInterval = window.clearInterval;
 	let gBrowser = window.gBrowser;
 
-	function $(...args) {
-		if (args.length === 1) {
-			return document.getElementById(args[0]);
+	function $() {
+		if (arguments.length === 1) {
+			return document.getElementById(arguments[0]);
 		}
 		let elements = [];
-		for (let i = 0, e = args.length; i < e; ++i) {
-			let id = args[i];
+		for (let i = 0, e = arguments.length; i < e; ++i) {
+			let id = arguments[i];
 			let element = document.getElementById(id);
 			if (element) {
 				elements.push(element);
@@ -250,7 +252,7 @@ exports.load = function load(window, outerEvent) {
 		return browsers;
 	}
 
-	async function findLinks(turbo, all) {
+	function findLinks(turbo, all) {
 		try {
 			if (!all && turbo && Preferences.getExt('rememberoneclick', false)) {
 				all = Preferences.getExt('lastalltabs', false);
@@ -287,123 +289,125 @@ exports.load = function load(window, outerEvent) {
 				}
 			}), 1750, true);
 
-			try {
-				let promises = [];
-				let job = findLinksJob++;
-				for (let b of findBrowsers(all)) {
-					let browser = b;
-					promises.push(new Promise((resolve, reject) => {
-						let progress = m => {
-							urlsLength += m.data.urls;
-							imagesLength += m.data.images;
-						};
-						let result = m => {
-							browser.messageManager.removeMessageListener("DTA:findLinks:progress:" + job, progress);
-							browser.messageManager.removeMessageListener("DTA:findLinks:" + job, result);
-							resolve(m.data);
-						};
-						browser.messageManager.addMessageListener("DTA:findLinks:progress:" + job, progress);
-						browser.messageManager.addMessageListener("DTA:findLinks:" + job, result);
-						browser.messageManager.sendAsyncMessage("DTA:findLinks", {
-							job: job,
-							honorSelection: !all,
-							recognizeTextLinks: recognizeTextLinks
-						});
-					}));
-				}
+			new Task.spawn(function*() {
+				try {
+					let promises = [];
+					let job = findLinksJob++;
+					for (let b of findBrowsers(all)) {
+						let browser = b;
+						promises.push(new Promise((resolve, reject) => {
+							let progress = m => {
+								urlsLength += m.data.urls;
+								imagesLength += m.data.images;
+							};
+							let result = m => {
+								browser.messageManager.removeMessageListener("DTA:findLinks:progress:" + job, progress);
+								browser.messageManager.removeMessageListener("DTA:findLinks:" + job, result);
+								resolve(m.data);
+							};
+							browser.messageManager.addMessageListener("DTA:findLinks:progress:" + job, progress);
+							browser.messageManager.addMessageListener("DTA:findLinks:" + job, result);
+							browser.messageManager.sendAsyncMessage("DTA:findLinks", {
+								job: job,
+								honorSelection: !all,
+								recognizeTextLinks: recognizeTextLinks
+							});
+						}));
+					}
 
-				let nonnull = function(e) {
-					return !!e;
-				};
-				let transposeURIs = function(e) {
-					try {
-						e.url = makeURI(e.url);
-						if (!e.url) {
+					let nonnull = function(e) {
+						return !!e;
+					};
+					let transposeURIs = function(e) {
+						try {
+							e.url = makeURI(e.url);
+							if (!e.url) {
+								return null;
+							}
+							e.referrer = makeURI(e.referrer);
+							return e;
+						}
+						catch (ex) {
 							return null;
 						}
-						e.referrer = makeURI(e.referrer);
-						return e;
-					}
-					catch (ex) {
-						return null;
-					}
-				};
-				for (let p of promises) {
-					let {urls, images, locations} = await p;
-					if (!urls.length && !images.length && !locations.length) {
-						continue;
-					}
-					collectedUrls = collectedUrls.concat(mapFilterInSitu(urls, transposeURIs, nonnull));
-					collectedImages = collectedImages.concat(mapFilterInSitu(images, transposeURIs, nonnull));
-					for (let l of locations) {
-						let sniffed = getSniffedInfoFromLocation(l);
-						for (let s of sniffed) {
-							let o = {
-								"url": new DTA.URL(s.url),
-								"fileName": s.name,
-								"referrer": s.ref,
-								"description": bundle.getString('sniffedvideo')
-							};
-							collectedUrls.push(o);
-							collectedImages.push(o);
+					};
+					for (let p of promises) {
+						let {urls, images, locations} = yield p;
+						if (!urls.length && !images.length && !locations.length) {
+							continue;
+						}
+						collectedUrls = collectedUrls.concat(mapFilterInSitu(urls, transposeURIs, nonnull));
+						collectedImages = collectedImages.concat(mapFilterInSitu(images, transposeURIs, nonnull));
+						for (let l of locations) {
+							let sniffed = getSniffedInfoFromLocation(l);
+							for (let s of sniffed) {
+								let o = {
+									"url": new DTA.URL(s.url),
+									"fileName": s.name,
+									"referrer": s.ref,
+									"description": bundle.getString('sniffedvideo')
+								};
+								collectedUrls.push(o);
+								collectedImages.push(o);
+							}
 						}
 					}
-				}
-				unique(collectedUrls);
-				for (let e of collectedUrls) {
-					if (!e.description) {
-						e.description = e.defaultDescription || "";
+					unique(collectedUrls);
+					for (let e of collectedUrls) {
+						if (!e.description) {
+							e.description = e.defaultDescription || "";
+						}
+						delete e.defaultDescription;
+						e.description = identity(e.description);
 					}
-					delete e.defaultDescription;
-					e.description = identity(e.description);
-				}
 
-				unique(collectedImages);
-				for (let e of collectedImages) {
-					if (!e.description) {
-						e.description = e.defaultDescription || "";
+					unique(collectedImages);
+					for (let e of collectedImages) {
+						if (!e.description) {
+							e.description = e.defaultDescription || "";
+						}
+						delete e.defaultDescription;
+						e.description = identity(e.description);
 					}
-					delete e.defaultDescription;
-					e.description = identity(e.description);
+
+					// clean up the "hint" notification from above
+					clearInterval(_updateInterval);
+					notifyProgress();
+
+					log(LOG_DEBUG, "findLinks(): finishing...");
+					if (!collectedUrls.length && !collectedImages.length) {
+						notifyError(bundle.getString('error'), bundle.getString('error.nolinks'));
+						return;
+					}
+
+					DTA.setPrivateMode(window, collectedUrls);
+					DTA.setPrivateMode(window, collectedImages);
+
+					if (turbo) {
+						DTA.turboSaveLinkArray(window, collectedUrls, collectedImages, function(queued) {
+							if (!queued) {
+								DTA.saveLinkArray(
+									window,
+									collectedUrls,
+									collectedImages,
+									bundle.getString('error.information')
+								);
+							}
+							else if (typeof queued === 'number') {
+								notifyInfo(bundle.getFormattedString('queuedn', [queued]));
+							}
+							else {
+								notifyInfo(bundle.getFormattedString('queued', [queued.url]));
+							}
+						});
+						return;
+					}
+					DTA.saveLinkArray(window, collectedUrls, collectedImages);
 				}
-
-				// clean up the "hint" notification from above
-				clearInterval(_updateInterval);
-				notifyProgress();
-
-				log(LOG_DEBUG, "findLinks(): finishing...");
-				if (!collectedUrls.length && !collectedImages.length) {
-					notifyError(bundle.getString('error'), bundle.getString('error.nolinks'));
-					return;
+				catch (ex) {
+					log(LOG_ERROR, "findLinksTask", ex);
 				}
-
-				DTA.setPrivateMode(window, collectedUrls);
-				DTA.setPrivateMode(window, collectedImages);
-
-				if (turbo) {
-					DTA.turboSaveLinkArray(window, collectedUrls, collectedImages, function(queued) {
-						if (!queued) {
-							DTA.saveLinkArray(
-								window,
-								collectedUrls,
-								collectedImages,
-								bundle.getString('error.information')
-							);
-						}
-						else if (typeof queued === 'number') {
-							notifyInfo(bundle.getFormattedString('queuedn', [queued]));
-						}
-						else {
-							notifyInfo(bundle.getFormattedString('queued', [queued.url]));
-						}
-					});
-					return;
-				}
-				DTA.saveLinkArray(window, collectedUrls, collectedImages);
-			}
-			catch (ex) {
-				log(LOG_ERROR, "findLinksTask", ex);
-			}
+			}.bind(this));
 		}
 		catch(ex) {
 			log(LOG_ERROR, 'findLinks', ex);
@@ -438,105 +442,109 @@ exports.load = function load(window, outerEvent) {
 		}
 	}
 
-	async function saveSingleLinkAsync(turbo, what, target, linkhint) {
-		try {
-			let data = await getMethod("saveTarget", {what:what, linkhint: linkhint}, target);
-			let url = makeURI(data, true);
-			if (!url) {
-				throw new Error("invalid URL");
-			}
-			let ref = makeURI(data.ref);
+	function saveSingleLinkAsync(turbo, what, target, linkhint) {
+		Task.spawn(function*() {
+			try {
+				let data = yield getMethod("saveTarget", {what:what, linkhint: linkhint}, target);
+				let url = makeURI(data, true);
+				if (!url) {
+					throw new Error("invalid URL");
+				}
+				let ref = makeURI(data.ref);
 
-			const item = {
-				url: url,
-				description: data.desc || trimMore(data.title || ""),
-				referrer: ref,
-				isPrivate: isWindowPrivate(window)
-			};
-			if (data.download) {
-				data.download = data.download.trim();
+				const item = {
+					url: url,
+					description: data.desc || trimMore(data.title || ""),
+					referrer: ref,
+					isPrivate: isWindowPrivate(window)
+				};
 				if (data.download) {
-					item.fileName = data.download;
+					data.download = data.download.trim();
+					if (data.download) {
+						item.fileName = data.download;
+					}
 				}
+				if (turbo) {
+					try {
+						DTA.saveSingleItem(window, true, item);
+						notifyInfo(bundle.getFormattedString('queued', [url]));
+						return;
+					}
+					catch (ex) {
+						log(LOG_ERROR, 'saveSingleLink', ex);
+						notifyError(bundle.getString('error'), bundle.getString('error.information'));
+					}
+				}
+				DTA.saveSingleItem(window, false, item);
 			}
-			if (turbo) {
-				try {
-					DTA.saveSingleItem(window, true, item);
-					notifyInfo(bundle.getFormattedString('queued', [url]));
-					return;
-				}
-				catch (ex) {
-					log(LOG_ERROR, 'saveSingleLink', ex);
-					notifyError(bundle.getString('error'), bundle.getString('error.information'));
-				}
+			catch (ex) {
+				log(LOG_ERROR, "Failed to process single link", ex);
+				notifyError(bundle.getString('error'), bundle.getString('errorcannotdownload'));
 			}
-			DTA.saveSingleItem(window, false, item);
-		}
-		catch (ex) {
-			log(LOG_ERROR, "Failed to process single link", ex);
-			notifyError(bundle.getString('error'), bundle.getString('errorcannotdownload'));
-		}
+		});
 	}
 
-	async function findForm(turbo) {
-		try {
-			let data = await getFormData(window.gContextMenu.target);
+	function findForm(turbo) {
+		Task.spawn(function*() {
+			try {
+				let data = yield getFormData(window.gContextMenu.target);
 
-			let action = makeURI(data);
-			if (!action) {
-				throw new Error("Invalid Form URL");
-			}
-
-			if (data.method === 'post') {
-				let ss = new Instances.StringInputStream(data.values, -1);
-				let ms = new Instances.MimeInputStream();
-				ms.addContentLength = true;
-				ms.addHeader('Content-Type', 'application/x-www-form-urlencoded');
-				ms.setData(ss);
-
-				let sis = new Instances.ScriptableInputStream(ms);
-				let postData = '';
-				let avail = 0;
-				while ((avail = sis.available())) {
-					postData += sis.read(avail);
+				let action = makeURI(data);
+				if (!action) {
+					throw new Error("Invalid Form URL");
 				}
-				sis.close();
-				ms.close();
-				ss.close();
 
-				action.postData = postData;
-			}
-			else {
-				action.url.query = data.values;
-				action.url.ref = '';
-			}
+				if (data.method === 'post') {
+					let ss = new Instances.StringInputStream(data.values, -1);
+					let ms = new Instances.MimeInputStream();
+					ms.addContentLength = true;
+					ms.addHeader('Content-Type', 'application/x-www-form-urlencoded');
+					ms.setData(ss);
 
-			let ref = makeURI(data.ref);
-			let defaultDescription = trimMore(data.title || "");
-			let desc = data.desc || defaultDescription;
+					let sis = new Instances.ScriptableInputStream(ms);
+					let postData = '';
+					let avail = 0;
+					while ((avail = sis.available())) {
+						postData += sis.read(avail);
+					}
+					sis.close();
+					ms.close();
+					ss.close();
 
-			let item = {
-				"url": action,
-				"referrer": ref,
-				"description": desc,
-				"isPrivate": isWindowPrivate(window)
-			};
-
-			if (turbo) {
-				try {
-					DTA.saveSingleItem(window, true, item);
-					return;
+					action.postData = postData;
 				}
-				catch (ex) {
-					log(LOG_ERROR, 'findSingleLink', ex);
-					notifyError(bundle.getString('error'), bundle.getString('error.information'));
+				else {
+					action.url.query = data.values;
+					action.url.ref = '';
 				}
+
+				let ref = makeURI(data.ref);
+				let defaultDescription = trimMore(data.title || "");
+				let desc = data.desc || defaultDescription;
+
+				let item = {
+					"url": action,
+					"referrer": ref,
+					"description": desc,
+					"isPrivate": isWindowPrivate(window)
+				};
+
+				if (turbo) {
+					try {
+						DTA.saveSingleItem(window, true, item);
+						return;
+					}
+					catch (ex) {
+						log(LOG_ERROR, 'findSingleLink', ex);
+						notifyError(bundle.getString('error'), bundle.getString('error.information'));
+					}
+				}
+				DTA.saveSingleItem(window, false, item);
 			}
-			DTA.saveSingleItem(window, false, item);
-		}
-		catch (ex) {
-			log(LOG_ERROR, 'findForm', ex);
-		}
+			catch (ex) {
+				log(LOG_ERROR, 'findForm', ex);
+			}
+		});
 	}
 
 	let notifyProgress = function(message) {
@@ -819,7 +827,7 @@ exports.load = function load(window, outerEvent) {
 		}
 	}
 
-	async function onDTAShowing(evt) {
+	function onDTAShowing(evt) {
 		let menu = evt.target;
 		for (let n of menu.querySelectorAll(".dta-sniff-element")) {
 			n.parentNode.removeChild(n);
@@ -827,79 +835,83 @@ exports.load = function load(window, outerEvent) {
 		if (!Preferences.getExt('listsniffedvideos', false)) {
 			return;
 		}
-		const locations = await getCurrentLocations();
-		let sniffed = [];
-		for (let l of locations) {
-			sniffed = sniffed.concat(getSniffedInfoFromLocation(l));
-		}
-		if (!sniffed.length) {
-			return;
-		}
+		Task.spawn(function*() {
+			const locations = yield getCurrentLocations();
+			let sniffed = [];
+			for (let l of locations) {
+				sniffed = sniffed.concat(getSniffedInfoFromLocation(l));
+			}
+			if (!sniffed.length) {
+				return;
+			}
 
-		let sep = document.createElement("menuseparator");
-		sep.className = "dta-sniff-element";
-		menu.appendChild(sep);
+			let sep = document.createElement("menuseparator");
+			sep.className = "dta-sniff-element";
+			menu.appendChild(sep);
 
-		let cmd = menu.parentNode.getAttribute("buttoncommand") + "-sniff";
-		for (let s of sniffed) {
-			let o = {
-				"url": new DTA.URL(s.url),
-				"referrer": s.ref,
-				"fileName": s.name,
-				"description": bundle.getString("sniffedvideo"),
-				"isPrivate": isWindowPrivate(window)
-			};
-			let mi = document.createElement("menuitem");
-			mi.setAttribute("label", strfn.cropCenter(s.name, 60));
-			mi.setAttribute("tooltiptext", o.url.spec);
-			mi.setAttribute("image", getIcon(s.name));
-			mi.setAttribute("command", cmd);
-			mi.info = o;
-			mi.className = "dta-sniff-element menuitem-iconic";
-			menu.appendChild(mi);
-		}
+			let cmd = menu.parentNode.getAttribute("buttoncommand") + "-sniff";
+			for (let s of sniffed) {
+				let o = {
+					"url": new DTA.URL(s.url),
+					"referrer": s.ref,
+					"fileName": s.name,
+					"description": bundle.getString("sniffedvideo"),
+					"isPrivate": isWindowPrivate(window)
+				};
+				let mi = document.createElement("menuitem");
+				mi.setAttribute("label", strfn.cropCenter(s.name, 60));
+				mi.setAttribute("tooltiptext", o.url.spec);
+				mi.setAttribute("image", getIcon(s.name));
+				mi.setAttribute("command", cmd);
+				mi.info = o;
+				mi.className = "dta-sniff-element menuitem-iconic";
+				menu.appendChild(mi);
+			}
+		});
 	}
 
-	async function onDTAViewShowing(button, view) {
+	function onDTAViewShowing(button, view) {
 		for (let n of view.querySelectorAll(".dta-sniff-element")) {
 			n.parentNode.removeChild(n);
 		}
 		if (!Preferences.getExt('listsniffedvideos', false)) {
 			return;
 		}
-		const locations = await getCurrentLocations();
-		let sniffed = [];
-		for (let l of locations) {
-			sniffed = sniffed.concat(getSniffedInfoFromLocation(l));
-		}
-		if (!sniffed.length) {
-			return;
-		}
+		Task.spawn(function*() {
+			const locations = yield getCurrentLocations();
+			let sniffed = [];
+			for (let l of locations) {
+				sniffed = sniffed.concat(getSniffedInfoFromLocation(l));
+			}
+			if (!sniffed.length) {
+				return;
+			}
 
-		let menu = view.querySelector(".panel-subview-body");
+			let menu = view.querySelector(".panel-subview-body");
 
-		let sep = document.createElement("menuseparator");
-		sep.className = "dta-sniff-element";
-		menu.appendChild(sep);
+			let sep = document.createElement("menuseparator");
+			sep.className = "dta-sniff-element";
+			menu.appendChild(sep);
 
-		let cmd = button.getAttribute("buttoncommand") + "-sniff";
-		for (let s of sniffed) {
-			let o = {
-				"url": new DTA.URL(s.url),
-				"referrer": s.ref,
-				"fileName": s.name,
-				"description": bundle.getString("sniffedvideo"),
-				"isPrivate": isWindowPrivate(window)
-			};
-			let mi = document.createElement("toolbarbutton");
-			mi.setAttribute("label", strfn.cropCenter(s.name, 60));
-			mi.setAttribute("tooltiptext", o.url.spec);
-			mi.setAttribute("image", getIcon(s.name));
-			mi.setAttribute("command", cmd);
-			mi.info = o;
-			mi.className = "dta-sniff-element subviewbutton cui-withicon";
-			menu.appendChild(mi);
-		}
+			let cmd = button.getAttribute("buttoncommand") + "-sniff";
+			for (let s of sniffed) {
+				let o = {
+					"url": new DTA.URL(s.url),
+					"referrer": s.ref,
+					"fileName": s.name,
+					"description": bundle.getString("sniffedvideo"),
+					"isPrivate": isWindowPrivate(window)
+				};
+				let mi = document.createElement("toolbarbutton");
+				mi.setAttribute("label", strfn.cropCenter(s.name, 60));
+				mi.setAttribute("tooltiptext", o.url.spec);
+				mi.setAttribute("image", getIcon(s.name));
+				mi.setAttribute("command", cmd);
+				mi.info = o;
+				mi.className = "dta-sniff-element subviewbutton cui-withicon";
+				menu.appendChild(mi);
+			}
+		});
 	}
 
 	function attachOneClick() {
@@ -942,7 +954,7 @@ exports.load = function load(window, outerEvent) {
 		// The remote site does not get special privileges!
 		try {
 			if (!/^about:downthemall/.test(event.target.location) &&
-				event.target.location.host !== "about.downthemall.net") {
+				event.target.location.host !== "about.downthemall.org") {
 				return;
 			}
 		}
@@ -997,21 +1009,23 @@ exports.load = function load(window, outerEvent) {
 				log(LOG_ERROR, "failed to process ondragover", ex);
 			}
 		}
-		async function ondrop(event) {
-			try {
-				let url = event.dataTransfer.getData("URL");
-				if (!url) {
-					return;
+		function ondrop(event) {
+			Task.spawn(function*() {
+				try {
+					let url = event.dataTransfer.getData("URL");
+					if (!url) {
+						return;
+					}
+					url = Services.io.newURI(url, null, null);
+					url = new DTA.URL(DTA.getLinkPrintMetalink(url) || url);
+					let {ref, title} = yield getFocusedDetails();
+					ref = makeURI(ref);
+					func(url, ref);
 				}
-				url = Services.io.newURI(url, null, null);
-				url = new DTA.URL(DTA.getLinkPrintMetalink(url) || url);
-				let {ref, title} = await getFocusedDetails();
-				ref = makeURI(ref);
-				func(url, ref);
-			}
-			catch (ex) {
-				log(LOG_ERROR, "failed to process ondrop", ex);
-			}
+				catch (ex) {
+					log(LOG_ERROR, "failed to process ondrop", ex);
+				}
+			});
 		}
 		elem.addEventListener("dragover", ondragover, true);
 		elem.addEventListener("drop", ondrop, true);
@@ -1021,10 +1035,10 @@ exports.load = function load(window, outerEvent) {
 		});
 	}
 
-	function $t(...args) {
+	function $t() {
 		let rv = [];
-		for (let i = 0, e = args.length; i < e; ++i) {
-			let id = args[i];
+		for (let i = 0, e = arguments.length; i < e; ++i) {
+			let id = arguments[i];
 			let element = document.getElementById(id);
 			if (element) {
 					rv.push(element);

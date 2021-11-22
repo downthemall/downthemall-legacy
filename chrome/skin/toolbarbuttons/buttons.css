@@ -97,12 +97,22 @@ toolbar[iconsize="large"] #dta-manager-button {
 	.dta-toolbarbutton {
 		list-style-image: url(buttons32.png)  !important;
 	}
+	.dta-toolbarbutton .toolbarbutton-icon {
+		width: 16px;
+	}
 	toolbar[iconsize="large"] .dta-toolbarbutton {
 		list-style-image: url(buttons24.png)  !important;
+	}
+	toolbar[iconsize="large"] .dta-toolbarbutton .toolbarbutton-icon {
+		width: 24px;
 	}
 	.dta-toolbarbutton[cui-areatype="menu-panel"],
 	#customization-container .dta-toolbarbutton {
 		list-style-image: url(buttons64.png) !important;
+	}
+	.dta-toolbarbutton[cui-areatype="menu-panel"] .toolbarbutton-icon,
+	#customization-container .dta-toolbarbutton .toolbarbutton-icon {
+	width: 32px;
 	}
 
 	#dta-button {

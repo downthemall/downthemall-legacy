@@ -17,11 +17,11 @@ const _ = (function(global) {
 		"chrome://dta/locale/common.properties",
 		"chrome://dta/locale/manager.properties"
 		]);
-	return function(...args) {
-		if (args.length === 1) {
-			return bundles.getString(args[0]);
+	return function() {
+		if (arguments.length === 1) {
+			return bundles.getString(arguments[0]);
 		}
-		return bundles.getFormattedString(...args);
+		return bundles.getFormattedString.apply(bundles, arguments);
 	};
 })(this);
 
@@ -141,6 +141,7 @@ const RemainderMatch = {
 		};
 	},
 	getMatcher: function(params) {
+		let state = 0;
 		let est = 0;
 		for (let p of params) {
 			let n = parseInt(p, 10);
@@ -262,17 +263,15 @@ const DomainMatch = {
 	}
 };
 
-class MatcherTee {
-	constructor(a, b) {
-		this.a = a;
-		this.b = b;
-	}
-
+function MatcherTee(a, b) {
+	this.a = a;
+	this.b = b;
+}
+MatcherTee.prototype = {
 	get name() {
 		return this.a + ";" + this.b;
-	}
-
-	*getItems(downloads) {
+	},
+	getItems: function*(downloads) {
 		for (let a of this.a.getItems(downloads)) {
 			a.param = "a:" + a.param;
 			yield a;
@@ -282,9 +281,8 @@ class MatcherTee {
 			b.param = "b:" + b.param;
 			yield b;
 		}
-	}
-
-	getMatcher(params) {
+	},
+	getMatcher: function(params) {
 		let a = [], b = [];
 		params.forEach(function(p) {
 			return this[p[0]].push(p.substr(2));
@@ -302,21 +300,27 @@ class MatcherTee {
 		b = this.b.getMatcher(b);
 		return function(d) { return a(d) && b(d); };
 	}
+};
+
+function Matcher() {
+	this._matchers = [];
+	this._matchersLength = 0;
 }
-
-class Matcher {
-	constructor() {
-		this._matchers = [];
-		this._matchersLength = 0;
-	}
-
-	*getItems(name, downloads) {
+Matcher.prototype = {
+	_available: {
+		'textmatch': TextMatch,
+		'downloadmatch': new MatcherTee(FilterMatch, DomainMatch),
+		'pathmatch': PathMatch,
+		'statusmatch': new MatcherTee(StatusMatch, RemainderMatch),
+		'sizematch': SizeMatch,
+		'domainmatch': DomainMatch
+	},
+	getItems: function*(name, downloads) {
 		for (let i of this._available[name].getItems(downloads)) {
 			yield i;
 		}
-	}
-
-	addMatcher(name, params) {
+	},
+	addMatcher: function(name, params) {
 		if (!(name in this._available)) {
 			log(LOG_ERROR, "trying to add a matcher that does not exist");
 			return;
@@ -328,17 +332,14 @@ class Matcher {
 			this._matchers.push({name: name, isMatch: m});
 			this._matchersLength = this._matchers.length;
 		}
-	}
-
-	removeMatcher(name) {
+	},
+	removeMatcher: function(name) {
 		this._matchersLength = filterInSitu(this._matchers, m => m.name !== name).length;
-	}
-
+	},
 	get filtering() {
 		return !!this._matchersLength;
-	}
-
-	filter(array) {
+	},
+	filter: function(array) {
 		// jshint strict:true, globalstrict:true, loopfunc:true
 		let rv;
 		for (let i = 0, e = this._matchers.length; i < e; ++i) {
@@ -357,9 +358,8 @@ class Matcher {
 			}
 		}
 		return rv;
-	}
-
-	shouldDisplay(d) {
+	},
+	shouldDisplay: function(d) {
 		for (let i = 0, e = this._matchers.length; i < e; ++i) {
 			if (!this._matchers[i].isMatch(d)) {
 				return false;
@@ -367,17 +367,6 @@ class Matcher {
 		}
 		return true;
 	}
-}
-
-Object.assign(Matcher.prototype, {
-	_available: {
-		'textmatch': TextMatch,
-		'downloadmatch': new MatcherTee(FilterMatch, DomainMatch),
-		'pathmatch': PathMatch,
-		'statusmatch': new MatcherTee(StatusMatch, RemainderMatch),
-		'sizematch': SizeMatch,
-		'domainmatch': DomainMatch
-	},
-});
+};
 
 exports.Matcher = Matcher;

@@ -11,11 +11,11 @@
 <!ENTITY amo.description.intro "DownThemAll! este tot ceea ce se poate dori de la un gestionar de descărcări: are un accelerator avansat care mărește viteza de descărcare de până la 4 ori și vă permite să întrerupeți și să reluați descărcările în orice moment.">
 <!ENTITY amo.description.feat2 "DownThemAll is fast, reliable and easy-to-use! It lets you download all the links or images contained in a web page and much more: you can refine your downloads by fully customizable criteria to get only what you really want. Be in full control over your downloads, dedicated speed and number of parallel connections at any time. Use Metalinks or add mirrors manually to download a file from different servers at the same time.">
 <!ENTITY amo.description.free2 "DownThemAll is open-source and freeware. No Adware, no Spyware, no tracking, no costs at all!">
-<!ENTITY amo.description.more "Pentru informații suplimentare vizitați pagina <a href='http://www.downthemall.net/howto/features/'>Caracteristici</a> (în limba engleză).">
+<!ENTITY amo.description.more "Pentru informații suplimentare vizitați pagina <a href='https://www.downthemall.org/howto/features/'>Caracteristici</a> (în limba engleză).">
 <!ENTITY lp.title "Despre DownThemAll!">
 <!ENTITY lp.welcome "Bun venit la DownThemAll!">
 <!ENTITY lp.info "Urmăriți clipurile video care ilustrează modul de utilizare a DownThemAll! și aflați mai multe despre confidențialitate și drepturile dumneavoastră.">
-<!ENTITY lp.moreinfo "Pentru informații suplimentare vizitați pagina <a href='http://www.downthemall.net/howto/features/'>Caracteristici</a>.">
+<!ENTITY lp.moreinfo "Pentru informații suplimentare vizitați pagina <a href='https://www.downthemall.org/howto/features/'>Caracteristici</a>.">
 <!ENTITY lp.gettingstarted "Primii pași">
 <!ENTITY lp.toolbar "Butoanele barei de unelte">
 <!ENTITY lp.privacy "Confidențialitate">
@@ -86,7 +86,7 @@
 <!ENTITY lp.language.babelzilla "If you're fluent in multiple languages, please consider joining <a href='http://babelzilla.org'>babelzilla.org</a> to help translate this and many other great add-ons.">
 <!ENTITY lp.yr.licensetitle "<font face="Helvetica">Drepturi de autor și licență&quot;&gt;">
 <!ENTITY lp.yr.licensed "DownThemAll! este disponibil sub licența <a href='http://www.gnu.org/licenses/old-licenses/gpl-2.0.html'>GPL 2.0</a>. Vedeți fișierul GPL. Aceasta este valabilă pentru toate fișierele codului sursă.">
-<!ENTITY lp.yr.morelicense3 "Individual files may have additional and/or different licenses. See the corresponding repository files available from <a href='http://code.downthemall.net/repos/'>http://code.downthemall.net/repos/</a>. Most files are licensed under the GPL/LGPL-compatible MPL 2.0, or are tri-licensed under a MPL 1.1/GPL 2.0/LGPL 2.1 license. See the MPL, GPL, LGPL files respectively.">
+<!ENTITY lp.yr.morelicense3 "Individual files may have additional and/or different licenses. See the corresponding repository files available from <a href='https://code.downthemall.org/repos/'>https://code.downthemall.org/repos/</a>. Most files are licensed under the GPL/LGPL-compatible MPL 2.0, or are tri-licensed under a MPL 1.1/GPL 2.0/LGPL 2.1 license. See the MPL, GPL, LGPL files respectively.">
 <!ENTITY lp.yr.gplintro "Cele mai importante secțiuni ale GPL 2.0 referitoare la descărcarea de răspundere privind garanția și potențialele efecte negative, sunt redate în continuare, în original:">
 <!ENTITY lp.yr.icons "Grafica, pictogramele și butoanele">
 <!ENTITY lp.yr.iconsbased4 "are based on the works of Mike Matas, Mark James, the Noun Project and the Tango project">
@@ -95,7 +95,7 @@
 <!ENTITY lp.yr.logo3 "The DownThemAll! logo design: Copyright © 2004-2013 by Stefano Verna.">
 <!ENTITY lp.yr.logopermissions "Denumirea și emblema DownThemAll! nu pot fi utilizate fără permisiune în nicio lucrare derivată, cu excepția aprecierilor și a notificărilor legate de licență.">
 <!ENTITY lp.ct.bugstitle "Raportarea problemelor și cereri de noi funcționalități">
-<!ENTITY lp.ct.bugs2 "Please report any bugs and feature requests at our <a href='https://bugs.downthemall.net/'>bug tracker</a>.">
+<!ENTITY lp.ct.bugs2 "Please report any bugs and feature requests at our <a href='https://bugs.downthemall.org/'>bug tracker</a>.">
 <!ENTITY lp.ct.contactstitle "Contact">
 <!ENTITY lp.ct.contactsfeed2 "We like to receive your feedback, suggestions and/or offers to help.">
-<!ENTITY lp.ct.contacts "Vă rugăm să vizitați <a href='http://www.downthemall.net/main/contacts/'>pagina de contact</a> (în limba engleză).">
+<!ENTITY lp.ct.contacts "Vă rugăm să vizitați <a href='https://www.downthemall.org/main/contacts/'>pagina de contact</a> (în limba engleză).">

@@ -7,45 +7,45 @@
  * Speed Statistics
  * @param maxSpeeds (unsigned) Maximum number of speeds to count
  */
-class SpeedStats {
-	constructor(maxSpeeds) {
-		this._maxSpeeds = maxSpeeds;
-		this._speeds = [];
-		this._aspeeds = [];
-		this._lastTime = this._lastBytes = this._avg = 0;
-	}
+function SpeedStats(maxSpeeds) {
+	this._maxSpeeds = maxSpeeds;
+	this._speeds = [];
+	this._aspeeds = [];
+	this._lastTime = this._lastBytes = this._avg = 0;
+}
 
+SpeedStats.prototype = Object.freeze({
 	/**
 	 * Maximum number of speeds to store
 	 * Oldest will be dropped if buffer runs full
 	 */
 	get maxSpeeds() {
 		return this._maxSpeeds;
-	}
+	},
 	/**
 	 * Average speed (at the moment)
 	 */
 	get avg() {
 		return this._avg;
-	}
+	},
 	/**
 	 * First (oldest) speed recorded
 	 */
 	get first() {
 		return this._speeds[0];
-	}
+	},
 	/**
 	 * Last (most recent) speed recorded
 	 */
 	get last() {
 		return this._speeds[this._speeds.length - 1];
-	}
+	},
 	/**
 	 * Number of speed statistics currently recorded
 	 */
 	get length() {
 		return this._speeds.length;
-	}
+	},
 	/**
 	 * Generator over all recorded speeds
 	 */
@@ -55,7 +55,7 @@ class SpeedStats {
 				yield x;
 			}
 		}).call(this);
-	}
+	},
 	/**
 	 * Generator over all avg speeds
 	 */
@@ -65,25 +65,25 @@ class SpeedStats {
 				yield x;
 			}
 		}).call(this);
-	}
+	},
 	/**
 	 * Time of last update
 	 */
 	get lastUpdate() {
 		return this._lastTime;
-	}
+	},
 	/**
 	 * Bytes in last period
 	 */
 	get lastBytes() {
 		return this._lastBytes;
-	}
+	},
 	/**
 	 * Adds a new data point based on given downloaded bytes and time
 	 * @param bytes (int) Bytes in the period
 	 * @param time (int) Time bytes was recorded
 	 */
-	add(bytes, time) {
+	add: function(bytes, time) {
 		let received = 0;
 		if (this._lastTime) {
 			let elapsed = (time - this._lastTime) / 1000;
@@ -113,14 +113,14 @@ class SpeedStats {
 		this._lastTime = time;
 		this._lastBytes = bytes;
 		return received;
-	}
+	},
 	/**
 	 * Clears all statistics
 	 */
-	clear() {
+	clear: function() {
 		this._speeds.length = 0;
 		this._aspeeds.length = 0;
 		this._lastTime = this._lastBytes = this._avg = 0;
 	}
-}
+});
 exports.SpeedStats = Object.freeze(SpeedStats);

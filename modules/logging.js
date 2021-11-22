@@ -42,8 +42,7 @@ function prepareStack(stack) {
 		message = [];
 		for (let i = 0; stack && i < 60; ++i, stack = stack.caller) {
 			if (stack.lineNumber) {
-				let loc = (stack.filename || "unknown").replace(GLUE, "");
-				message.push(`\t${stack.name || "[anonymous]"}() @ ${loc}:${stack.lineNumber}`);
+				message.push(`\t${stack.name || "[anonymous]"}() @ ${(stack.filename || "unknown").replace(GLUE, "")}:${stack.lineNumber}`);
 			}
 			else {
 				message.push(`\t[native @ ${stack.languageName || "???"}]`);
@@ -112,8 +111,8 @@ function getTimeString() {
 		"::" +
 		fmt(time.getMilliseconds());
 }
-exports.log = function(level, message, exception, force) {
-	if (!force && global.level > level && level < exports.LOG_ERROR)  {
+exports.log = function(level, message, exception) {
+	if (global.level > level && level < exports.LOG_ERROR)  {
 		return;
 	}
 	try {
@@ -187,7 +186,7 @@ exports.log = function(level, message, exception, force) {
 		Services.console.logMessage(scriptError);
 		message = `${getTimeString()}\n${message}\n--> ${sourceName}:${lineNumber}:${columnNumber}\n`;
 
-		if (force || global.level <= level) {
+		if (global.level <= level) {
 			let f = new Instances.FileOutputStream(global.file, 0x04 | 0x08 | 0x10, parseInt("664", 8), 0);
 			f.write(message, message.length);
 			f.close();

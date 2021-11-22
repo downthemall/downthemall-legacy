@@ -4,32 +4,36 @@
 "use strict";
 
 const DTA = require("api");
+const Preferences = require("preferences");
 const {getTextLinks} = require("support/textlinks");
 const Version = require("version");
 const {NS_DTA, NS_METALINKER3, NS_METALINK_RFC5854} = require("support/metalinker");
 const {filterInSitu} = require("utils");
 
-exports.parseTextFile = async function parseTextFile(aFile) {
-	log(LOG_INFO, "Parsing text file: " + aFile.spec);
+const XPathResult = Ci.nsIDOMXPathResult;
 
-	let req = await fetch(Services.io.newFileURI(aFile).spec);
-	req = await req.text();
-	log(LOG_ERROR, req);
-	
-	let links = [];
-	for (let l of getTextLinks(req, false)) {
-		l = Services.io.newURI(l, null, null);
-		links.push({
-			url: new DTA.URL(l),
-			referrer: null,
-			description: 'imported from ' + aFile.leafName,
-			isPrivate: false
-		});
-	}
-	log(LOG_INFO, "parsed text file, links: " + links.length);
-	return filterInSitu(links, function(e) {
-		return (e = e.url.spec) && !((e in this) || (this[e] = null));
-	}, {});
+exports.parseTextFile = function parseTextFile(aFile, cb) {
+	log(LOG_INFO, "Parsing text file: " + aFile.spec);
+	let req = new Instances.XHR();
+	req.onload = function() {
+		let links = [];
+		for (let l of getTextLinks(req.responseText, false)) {
+			l = Services.io.newURI(l, null, null);
+			links.push({
+				url: new DTA.URL(l),
+				referrer: null,
+				description: 'imported from ' + aFile.leafName,
+				isPrivate: false
+			});
+		}
+		log(LOG_INFO, "parsed text file, links: " + links.length);
+		cb(filterInSitu(links, function(e) {
+			return (e = e.url.spec) && !((e in this) || (this[e] = null));
+		}, {}));
+	};
+	req.overrideMimeType("text/plain");
+	req.open("GET", Services.io.newFileURI(aFile).spec);
+	req.send();
 };
 
 exports.exportToTextFile = function exportToTextFile(aDownloads, aFile, aPermissions) {
@@ -129,7 +133,7 @@ exports.exportToHtmlFile = function exportToHtmlFile(aDownloads, aDocument, aFil
 		let foot = document.createElement('p');
 		foot.appendChild(document.createTextNode('Exported by '));
 		n = document.createElement('a');
-		n.setAttribute('href', 'http://www.downthemall.net/');
+		n.setAttribute('href', 'https://www.downthemall.org/');
 		n.textContent = 'DownThemAll! ' + Version.VERSION;
 		foot.appendChild(n);
 		body.appendChild(foot);

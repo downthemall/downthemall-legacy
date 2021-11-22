@@ -11,11 +11,11 @@
 <!ENTITY amo.description.intro "DownThemAll je vse, kar si želite od upravitelja prenosov: vsebuje napredni pospeševalnik, ki poveča hitrost do 4x in kadarkoli omogoča premore in obnovitve prenosov.">
 <!ENTITY amo.description.feat2 "DownThemAll je hiter, zanesljiv in enostaven za uporabo! Omogoča prenos vseh povezav ali slik na strani in veliko več: svoje prenose lahko popolnoma prilagodite z merili, da dobite samo tisto, kar želite. Kadarkoli prevzemite popoln nadzor nad prenosi, dodeljeno hitrostjo in številom vzporednih povezav. Uporabite metapovezave ali ročno dodajte zrcalne strežnike za sočasni prenos datoteke z različnih strežnikov.">
 <!ENTITY amo.description.free2 "DownThemAll je odprtokoden in prost. Brez oglasov, vohunske programske opreme, sledenja in kakršnihkoli stroškov!">
-<!ENTITY amo.description.more "Za več podrobnosti glejte našo <a href='http://www.downthemall.net/howto/features/'>stran značilnosti</a>.">
+<!ENTITY amo.description.more "Za več podrobnosti glejte našo <a href='https://www.downthemall.org/howto/features/'>stran značilnosti</a>.">
 <!ENTITY lp.title "O razširitvi!">
 <!ENTITY lp.welcome "Dobrodošli v DownThemAll!">
 <!ENTITY lp.info "Oglejte si videoposnetke o uporabi razširitve DownThemAll! in se spoznajte več o zasebnosti in vaših pravicah">
-<!ENTITY lp.moreinfo "Za več podrobnosti glejte našo <a href='http://www.downthemall.net/howto/features/'>stran značilnosti</a>.">
+<!ENTITY lp.moreinfo "Za več podrobnosti glejte našo <a href='https://www.downthemall.org/howto/features/'>stran značilnosti</a>.">
 <!ENTITY lp.gettingstarted "Prvi koraki">
 <!ENTITY lp.toolbar "Gumbi orodne vrstice">
 <!ENTITY lp.privacy "Zasebnost">
@@ -86,7 +86,7 @@
 <!ENTITY lp.language.babelzilla "Če tekoče govorite več jezikov, prosimo razmislite o pridružitvi <a href='http://babelzilla.org'>Babelzilli</a>, da nam pomagate prevesti ta in veliko drugih dodatkov.">
 <!ENTITY lp.yr.licensetitle "Avtorke pravice in licenca">
 <!ENTITY lp.yr.licensed "DownThemAll! licencira <a href='http://www.gnu.org/licenses/old-licenses/gpl-2.0.html'>GPL 2.0</a>. Glejte datoteko GPL. To velja za vse datoteke izvorne kode.">
-<!ENTITY lp.yr.morelicense3 "Posamezne datoteke imajo lahko dodatne in/ali drugačne licence. Glejte ustrezne datoteke v skladišču, ki je na voljo na <a href='http://code.downthemall.net/repos/'>http://code.downthemall.net/repos/</a>. Večina datotek je pod licenco GPL/LGPL-compatible MPL 2.0 ali pod trojno licenco MPL 1.1/GPL 2.0/LGPL 2.1. Glejte datoteke MPL, GPL in LGPL.">
+<!ENTITY lp.yr.morelicense3 "Posamezne datoteke imajo lahko dodatne in/ali drugačne licence. Glejte ustrezne datoteke v skladišču, ki je na voljo na <a href='https://code.downthemall.org/repos/'>https://code.downthemall.org/repos/</a>. Večina datotek je pod licenco GPL/LGPL-compatible MPL 2.0 ali pod trojno licenco MPL 1.1/GPL 2.0/LGPL 2.1. Glejte datoteke MPL, GPL in LGPL.">
 <!ENTITY lp.yr.gplintro "Najbolj pomembni odseki iz GPL 2.0, pogoji o garanciji in poškodbah so naslednji:">
 <!ENTITY lp.yr.icons "Grafika, ikone in gumbi">
 <!ENTITY lp.yr.iconsbased4 "so osnovani na delu Mika Matasa, Marka Jamesa, in projektov Noun in Tango">
@@ -95,7 +95,7 @@
 <!ENTITY lp.yr.logo3 "Oblikovanje logotipa DownThemAll!: avtorske pravice © 2004-2013 Stefano Verna.">
 <!ENTITY lp.yr.logopermissions "Imena in logotipa razširitve DownThemAll! ne smete uporabljati brez dovoljenja v izpeljanem delu, z izjemo zaslug in obvestil, ki se nanašajo na licenco.">
 <!ENTITY lp.ct.bugstitle "Poročanje o hroščih/Predlogi za značilnosti">
-<!ENTITY lp.ct.bugs2 "Morebitne hrošče in prošnje za značilnosti oddajte v našem <a href='https://bugs.downthemall.net/'>sledilniku hroščev</a>.">
+<!ENTITY lp.ct.bugs2 "Morebitne hrošče in prošnje za značilnosti oddajte v našem <a href='https://bugs.downthemall.org/'>sledilniku hroščev</a>.">
 <!ENTITY lp.ct.contactstitle "Stiki">
 <!ENTITY lp.ct.contactsfeed2 "Veseli bomo vaših morebitnih povratnih informacij, predlogov in/ali ponudb za pomoč.">
-<!ENTITY lp.ct.contacts "Glejte našo spletno <a href='http://www.downthemall.net/main/contacts/'>stran za stike</a>.">
+<!ENTITY lp.ct.contacts "Glejte našo spletno <a href='https://www.downthemall.org/main/contacts/'>stran za stike</a>.">

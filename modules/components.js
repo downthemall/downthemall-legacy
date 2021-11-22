@@ -28,9 +28,13 @@ function createFactory(direct, cls) {
 			try {
 				Cm.registerFactory(i.classID, i.classDescription, i.contractID, this);
 			}
-			catch (ex if ex.result === Cr.NS_ERROR_FACTORY_EXISTS) {
-				defer(this.register.bind(this));
-				return;
+			catch (ex) {
+			    if (ex.result === Cr.NS_ERROR_FACTORY_EXISTS) {
+				    defer(this.register.bind(this));
+				    return;
+			    } else {
+			        throw ex;
+		        }
 			}
 
 			if (i.xpcom_categories) {

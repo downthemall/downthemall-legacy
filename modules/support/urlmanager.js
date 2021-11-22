@@ -9,6 +9,7 @@ const {
 	normalizeSlashes,
 	removeLeadingSlash,
 	removeFinalSlash,
+	removeLeadingChar,
 	toURL
 	} = require("./stringfuncs");
 
@@ -17,12 +18,11 @@ function compareFn(a, b) {
 	return rv ? rv : (Math.floor(Math.random() * 3) - 1);
 }
 
-class UrlManager {
-	constructor(urls) {
-		this.initByArray(urls);
-	}
-
-	initByArray(urls) {
+function UrlManager(urls) {
+	this.initByArray(urls);
+}
+UrlManager.prototype = {
+	initByArray: function um_initByArray(urls) {
 		this._urls = [];
 		for (let u of urls) {
 			if (u instanceof URL || (u.url && u.url instanceof Ci.nsIURI)) {
@@ -45,28 +45,20 @@ class UrlManager {
 		this._url = this._urls[0].url;
 		this._usable = this._urls[0].usable;
 		this._makeGood();
-	}
-	_usableURL() {
-		return toURL(this._usable);
-	}
-	_usableURLPath() {
-		let rv = this.usableURL.path || this.usableURL.pathQueryRef;
+	},
+	_usableURL: function() { return toURL(this._usable); },
+	_usableURLPath: function() {
+		let rv = this.usableURL.path;
 		if (rv.length) {
 			rv = removeFinalSlash(normalizeSlashes(rv.substring(0, rv.lastIndexOf("/"))));
 		}
 		return removeLeadingSlash(rv);
-	}
-	_host() {
-		return this.usableURL.host;
-	}
-	_spec() {
-		return this._url.spec;
-	}
-	_domain() {
-		return Limits.getEffectiveHost(this._url);
-	}
-	add(url) {
-		if (!(url instanceof URL)) {
+	},
+	_host: function() { return this.usableURL.host; },
+	_spec: function() { return this._url.spec; },
+	_domain: function() { return Limits.getEffectiveHost(this._url); },
+	add: function um_add(url) {
+		if (!url instanceof URL) {
 			throw new Exception(url + " is not an URL");
 		}
 		for (let i = 0; i < this._urls.length; ++i) {
@@ -75,18 +67,16 @@ class UrlManager {
 			}
 		}
 		this._urls.push(url);
-	}
-	_rotate() {
+	},
+	_rotate: function um_rotate() {
 		if (this.good.length < 2) {
 			return;
 		}
 		this.good.push(this.good.shift());
-	}
-	static _makeGood_check(u) {
-		return !('bad' in u);
-	}
-	_makeGood() {
-		this.good = this._urls.filter(UrlManager._makeGood_check);
+	},
+	_makeGood_check: function(u) { return !('bad' in u); },
+	_makeGood: function um_makeGood() {
+		this.good = this._urls.filter(this._makeGood_check);
 		if (!this.good.length) {
 			// all marked bad; actually a bug
 			Cu.reportError("UM: all marked bad");
@@ -95,29 +85,23 @@ class UrlManager {
 			}
 			this.good = this._urls.map(e => e);
 		}
-	}
-	getURL(idx) {
+	},
+	getURL: function um_getURL(idx) {
 		let rv = this.good[0];
 		this._rotate();
 		return rv;
-	}
-	get url() {
-		return this._url;
-	}
-	get usable() {
-		return this._usable;
-	}
-	get length() {
-		return this._urls.length;
-	}
+	},
+	get url() { return this._url; },
+	get usable() { return this._usable; },
+	get length() { return this._urls.length; },
 	get all() {
 		return this.toArray();
-	}
-	replace(url, newurl) {
+	},
+	replace: function(url, newurl) {
 		this._urls = this._urls.map(u => u.spec === url.spec ? newurl : u);
 		this._makeGood();
-	}
-	markBad(url) {
+	},
+	markBad: function um_markBad(url) {
 		if (this.good.length === 1) {
 			// cannot mark the last url bad :p
 			return false;
@@ -133,18 +117,14 @@ class UrlManager {
 		}
 		this._makeGood();
 		return true;
-	}
-	toJSON() {
-		return this._urls;
-	}
-	toString() {
+	},
+	toJSON: function um_toJSON() { return this._urls; },
+	toString: function() {
 		return this._urls.reduce((v, u) => v + u.preference + " " + u.url + "\n");
-	}
+	},
 	// clone ;)
-	toArray() {
-		return this._urls.map(e => e);
-	}
-}
+	toArray: function() { return this._urls.map(e => e); }
+};
 lazyProto(UrlManager.prototype, "usableURL", UrlManager.prototype._usableURL);
 lazyProto(UrlManager.prototype, "usableURLPath", UrlManager.prototype._usableURLPath);
 lazyProto(UrlManager.prototype, "host", UrlManager.prototype._host);

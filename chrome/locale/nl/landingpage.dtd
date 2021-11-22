@@ -11,11 +11,11 @@
 <!ENTITY amo.description.intro "DownThemAll is alles wat u van een downloadbeheerder kunt verwachten: een geavanceerde versneller die de snelheid tot 4x verhoogt, en waarbij downloads altijd kunnen worden gepauzeerd en hervat.">
 <!ENTITY amo.description.feat2 "DownThemAll is snel, betrouwbaar en gemakkelijk te gebruiken! U kunt er alle koppelingen of afbeelingen die zich op een webpagina bevinden mee downloaden, en veel meer: zo kunt u downloads via volledig aanpasbare criteria verfijnen, zodat u alleen ophaalt wat u echt wilt. U hebt altijd de volledige controle over uw downloads, toegewezen snelheid en het aantal gelijktijdige verbindingen. Gebruik Metalinks of voeg handmatig mirrors toe om tegelijkertijd een bestand van andere servers te downloaden.">
 <!ENTITY amo.description.free2 "DownThemAll is open source en freeware. Geen Adware, geen Spyware, geen tracking, helemaal geen kosten!">
-<!ENTITY amo.description.more "Bekijk voor meer informatie onze <a href='http://www.downthemall.net/howto/features/'>pagina Features</a>.">
+<!ENTITY amo.description.more "Bekijk voor meer informatie onze <a href='https://www.downthemall.org/howto/features/'>pagina Features</a>.">
 <!ENTITY lp.title "Over DownThemAll!">
 <!ENTITY lp.welcome "Welkom bij DownThemAll!">
 <!ENTITY lp.info "Bekijk de video’s die aangeven hoe DownThemAll! kan worden gebruikt en lees meer over privacy en uw rechten.">
-<!ENTITY lp.moreinfo "Bezoek voor meer informatie onze <a href='http://www.downthemall.net/howto/features/'>pagina Features</a>.">
+<!ENTITY lp.moreinfo "Bezoek voor meer informatie onze <a href='https://www.downthemall.org/howto/features/'>pagina Features</a>.">
 <!ENTITY lp.gettingstarted "Beginnen">
 <!ENTITY lp.toolbar "Werkbalkknoppen">
 <!ENTITY lp.privacy "Privacy">
@@ -86,7 +86,7 @@
 <!ENTITY lp.language.babelzilla "Als u vloeiend meerdere talen spreekt, overweeg dan mee te helpen op <a href='http://babelzilla.org'>babelzilla.org</a> om deze en vele andere geweldige add-ons te helpen vertalen.">
 <!ENTITY lp.yr.licensetitle "Copyright en Licentie">
 <!ENTITY lp.yr.licensed "DownThemAll! is gelicentieerd onder <a href='http://www.gnu.org/licenses/old-licenses/gpl-2.0.html'>GPL 2.0</a>. Zie hiervoor het GPL-bestand. Dit is op alle broncodebestanden van toepassing.">
-<!ENTITY lp.yr.morelicense3 "Individuele bestanden kunnen aanvullende en/of andere licenties bevatten. Bekijk hiervoor de overeenkomende repositorybestanden die beschikbaar zijn via <a href='http://code.downthemall.net/repos/'>http://code.downthemall.net/repos/</a>. De meeste bestanden zijn gelicentieerd onder de GPL/LGPL-compatibele MPL 2.0, of ze zijn ‘tri-licensed’ onder een MPL 1.1/GPL 2.0/LGPL 2.1-licentie. Zie hiervoor respectievelijk de MPL-, GPL- en LGPL-bestanden.">
+<!ENTITY lp.yr.morelicense3 "Individuele bestanden kunnen aanvullende en/of andere licenties bevatten. Bekijk hiervoor de overeenkomende repositorybestanden die beschikbaar zijn via <a href='https://code.downthemall.org/repos/'>https://code.downthemall.org/repos/</a>. De meeste bestanden zijn gelicentieerd onder de GPL/LGPL-compatibele MPL 2.0, of ze zijn ‘tri-licensed’ onder een MPL 1.1/GPL 2.0/LGPL 2.1-licentie. Zie hiervoor respectievelijk de MPL-, GPL- en LGPL-bestanden.">
 <!ENTITY lp.yr.gplintro "De meest belangrijke secties van de GPL 2.0, de disclaimer omtrent vrijwaring van garantie en schade, volgen:">
 <!ENTITY lp.yr.icons "Illustraties, pictogrammen en knoppen">
 <!ENTITY lp.yr.iconsbased4 "zijn gebaseerd op het werk van Mike Matas, Mark James, het Noun-project en het Tango-project">
@@ -95,7 +95,7 @@
 <!ENTITY lp.yr.logo3 "Het DownThemAll!-logo-ontwerp: Copyright © 2004-2013 door Stefano Verna.">
 <!ENTITY lp.yr.logopermissions "De naam en het logo van DownThemAll! kunnen niet zonder toestemming in enige afgeleide werken worden gebruikt, met uitzondering van dankbetuigingen en licentie-gerelateerde opmerkingen.">
 <!ENTITY lp.ct.bugstitle "Bugs/functieaanvragen melden">
-<!ENTITY lp.ct.bugs2 "Meld bugs en aanvragen voor functies in onze <a href='https://bugs.downthemall.net/'>bugtracker</a>.">
+<!ENTITY lp.ct.bugs2 "Meld bugs en aanvragen voor functies in onze <a href='https://bugs.downthemall.org/'>bugtracker</a>.">
 <!ENTITY lp.ct.contactstitle "Contacten">
 <!ENTITY lp.ct.contactsfeed2 "We ontvangen graag feedback, suggesties en/of aanbiedingen om te helpen.">
-<!ENTITY lp.ct.contacts "Bekijk hiervoor onze <a href='http://www.downthemall.net/main/contacts/'>contactpagina</a>.">
+<!ENTITY lp.ct.contacts "Bekijk hiervoor onze <a href='https://www.downthemall.org/main/contacts/'>contactpagina</a>.">

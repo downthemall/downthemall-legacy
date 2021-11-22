@@ -8,19 +8,18 @@ const {LOCALE} = require("version");
 const {getTimestamp, normalizeMetaPrefs} = require("utils");
 const {identity} = require("support/memoize");
 
-class Visitor {
-	constructor(nodes) {
-		if (nodes) {
-			for (let x in nodes) {
-				if (!(x in this.cmpKeys))	{
-					continue;
-				}
-				this[x] = nodes[x];
-			}
+function Visitor() {
+	let nodes = arguments[0];
+	for (let x in nodes) {
+		if (!(x in this.cmpKeys))	{
+			continue;
 		}
+		this[x] = nodes[x];
 	}
+}
 
-	compare(v)	{
+Visitor.prototype = {
+	compare: function vi_compare(v)	{
 		if (!(v instanceof Visitor)) {
 			return;
 		}
@@ -45,9 +44,8 @@ class Visitor {
 				throw new Exception("Header " + x + " doesn't match");
 			}
 		}
-	}
-
-	save(node) {
+	},
+	save: function vi_save(node) {
 		var rv = {};
 		for (let x in this.cmpKeys) {
 			if (!(x in this)) {
@@ -57,30 +55,39 @@ class Visitor {
 		}
 		return rv;
 	}
+};
+
+function HttpVisitor(chan) {
+	if ((chan instanceof Ci.nsIHttpChannel) || ("_stub" in chan)) {
+		this._charset = chan.URI.originCharset;
+		this.visit(chan);
+	}
+	else {
+		Visitor.apply(this, arguments);
+	}
 }
 
-class HttpVisitor extends Visitor {
-	constructor(chan) {
-		if ((chan instanceof Ci.nsIHttpChannel) || ("_stub" in chan)) {
-			super(null);
-			this.acceptRanges = true;
-			this._charset = chan.URI.originCharset;
-			this.visit(chan);
-		}
-		else {
-			super(chan);
-		}
-	}
-
-	QueryInterface(aIID) {
-		if (aIID.equals(Ci.nsISupports) ||
-			aIID.equals(Ci.nsIHttpHeaderVisitor)) {
+HttpVisitor.prototype = {
+	__proto__: Visitor.prototype,
+	acceptRanges: true,
+	cmpKeys: {
+		'etag': true, // must not be modified from 200 to 206:
+									// http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.7
+		//'content-length': false,
+		'last-modified': true, // may get omitted later, but should not change
+		'content-encoding': true // must not change, or download will become
+															// corrupt.
+	},
+	QueryInterface: function(aIID) {
+		if (
+			aIID.equals(Ci.nsISupports) ||
+			aIID.equals(Ci.nsIHttpHeaderVisitor)
+		) {
 			return this;
 		}
 		throw Components.results.NS_ERROR_NO_INTERFACE;
-	}
-
-	visit(chan) {
+	},
+	visit: function vmh_visit(chan) {
 		if (log.enabled) {
 			let msg = chan.URI.spec + "\nRequest:\n";
 			let visitor = {
@@ -246,9 +253,8 @@ class HttpVisitor extends Visitor {
 		if (!("fileName" in this) && ("type" in this)) {
 			this._checkFileName(this.type);
 		}
-
-	}
-	_checkFileName(aValue) {
+	},
+	_checkFileName: function(aValue) {
 		let fn;
 		try {
 			fn = Services.mimeheader.getParameter(aValue, 'filename', this._charset, true, {});
@@ -270,24 +276,18 @@ class HttpVisitor extends Visitor {
 		}
 	}
 };
-Object.assign(HttpVisitor.prototype, {
+
+function FtpVisitor(chan) {
+	Visitor.apply(this, arguments);
+}
+
+FtpVisitor.prototype = {
+	__proto__: Visitor.prototype,
 	cmpKeys: {
-		'etag': true, // must not be modified from 200 to 206:
-									// http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.7
-		//'content-length': false,
-		'last-modified': true, // may get omitted later, but should not change
-		'content-encoding': true // must not change, or download will become
-															// corrupt.
+		'etag': true,
 	},
-});
-
-class FtpVisitor extends Visitor {
-	constructor(nodes) {
-		super(nodes);
-		this.time = null;
-	}
-
-	visitChan(chan) {
+	time: null,
+	visitChan: function fv_visitChan(chan) {
 		try {
 			this.etag = chan.QueryInterface(Ci.nsIResumableChannel).entityID;
 			let m = this.etag.match(/\/(\d{4})(\d{2})(\d{2})(?:(\d{2})(\d{2})(?:(\d{2})))?$/);
@@ -307,22 +307,21 @@ class FtpVisitor extends Visitor {
 			log(LOG_ERROR, "visitChan:", ex);
 		}
 	}
+};
+
+/**
+ * Visitor Manager c'tor
+ *
+ * @author Nils
+ */
+function VisitorManager() {
+	this._visitors = {};
 }
-Object.assign(FtpVisitor.prototype, {
-	cmpKeys: {
-		'etag': true,
-	},
-});
-
-class VisitorManager {
-	constructor() {
-		this._visitors = {};
-	}
-
+VisitorManager.prototype = {
 	/**
 	 * Loads a ::save'd JS Array Will silently bypass failed items!
 	 */
-	load(nodes) {
+	load: function vm_init(nodes) {
 		for (let n of nodes) {
 			try {
 				let uri = Services.io.newURI(n.url, null, null);
@@ -340,13 +339,13 @@ class VisitorManager {
 				log(LOG_ERROR, "failed to read one visitor", ex);
 			}
 		}
-	}
+	},
 	/**
 	 * Saves/serializes the Manager and associated Visitors to an JS Array
 	 *
 	 * @return A ::load compatible Array
 	 */
-	toJSON() {
+	toJSON: function vm_toJSON() {
 		let rv = [];
 		for (let x in this._visitors) {
 			try {
@@ -360,7 +359,7 @@ class VisitorManager {
 			}
 		}
 		return rv;
-	}
+	},
 	/**
 	 * Visit and compare a channel
 	 *
@@ -369,7 +368,7 @@ class VisitorManager {
 	 *           if comparision yield a difference (i.e. channels are not
 	 *           "compatible")
 	 */
-	visit(chan) {
+	visit: function vm_visit(chan) {
 		let url = chan.URI.spec;
 
 		let visitor;
@@ -392,7 +391,7 @@ class VisitorManager {
 			this._visitors[url].compare(visitor);
 		}
 		return (this._visitors[url] = visitor);
-	}
+	},
 	/**
 	 * return the first timestamp registered with a visitor
 	 *
@@ -407,6 +406,6 @@ class VisitorManager {
 		}
 		throw new Exception("No Date registered");
 	}
-}
+};
 
 exports.VisitorManager = VisitorManager;

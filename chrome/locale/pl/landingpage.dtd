@@ -11,11 +11,11 @@
 <!ENTITY amo.description.intro "DownThemAll zawiera wszystko, czego można życzyć sobie od menedżera plików. Ma zaawansowany akcelerator przyspieszający do czterech razy prędkość pobierania plików i umożliwia wstrzymywanie i wznawianie pobierania w dowolnym czasie.">
 <!ENTITY amo.description.feat2 "DownThemAll jest szybki, niezawodny i łatwy w użyciu. Umożliwia pobieranie wszystkich odnośników, czy obrazków znajdujących się na stronie internetowej i wiele więcej… Używając w pełni konfigurowalnych reguł pobierania możesz udoskonalić swoje pobieranie plików. Zachowasz pełną kontrolę nad pobieranymi plikami, określisz dedykowaną prędkość pobierania i liczbę jednoczesnych połączeń. Użyj metalinków lub ręcznie dodaj mirrory, by pobierać plik z wielu serwerów jednocześnie.">
 <!ENTITY amo.description.free2 "DownThemAll jest darmowym, o otwartych źródłach oprogramowaniem. Nie zawiera reklam, programów szpiegujących i ukrytych kosztów!">
-<!ENTITY amo.description.more "Więcej informacji uzyskasz na naszej stronie z <a href='http://www.downthemall.net/howto/features/'>opisem funkcji</a>.">
+<!ENTITY amo.description.more "Więcej informacji uzyskasz na naszej stronie z <a href='https://www.downthemall.org/howto/features/'>opisem funkcji</a>.">
 <!ENTITY lp.title "Informacje o DownThemAll!">
 <!ENTITY lp.welcome "Witamy w DownThemAll!">
 <!ENTITY lp.info "Obejrzyj filmy przedstawiające, jak używać DownThemAll! i dowiedzieć się więcej o zachowaniu prywatności i swoich prawach.">
-<!ENTITY lp.moreinfo "Więcej informacji uzyskasz na naszej stronie z <a href='http://www.downthemall.net/howto/features/'>opisem funkcji</a>.">
+<!ENTITY lp.moreinfo "Więcej informacji uzyskasz na naszej stronie z <a href='https://www.downthemall.org/howto/features/'>opisem funkcji</a>.">
 <!ENTITY lp.gettingstarted "Wprowadzenie">
 <!ENTITY lp.toolbar "Przyciski narzędziowe">
 <!ENTITY lp.privacy "Prywatność">
@@ -86,7 +86,7 @@
 <!ENTITY lp.language.babelzilla "Jeśli znasz kilka języków, rozważ dołączenie do <a href='http://babelzilla.org'>babelzilla.org</a>, by pomóc w tłumaczeniu tego i innych wspaniałych dodatków.">
 <!ENTITY lp.yr.licensetitle "Prawa autorskie i licencja">
 <!ENTITY lp.yr.licensed "DownThemAll! jest licencjonowany na zasadach licencji <a href='http://www.gnu.org/licenses/old-licenses/gpl-2.0.html'>GPL 2.0</a>. Zobacz plik GPL. Dotyczy to wszystkich plików zawierających kod źródłowy.">
-<!ENTITY lp.yr.morelicense3 "Poszczególne pliki mogą mieć różne licencje. Zobacz odpowiednie repozytoria plików dostępne na <a href='http://code.downthemall.net/repos/'>http://code.downthemall.net/repos/</a>. Wiele plików ma trzy licencje: MPL 1.1/GPL 2.0/LGPL 2.1. Zobacz odpowiednio pliki MPL, GPL, LGPL.">
+<!ENTITY lp.yr.morelicense3 "Poszczególne pliki mogą mieć różne licencje. Zobacz odpowiednie repozytoria plików dostępne na <a href='https://code.downthemall.org/repos/'>https://code.downthemall.org/repos/</a>. Wiele plików ma trzy licencje: MPL 1.1/GPL 2.0/LGPL 2.1. Zobacz odpowiednio pliki MPL, GPL, LGPL.">
 <!ENTITY lp.yr.gplintro "Najważniejsze punkty z licencji GPL 2.0 – nieudzielanie gwarancji i brak odpowiedzialności za szkody:">
 <!ENTITY lp.yr.icons "Grafika, ikony i przyciski">
 <!ENTITY lp.yr.iconsbased4 "Grafika, ikony i przyciski są oparte na pracach Mike'a Matasa, Jakuba Steinera, Marka Jamesa i projekcie Tango:">
@@ -95,7 +95,7 @@
 <!ENTITY lp.yr.logo3 "Prawa autorskie logo DownThemAll!: Copyright © 2004-2010 Stefano Verna.">
 <!ENTITY lp.yr.logopermissions "Nazwa i logo DownThemAll! nie może być używana bez zezwolenia w żadnych pracach pochodnych DownThemAll! z wyjątkiem podziękowań i uwag odnośnie licencji.">
 <!ENTITY lp.ct.bugstitle "Zgłaszanie błędów/próśb nowych funkcji">
-<!ENTITY lp.ct.bugs2 "Proszę zgłaszać błędy i prośby o nowe funkcje poprzez nasz <a href='https://bugs.downthemall.net/'>system śledzenia błędów</a>.">
+<!ENTITY lp.ct.bugs2 "Proszę zgłaszać błędy i prośby o nowe funkcje poprzez nasz <a href='https://bugs.downthemall.org/'>system śledzenia błędów</a>.">
 <!ENTITY lp.ct.contactstitle "Kontakty">
 <!ENTITY lp.ct.contactsfeed2 "Chcemy otrzymywać Twoje opinie, sugestie lub propozycje pomocy.">
-<!ENTITY lp.ct.contacts "Przejdź na naszą <a href='http://www.downthemall.net/main/contacts/'>stronę kontaktową</a>.">
+<!ENTITY lp.ct.contacts "Przejdź na naszą <a href='https://www.downthemall.org/main/contacts/'>stronę kontaktową</a>.">

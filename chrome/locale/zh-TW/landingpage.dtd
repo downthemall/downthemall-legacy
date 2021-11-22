@@ -11,11 +11,11 @@
 <!ENTITY amo.description.intro "DownThemAll! 可以滿足您對下載的需求；安裝後不僅可以加速下載至 4 倍速，而且可隨時暫停／續傳。">
 <!ENTITY amo.description.feat2 "DownThemAll! 快速、可靠、易上手！讓您可以下載網頁中的所有鏈結或圖片以及更多：您可以透過全自訂條件只下載您想要的東西，以優化您的下載流程。您隨時都可以完全操控您要下載的東西、速度限制、並行下載連線數。除此之外，也能同時使用 Metalinks 或手動加入其它鏡射站臺從不同伺服器中下載同一檔案。">
 <!ENTITY amo.description.free2 "DownThemAll! 不僅開放源始碼，而且也是免費軟體。不含廣告軟體、不含間碟軟體、不會追蹤隱私、完全沒有任何隱藏的費用！">
-<!ENTITY amo.description.more "請至我們的<a href='http://www.downthemall.net/howto/features/'>功能說明頁面</a>取得更多資訊。">
+<!ENTITY amo.description.more "請至我們的<a href='https://www.downthemall.org/howto/features/'>功能說明頁面</a>取得更多資訊。">
 <!ENTITY lp.title "關於 DownThemAll!">
 <!ENTITY lp.welcome "歡迎使用 DownThemAll!">
 <!ENTITY lp.info "看一下影片來學習怎麼使用 DownThemAll! 並且瞭解隱私權和您的權利">
-<!ENTITY lp.moreinfo "請至<a href='http://www.downthemall.net/howto/features/'>我們的網頁</a>取得更多資訊。">
+<!ENTITY lp.moreinfo "請至<a href='https://www.downthemall.org/howto/features/'>我們的網頁</a>取得更多資訊。">
 <!ENTITY lp.gettingstarted "開始">
 <!ENTITY lp.toolbar "工作列按鍵">
 <!ENTITY lp.privacy "隱私權">
@@ -86,7 +86,7 @@
 <!ENTITY lp.language.babelzilla "如果您熟悉多種語言，請考慮加入 <a href='http://babelzilla.org'>babelzilla.org</a> 幫忙翻譯這個擴充套件或其他許多優秀的附加元件。">
 <!ENTITY lp.yr.licensetitle "版權與許可">
 <!ENTITY lp.yr.licensed "DownThemAll! 授權隸屬 <a href='http://www.gnu.org/licenses/old-licenses/gpl-2.0.html'>GPL 2.0</a> 。參見 GNU GPL 的文件。這適用於所有的原始碼檔案。">
-<!ENTITY lp.yr.morelicense3 "個別檔案可能有額外或不同的授權條款。請至 <a href='http://code.downthemall.net/repos/'>http://code.downthemall.net/repos/</a> 查看可用的對應檔案倉儲。大多數檔案以 GPL/LGPL-compatible MPL 2.0 授權，或 MPL 1.1/GPL 2.0/LGPL 2.1 三重授權。詳情請參閱個別的 MPL, GPL, LGPL 授權條款文件。">
+<!ENTITY lp.yr.morelicense3 "個別檔案可能有額外或不同的授權條款。請至 <a href='https://code.downthemall.org/repos/'>https://code.downthemall.org/repos/</a> 查看可用的對應檔案倉儲。大多數檔案以 GPL/LGPL-compatible MPL 2.0 授權，或 MPL 1.1/GPL 2.0/LGPL 2.1 三重授權。詳情請參閱個別的 MPL, GPL, LGPL 授權條款文件。">
 <!ENTITY lp.yr.gplintro "在 GPL 2.0，無擔保和賠償的免責聲明，最重要的部分如下：">
 <!ENTITY lp.yr.icons "美工、圖案以及按鈕">
 <!ENTITY lp.yr.iconsbased4 "為基於 Mike Matas, Mark James, 以及 Noun 專案與 Tango 專案的成果。">
@@ -95,7 +95,7 @@
 <!ENTITY lp.yr.logo3 "DownThemAll! 商標圖示設計：版權所有 © 2004-2013 by Stefano Verna。">
 <!ENTITY lp.yr.logopermissions "DownThemAll! 名稱和商標圖示不能擅自使用於任何衍生作品，與信用和許可有關例外。">
 <!ENTITY lp.ct.bugstitle "回報軟體缺陷(Bug)/新功能要求">
-<!ENTITY lp.ct.bugs2 "請至我們的 <a href='https://bugs.downthemall.net/'>Bug 追蹤系統</a> 回報軟體缺陷(Bug)與新功能要求。">
+<!ENTITY lp.ct.bugs2 "請至我們的 <a href='https://bugs.downthemall.org/'>Bug 追蹤系統</a> 回報軟體缺陷(Bug)與新功能要求。">
 <!ENTITY lp.ct.contactstitle "聯繫">
 <!ENTITY lp.ct.contactsfeed2 "我們樂於收到您的反饋、建議和／或提供幫助。">
-<!ENTITY lp.ct.contacts "請參訪線上 <a href='http://www.downthemall.net/main/contacts/'>聯絡網頁</a> .">
+<!ENTITY lp.ct.contacts "請參訪線上 <a href='https://www.downthemall.org/main/contacts/'>聯絡網頁</a> .">

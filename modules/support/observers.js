@@ -5,13 +5,13 @@
 
 const TOPIC_SHUTDOWN = "profile-change-teardown";
 
-class Observer {
-	constructor() {
-		this.observers = new Map();
-		Services.obs.addObserver(this, TOPIC_SHUTDOWN, true);
-	}
+function Observer() {
+	Services.obs.addObserver(this, TOPIC_SHUTDOWN, true);
+}
+Observer.prototype = Object.freeze({
+	observers: new Map(),
 
-	unload() {
+	unload: function() {
 		log(LOG_DEBUG, "DYING");
 		for (let [t, o] of this.observers) {
 			try {
@@ -30,10 +30,11 @@ class Observer {
 		catch (ex) {
 			// no op
 		}
-	}
+	},
 
+	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference]),
 
-	add(obs, topic) {
+	add: function(obs, topic) {
 		if (!obs || !topic) {
 			throw new Error("Invalid arguments");
 		}
@@ -46,9 +47,8 @@ class Observer {
 			this.observers.set(topic, observers);
 		}
 		observers.add(obs);
-	}
-
-	remove(obs, topic) {
+	},
+	remove: function(obs, topic) {
 		if (!obs || !topic) {
 			throw new Error("Invalid arguments");
 		}
@@ -64,17 +64,15 @@ class Observer {
 			}
 			this.observers.delete(topic);
 		}
-	}
-
+	},
 	get topics() {
 		let topics = [];
-		for (let [t, _] of this.observers) {
+		for (let [t,o] of this.observers) {
 			topics.push(t);
 		}
 		return topics;
-	}
-
-	observe(subject, topic, data) {
+	},
+	observe: function(subject, topic, data) {
 		var observers = this.observers.get(topic);
 		if (!observers) {
 			return;
@@ -96,10 +94,7 @@ class Observer {
 			this.unload();
 		}
 	}
-}
-Observer.prototype.QueryInterface =
-	XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference]);
-
+});
 const observer = new Observer();
 unload(observer.unload.bind(observer));
 

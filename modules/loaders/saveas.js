@@ -16,13 +16,13 @@ lazy(this, "isWindowPrivate", () => require("support/pbm").isWindowPrivate);
  * Loader
  */
 function load(window, document) {
-	function $(...args) {
-		if (args.length === 1) {
-			return document.getElementById(args[0]);
+	function $() {
+		if (arguments.length === 1) {
+			return document.getElementById(arguments[0]);
 		}
 		let elements = [];
-		for (let i = 0, e = args.length; i < e; ++i) {
-			let id = args[i];
+		for (let i = 0, e = arguments.length; i < e; ++i) {
+			let id = arguments[i];
 			let element = document.getElementById(id);
 			if (element) {
 				elements.push(element);
@@ -87,6 +87,7 @@ function load(window, document) {
 
 			log(LOG_DEBUG, "save-as reverted!");
 		};
+
 		let url, referrer, mask, isPrivate;
 
 		let download = turbo => {
@@ -142,7 +143,7 @@ function load(window, document) {
 				value: function(...args) {
 					log(LOG_DEBUG, "initDialog called");
 					try {
-						return dialog.initDialog(...args);
+						return dialog.initDialog.apply(dialog, args);
 					}
 					finally {
 						revertUI();

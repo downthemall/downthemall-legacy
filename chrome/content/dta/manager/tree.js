@@ -2,64 +2,64 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
-/* global $, $e, $$, _, Utils, FilterManager, getIcon, Preferences, OS */
+/* global $, $e, $$, _, Utils, Timers, FilterManager, getIcon, Preferences, Task, OS */
 /* global mapInSitu, filterInSitu, mapFilterInSitu, filterMapInSitu */
-/* global DTA, Dialog,  QueueItem, Prefs, QueueStore, Prompts, ImportExport, Metalinker */
+/* global DTA, Dialog, QueueItem, Prefs, QueueStore, Prompts, ImportExport, Metalinker */
 /* global asyncMoveFile, showPreferences, Tooltip, CoThreadListWalker */
 /* global COMPLETE, CANCELED, RUNNING, PAUSED, QUEUED, FINISHING */
 /* global TextCache_PAUSED */
-/* global FileExts, setTimeoutOnlyFun */
+/* global FileExts */
 /* jshint strict:true, globalstrict:true, browser:true, latedef:false */
 
 XPCOMUtils.defineLazyGetter(window, "ImportExport", () => require("manager/imex"));
 
-class FileDataProvider {
-	constructor(tree, download, file) {
-		this._tree = tree;
-		this._download = download;
-		this._file = file;
-		this._checks = 0;
-		this.QueryInterface = QI([Ci.nsIFlavorDataProvider]);
-	}
+function FileDataProvider(download, file) {
+	this._download = download;
+	this._file = file;
+	this._checkFile = this._checkFile.bind(this);
+};
+FileDataProvider.prototype = {
+	_checks: 0,
+	QueryInterface: QI([Ci.nsIFlavorDataProvider]),
 	get file() {
 		if (this._timer) {
-			clearTimeout(this._timer);
+			Timers.killTimer(this._timer);
 			delete this._timer;
 		}
 		this._checks = 0;
-		this._timer = setTimeoutOnlyFun(() => this.checkFile(), 500);
+		this._timer = Timers.createOneshot(500, this.checkFile.bind(this));
 		return this._file;
-	}
-	async checkFile() {
+	},
+	checkFile: function() {
+		Task.spawn(this._checkFile);
+	},
+	_checkFile: function*() {
 		delete this._timer;
-		let exists = await OS.File.exists(this._file.path);
+		let exists = yield OS.File.exists(this._file.path);
 		if (!exists) {
-			this._tree.remove(this._download);
+			Tree.remove(this._download);
 			return;
 		}
 		if (++this._checks < 10) {
-			this._timer = setTimeoutOnlyFun(() => this.checkFile(), 5000);
+			this._timer = Timers.createOneshot(5000, this.checkFile.bind(this));
 		}
-	}
-	getFlavorData(dataTransfer, flavor, data, dataLen) {
+	},
+	getFlavorData: function(dataTransfer, flavor, data, dataLen) {
 		data.value = this.file;
 		dataLen.value = 1;
 	}
-}
+};
 
 
-class TreeManager {
-	constructor(elem) {
+var Tree = {
+	init: function(elem) {
 		this.elem = elem;
 		this._downloads = [];
-		this._updating = 0;
-		this._filter = '';
-		this._mustFilter = false;
 		this._filtered = this._downloads;
 		this._speedLimitList = $('perDownloadSpeedLimitList');
 		this._matcher = new this.Matcher();
 
-		addEventListener('blur', () => this.stopTip(), false);
+		addEventListener('blur', () => Tree.stopTip(), false);
 
 		this.elem.addEventListener('select', () => this.selectionChanged(), false);
 		this.elem.addEventListener('click', evt => {
@@ -70,10 +70,10 @@ class TreeManager {
 
 		let dtree = $('downloadList');
 		dtree.addEventListener('dragstart', event => this.onDragStart(event), false);
-		dtree.addEventListener('dblclick', (event) => {
+		dtree.addEventListener('dblclick', function(event) {
 			event.preventDefault();
 			event.stopPropagation();
-			this.openFile();
+			FileHandling.openFile();
 		}, false);
 
 		$("matcher").addEventListener("command", event => this.handleMatcherPopup(event), true);
@@ -97,53 +97,12 @@ class TreeManager {
 		this.assembleMenus();
 		this._refreshTools_init();
 		this.refreshTools();
-	}
-
-	get downloadCount() {
-		return this._downloads.length;
-	}
-	get rowCount() {
-		return this._filtered.length;
-	}
-	get filtered() {
-		return this._matcher.filtering;
-	}
-	get box() {
-		return this._box;
-	}
-	get all() {
-		return this._downloads;
-	}
-	// get the first selected item, NOT the item which has the input focus.
-	get current() {
-		let select = this.selection;
-		try {
-			let ci = {value: -1};
-			this.selection.getRangeAt(0, ci, {});
-			if (ci.value > -1 && ci.value < this.rowCount) {
-				return this._filtered[ci.value];
-			}
-		}
-		catch (ex) {
-			// fall-through
-		}
-		return null;
-	}
-	// get the currently focused item.
-	get focused() {
-		let ci = this.selection.currentIndex;
-		if (ci > -1 && ci < this.rowCount) {
-			return this._filtered[ci];
-		}
-		return null;
-	}
-
-	unlink() {
+	},
+	unlink: function() {
 		this.elem.view = null;
 		delete this.elem;
-	}
-
-	assembleMenus() {
+	},
+	assembleMenus: function() {
 		// jshint globalstrict:true, strict:true, loopfunc:true
 		for (let popup of $('removeCompletedPopup', 'removePopup')) {
 			while (popup.lastChild) {
@@ -168,13 +127,12 @@ class TreeManager {
 				else {
 					mi.setAttribute('class', 'menuitem-iconic menuitem-filter');
 				}
-				mi.addEventListener('command', () => this.removeByFilter(filter, id), true);
+				mi.addEventListener('command', () => Tree.removeByFilter(filter, id), true);
 				popup.appendChild(mi);
 			}
 		}
-	}
-
-	handleMatcherPopupshowing(col) {
+	},
+	handleMatcherPopupshowing: function(col) {
 		let processor = col.getAttribute('matcher');
 		if (!processor) {
 			return;
@@ -218,9 +176,8 @@ class TreeManager {
 		}
 		popup.col = col;
 		popup.openPopup(col, "after_start", -1, -1, true, false, null);
-	}
-
-	handleMatcherPopup(event) {
+	},
+	handleMatcherPopup: function(event) {
 		let target = event.target;
 		let popup = target.parentNode;
 		let element = popup.col;
@@ -329,9 +286,8 @@ class TreeManager {
 			}
 			return;
 		}
-	}
-
-	clear() {
+	},
+	clear: function() {
 		log(LOG_INFO, "Tree: clearing");
 		this.beginUpdate();
 		delete this._downloads;
@@ -341,9 +297,15 @@ class TreeManager {
 		$('search').clear();
 		this.elem.view = this;
 		this.endUpdate();
-	}
+	},
 
-	setTree(box) {
+	get downloadCount() {
+		return this._downloads.length;
+	},
+	get rowCount() {
+		return this._filtered.length;
+	},
+	setTree: function(box) {
 		if (!box) {
 			return;
 		}
@@ -352,9 +314,8 @@ class TreeManager {
 		for (let i = 0; i < box.columns.count; ++i) {
 			this._cols.push(box.columns.getColumnAt(i));
 		}
-	}
-
-	sort(id, descending) {
+	},
+	sort: function(id, descending) {
 		if (Prompts.confirm(
 			window,
 			_('sortqueue.title'),
@@ -408,9 +369,13 @@ class TreeManager {
 			this.invalidate();
 			this.endUpdate();
 		}
-	}
-
-	doFilter() {
+	},
+	_filter: '',
+	_mustFilter: false,
+	get filtered() {
+		return this._matcher.filtering;
+	},
+	doFilter: function() {
 		if (this._updating) {
 			this._mustFilter = true;
 			return;
@@ -454,9 +419,8 @@ class TreeManager {
 		finally {
 			this.endUpdate();
 		}
-	}
-
-	doFilterOne(d) {
+	},
+	doFilterOne: function(d) {
 		const display = !this.filtered || this._matcher.shouldDisplay(d);
 		if (display === !!~d.filteredPosition) {
 			return false;
@@ -502,9 +466,8 @@ class TreeManager {
 			this.doFilter();
 		}
 		return true;
-	}
-
-	setFilter(nv) {
+	},
+	setFilter: function(nv) {
 		if (nv === this._filter) {
 			return;
 		}
@@ -517,19 +480,16 @@ class TreeManager {
 		}
 		// apply filters
 		this.doFilter();
-	}
-
-	getParentIndex(idx) {
+	},
+	getParentIndex: function(idx) {
 		// no parents, as we are actually a list
 		return -1;
-	}
-
-	getLevel(idx) {
+	},
+	getLevel: function(idx) {
 		// ... and being a list all nodes are on the same level
 		return 0;
-	}
-
-	getCellText(idx, col) {
+	},
+	getCellText: function(idx, col) {
 		const d = this._filtered[idx];
 		if (!d) {
 			return '';
@@ -548,9 +508,8 @@ class TreeManager {
 			case 10: return d.prettyHash;
 		}
 		return '';
-	}
-
-	setCellText(idx, col, text) {
+	},
+	setCellText: function(idx, col, text) {
 		text = Utils.getUsableFileName(text);
 		if (col.index || !text) {
 			return;
@@ -568,39 +527,39 @@ class TreeManager {
 			log(LOG_DEBUG, "reset");
 			return; // complete logic will do this
 		}
+		Task.spawn(this._setCellText.bind(this, d, from, to)).then(null, function(ex) {
+			log(LOG_DEBUG, "move failed " + from.path + " to " + to.path, ex);
+			Prompts.alert(window, _("rename.title"), _("rename.failedtomove", [from.path, to.path]));
+		});
+	},
+	_setCellText: function*(d, from, to) {
+		if (!(yield OS.File.exists(from.path))) {
+			d.setUserFileName(to.leafName);
+			log(LOG_DEBUG, "gone");
+			return; // gone already
+		}
+		if ((yield OS.File.exists(to.path))) {
+			Prompts.alert(window, _("rename.title"), _("rename.alreadythere", [from.leafName, to.path]));
+			log(LOG_DEBUG, "exists");
+			return;
+		}
 
-		this._moveToNewLocation(d, from, to);
-	}
-
-	isSorted() {
-		return true;
-	}
-
-	isContainer(idx) {
-		return false;
-	}
-
-	isContainerOpen(idx) {
-		return false;
-	}
-
-	isContainerEmpty(idx) {
-	 	return false;
-	}
-
-	isSeparator(idx) {
-		return false;
-	}
-
-	isEditable(row, col) {
-		return !col.index;
-	}
-
+		log(LOG_DEBUG, "move " + from.path + " to " + to.path);
+		// need to move
+		yield OS.File.move(from.path, to.path);
+		log(LOG_DEBUG, "move complete " + from.path + " to " + to.path);
+		d.setUserFileName(to.leafName);
+	},
+	isSorted: function() { return true; },
+	isContainer: function(idx) { return false; },
+	isContainerOpen: function(idx) { return false; },
+	isContainerEmpty: function(idx) { return false; },
+	isSeparator: function(idx) { return false; },
+	isEditable: function(row, col) { return !col.index; },
 
 	// will grab the "icon" for a cell.
-	getImageSrc(idx, col) {}
-
-	getProgressMode(idx, col) {
+	getImageSrc: function(idx, col) {},
+	getProgressMode : function(idx, col) {
 		if (col.index === 2) {
 			const d = this._filtered[idx];
 			if (!d) {
@@ -616,10 +575,9 @@ class TreeManager {
 			return 1; // PROGRESS_NORMAL;
 		}
 		return 3; // PROGRESS_NONE;
-	}
-
+	},
 	// will be called for cells other than textcells
-	getCellValue(idx, col) {
+	getCellValue: function(idx, col) {
 		if (col.index === 2) {
 			const d = this._filtered[idx];
 			if (!d) {
@@ -631,9 +589,18 @@ class TreeManager {
 			return d.progress || 0;
 		}
 		return null;
-	}
-
-	getCellProperties(idx, col) {
+	},
+	_cpprop_iconic: "iconic progress",
+	_cpprop_iconiccomplete: "iconic progress completed",
+	_cpprop_iconicfinishing: "iconic progress finishing",
+	_cpprop_iconicverified: "iconic progress completed verified",
+	_cpprop_iconicpaused: "iconic progress paused",
+	_cpprop_iconicpausedundetermined: "iconic progress paused pausedUndetermined",
+	_cpprop_iconicpausedretrying: "iconic progress paused pausedAutoretrying",
+	_cpprop_iconicpausedundeterminedretrying: "iconic progress paused pausedUndetermined pausedAutoretrying",
+	_cpprop_iconicinprogress: "iconic progress inprogress",
+	_cpprop_iconicicanceled: "iconic progress canceled",
+	getCellProperties: function(idx, col) {
 		const cidx = col.index;
 		if (cidx !== 2 && cidx !== 0) {
 			return "";
@@ -678,48 +645,37 @@ class TreeManager {
 			return d.iconProp;
 		}
 		return "";
-	}
-
-	cycleHeader(col) {
+	},
+	cycleHeader: function(col) {
 		if (!col.element.hasAttribute("matcher")) {
 			return;
 		}
 		this.handleMatcherPopupshowing(col.element);
-	}
-
+	},
 	// just some stubs we need to provide anyway to implement a full nsITreeView
-	cycleCell(idx, column) {}
+	cycleCell: function(idx, column) {},
+	performAction: function(action) {},
+	performActionOnRow: function(action, index, column) {},
+	performActionOnCell: function(action, index, column) {},
+	getColumnProperties: function(column, element) { return ""; },
+	getRowProperties: function(idx) { return ""; },
+	setCellValue: function(idx, col, value) {},
 
-	performAction(action) {}
-
-	performActionOnRow(action, index, column) {}
-
-	performActionOnCell(action, index, column) {}
-
-	getColumnProperties(column, element) {
-		return "";
-	}
-
-	getRowProperties(idx) {
-		return "";
-	}
-
-	setCellValue(idx, col, value) {}
-
-	selectionChanged() {
+	_changeTimer: null,
+	selectionChanged: function() {
 		if (this._updating) {
 			return;
 		}
 		if (this._changeTimer) {
-			clearTimeout(this._changeTimer);
+			Timers.killTimer(this._changeTimer);
 		}
-		this._changeTimer = setTimeoutOnlyFun(() => {
+		this._changeTimer = Timers.createOneshot(100, function() {
 			this._changeTimer = null;
 			this.refreshTools();
-		}, 100);
-	}
+		}, this);
+	},
 
-	onDragStart(event) {
+	onDragStart: function(event) {
 		let transfer = event.dataTransfer;
 		let i = 0;
 		transfer.effectAllowed = "copymove";
@@ -728,31 +684,25 @@ class TreeManager {
 				if (qi.state === COMPLETE) {
 					let file = qi.destinationLocalFile;
 					if (file.exists()) {
-						transfer.mozSetDataAt(
-							"application/x-moz-file",
-							new FileDataProvider(this, qi, file),
-							i++);
+						transfer.mozSetDataAt("application/x-moz-file", new FileDataProvider(qi, file), i++);
 					}
 				}
-				transfer.setData("application/x-dta-position", qi.position);
-				i++;
+				transfer.setData("application/x-dta-position", qi.position); i++;
 			}
 			catch (ex) {
 				log(LOG_ERROR, "dnd failure", ex);
 			}
 			return;
 		}
-	}
-
-	canDrop(index, orient, dt) {
+	},
+	canDrop: function(index, orient, dt) {
 		let rv = dt.types.contains("application/x-dta-position");
 		if (rv) {
 			dt.dropEffect = "move";
 		}
 		return rv;
-	}
-
-	drop(row, orient, dt) {
+	},
+	drop: function(row, orient, dt) {
 		log(LOG_DEBUG, "drop");
 		if (!this.canDrop(row, orient, dt)) {
 			return;
@@ -802,15 +752,15 @@ class TreeManager {
 		catch (ex) {
 			log(LOG_ERROR, "_dropSelection", ex);
 		}
-	}
+	},
 
-	beginUpdate() {
+	_updating: 0,
+	beginUpdate: function() {
 		if (++this._updating === 1) {
 			this._box.beginUpdateBatch();
 		}
-	}
-
-	endUpdate() {
+	},
+	endUpdate: function() {
 		if (--this._updating === 0) {
 			this._box.endUpdateBatch();
 			this.refreshTools();
@@ -823,17 +773,15 @@ class TreeManager {
 				this.fireChangeEvent();
 			}
 		}
-	}
-
-	fastLoad(download) {
+	},
+	fastLoad: function(download) {
 		if (download.state === COMPLETE) {
 			++Dialog.completed;
 		}
 		let dummy = download.iconProp; // set up initial icon to avoid display problems
 		return this._downloads.push(download) - 1;
-	}
-
-	add(download) {
+	},
+	add: function(download) {
 		let pos = download.position = this.fastLoad(download);
 		if (this.filtered) {
 			download.filteredPosition = -1;
@@ -844,9 +792,8 @@ class TreeManager {
 		}
 		this.fireChangeEvent();
 		return pos;
-	}
-
-	scrollToNearest(download) {
+	},
+	scrollToNearest: function(download) {
 		if (!download || download.position < 0) {
 			// Cannot scroll to a deleted download
 			return;
@@ -868,9 +815,8 @@ class TreeManager {
 			return;
 		}
 		// nothing found; do not scroll
-	}
-
-	removeWithConfirmation() {
+	},
+	removeWithConfirmation: function() {
 		if (Prefs.confirmRemove) {
 			let res = Prompts.confirm(
 				window,
@@ -890,17 +836,15 @@ class TreeManager {
 			}
 		}
 		this.remove(null, true);
-	}
-
-	removeAllWithConfirmation() {
+	},
+	removeAllWithConfirmation: function() {
 		let res = Prompts.confirm(window, _('remove.title'), _('removeallquestion'), Prompts.YES, Prompts.NO);
 		if (res) {
 			return;
 		}
 		this.remove(this._downloads.map(e => e), true);
-	}
-
-	removeHostWithConfirmation() {
+	},
+	removeHostWithConfirmation: function() {
 		let domain = this.current.urlManager.domain;
 		let res = Prompts.confirm(
 			window,
@@ -912,9 +856,8 @@ class TreeManager {
 			return;
 		}
 		this.remove(this._downloads.filter(e => e.urlManager.domain === domain), true);
-	}
-
-	removeBatchWithConfirmation() {
+	},
+	removeBatchWithConfirmation: function() {
 		let bid = this.current.bNum;
 		if (Prefs.confirmRemove) {
 			let res = Prompts.confirm(
@@ -928,9 +871,8 @@ class TreeManager {
 			}
 		}
 		this.remove(this._downloads.filter(e => e.bNum === bid), true);
-	}
-
-	removeByFilter(filter, id) {
+	},
+	removeByFilter: function(filter, id) {
 		let pref = null;
 		let mask = -1;
 		let msg = null;
@@ -975,11 +917,11 @@ class TreeManager {
 			downloads.push(d);
 		}
 		if (downloads.length) {
-			this.remove(downloads);
+			Tree.remove(downloads);
 		}
-	}
-
-	fireChangeEvent() {
+	},
+	_mustFireChangeEvent: false,
+	fireChangeEvent: function() {
 		if (this._updating) {
 			this._mustFireChangeEvent = true;
 			return;
@@ -987,9 +929,8 @@ class TreeManager {
 		let evt = document.createEvent("UIEvents");
 		evt.initUIEvent("change", true, true, null, 0);
 		return this.elem.dispatchEvent(evt);
-	}
-
-	remove(downloads, performJump) {
+	},
+	remove: function(downloads, performJump) {
 		if (downloads && !(downloads instanceof Array)) {
 			downloads = [downloads];
 		}
@@ -1038,13 +979,39 @@ class TreeManager {
 			this.invalidate();
 			this.doFilter();
 			this.endUpdate();
+			this.fireChangeEvent();
 		}
 		if (performJump) {
 			this._removeJump(filterInSitu(downloads, e => e.filteredPosition >= 0).length, last);
 		}
-	}
-
-	removeCompleted() {
+	},
+	_removeByState: function(state, onlyGone) {
+		this.beginUpdate();
+		Task.spawn((function*() {
+			try {
+				QueueStore.beginUpdate();
+				var removing = [];
+				for (let d of this._downloads) {
+					if (d.state !== state) {
+						continue;
+					}
+					if (onlyGone && (yield OS.File.exists(d.destinationLocalFile.path))) {
+						continue;
+					}
+					removing.push(d);
+				}
+				if (removing.length) {
+					this.remove(removing);
+				}
+				QueueStore.endUpdate();
+			}
+			finally {
+				this.invalidate();
+				this.endUpdate();
+			}
+		}).bind(this));
+	},
+	removeCompleted: function() {
 		if (Prefs.confirmRemoveCompleted) {
 			let res = Prompts.confirm(
 				window,
@@ -1064,9 +1031,8 @@ class TreeManager {
 			}
 		}
 		this._removeByState(COMPLETE, false);
-	}
-
-	removeFailed() {
+	},
+	removeFailed: function() {
 		if (Prefs.confirmRemoveFailed) {
 			let res = Prompts.confirm(
 				window,
@@ -1086,9 +1052,8 @@ class TreeManager {
 			}
 		}
 		this._removeByState(CANCELED, false);
-	}
-
-	removePaused() {
+	},
+	removePaused: function() {
 		if (Prefs.confirmRemovePaused) {
 			let res = Prompts.confirm(
 				window,
@@ -1108,9 +1073,8 @@ class TreeManager {
 			}
 		}
 		this._removeByState(PAUSED, false);
-	}
-
-	removeDupes() {
+	},
+	removeDupes: function() {
 		let known = {};
 		let dupes = [];
 		for (let d of this.all) {
@@ -1130,13 +1094,11 @@ class TreeManager {
 			return true;
 		}
 		return false;
-	}
-
-	removeGone() {
+	},
+	removeGone: function() {
 		this._removeByState(COMPLETE, true);
-	}
-
-	_removeJump(delta, last) {
+	},
+	_removeJump: function(delta, last) {
 		if (!this.rowCount) {
 			this._box.ensureRowIsVisible(0);
 		}
@@ -1147,39 +1109,33 @@ class TreeManager {
 			}
 			this.selection.currentIndex = np;
 		}
-	}
-
-	_pause_item(d) {
-		if (d.isOf(QUEUED | PAUSED | CANCELED) || (d.state === RUNNING && d.resumable)) {
+	},
+	_pause_item: function(d) {
+		if (d.isOf(QUEUED | PAUSED) || (d.state === RUNNING && d.resumable)) {
 			d.pause();
 			d.clearAutoRetry();
 			d.status = TextCache_PAUSED;
 			d.setState(PAUSED);
 		}
 		return true;
-	}
-
-	pause() {
+	},
+	pause: function() {
 		this.updateSelected(this._pause_item);
-	}
-
-	_resume_item(d) {
+	},
+	_resume_item: function(d) {
 		if (d.isOf(PAUSED | CANCELED)) {
 			d.liftLoginRestriction = true;
 			d.queue();
 		}
 		return true;
-	}
-
-	resume(d) {
+	},
+	resume: function(d) {
 		this.updateSelected(this._resume_item);
-	}
-
-	_cancel_item(d) {
+	},
+	_cancel_item: function(d) {
 		return d.cancel() || true;
-	}
-
-	cancel() {
+	},
+	cancel: function() {
 		if (Prefs.confirmCancel) {
 			let many = this.selection.count > 1;
 			let res = Prompts.confirm(
@@ -1197,48 +1153,41 @@ class TreeManager {
 			}
 		}
 		this.updateSelected(this._cancel_item);
-	}
-
-	selectAll() {
+	},
+	selectAll: function() {
 		this.selection.selectAll();
 		this.selectionChanged();
-	}
-
-	selectInv() {
+	},
+	selectInv: function() {
 		for (let d of this.all) {
 			this.selection.toggleSelect(d.position);
 		}
 		this.selectionChanged();
-	}
-
-	_changeChunks_inc(d) {
+	},
+	_changeChunks_inc: function(d) {
 		if (d.maxChunks < 10 && d.resumable) {
 			++d.maxChunks;
 		}
 		return true;
-	}
-
-	_changeChunks_dec(d) {
+	},
+	_changeChunks_dec: function(d) {
 		if (d.maxChunks > 1) {
 			--d.maxChunks;
 		}
 		return true;
-	}
-
-	changeChunks(increase) {
-		this.updateSelected(increase ? this._changeChunks_inc : this._changeChunks_dec);
-	}
-
-	force() {
-		for (let d of this.getSelected()) {
+	},
+	changeChunks: function(increase) {
+		Tree.updateSelected(increase ? this._changeChunks_inc : this._changeChunks_dec);
+	},
+	force: function() {
+		for (let d of Tree.getSelected()) {
 			if (d.isOf(QUEUED | PAUSED | CANCELED)) {
 				d.queue();
 				Dialog.run(d, true);
 			}
 		}
-	}
-
-	manageMirrors() {
+	},
+	manageMirrors: function() {
 		if (!this.current) {
 			return;
 		}
@@ -1253,9 +1202,8 @@ class TreeManager {
 			this.current.replaceMirrors(mirrors);
 			log(LOG_INFO, "New mirrors set " + mirrors);
 		}
-	}
-
-	export() {
+	},
+	export: function() {
 		function processResponse(fp, rv) {
 			if (rv !== Ci.nsIFilePicker.returnOK && rv !== Ci.nsIFilePicker.returnReplace) {
 				return;
@@ -1314,10 +1262,9 @@ class TreeManager {
 			log(LOG_ERROR, "Cannot export downloads", ex);
 			Prompts.alert(window, _('export.title'), _('exportfailed'));
 		}
-	}
-
-	import() {
-		const processResponse = async function(fp, rv) {
+	},
+	import: function() {
+		function processResponse(fp, rv) {
 			if (rv !== Ci.nsIFilePicker.returnOK) {
 				return;
 			}
@@ -1326,16 +1273,17 @@ class TreeManager {
 					Metalinker.handleFile(fp.file);
 					return;
 				}
-				let lnks = await ImportExport.parseTextFile(fp.file);
-				if (lnks.length) {
-					DTA.saveLinkArray(window, lnks, []);
-				}
+				ImportExport.parseTextFile(fp.file, function importcb(lnks) {
+					if (lnks.length) {
+						DTA.saveLinkArray(window, lnks, []);
+					}
+				});
 			}
 			catch (ex) {
 				log(LOG_ERROR, "Cannot import downloads (processResponse)", ex);
 				Prompts.alert(window, _('import.title'), _('importfailed'));
 			}
-		};
+		}
 		try {
 			let fp = new Instances.FilePicker(window, _('import.title'), Ci.nsIFilePicker.modeOpen);
 			fp.appendFilters(Ci.nsIFilePicker.filterText);
@@ -1355,9 +1303,8 @@ class TreeManager {
 			log(LOG_ERROR, "Cannot import downloads", ex);
 			Prompts.alert(window, _('import.title'), _('importfailed'));
 		}
-	}
-
-	addLimits() {
+	},
+	addLimits: function() {
 		showPreferences(
 			"paneServers",
 			{
@@ -1365,13 +1312,12 @@ class TreeManager {
 				url: this.current.urlManager.spec
 			}
 		);
-	}
-
-	showInfo() {
+	},
+	showInfo: function() {
 		this.beginUpdate();
 		try {
 			let downloads = [];
-			for (let d of this.getSelected()) {
+			for (let d of Tree.getSelected()) {
 				downloads.push(d);
 			}
 			if (downloads.length) {
@@ -1381,9 +1327,8 @@ class TreeManager {
 		finally {
 			this.endUpdate();
 		}
-	}
-
-	showTip(event) {
+	},
+	showTip: function(event) {
 		if (!Prefs.showTooltip || Services.ww.activeWindow !== window) {
 			return false;
 		}
@@ -1404,29 +1349,40 @@ class TreeManager {
 
 		Tooltip.start(d, true);
 		return true;
-	}
-
-	stopTip() {
+	},
+	stopTip: function() {
 		Tooltip.stop();
-	}
+	},
+	_refreshTools_item: [
+		{item: 'cmdResume', f: function(d) { return d.isOf(PAUSED | QUEUED | CANCELED); }},
+		{item: 'cmdPause', f: function(d) { return (d.isOf(RUNNING) && d.resumable) || d.isOf(QUEUED | PAUSED); }},
+		{item: 'cmdCancel', f: function(d) { return d.isOf(PAUSED | RUNNING | QUEUED | COMPLETE); }},
 
-	_refreshTools_init() {
-		this._refreshTools_item.forEach(function(e) {
-			e.item = $(e.item);
-		});
-		this._refreshTools_items.forEach(function(e) {
-			e.items = $(...e.items);
-		});
-		this._refreshTools_items_deferred.forEach(function(e) {
-			e.items = $(...e.items);
-		});
-	}
+		{item: 'cmdMoveUp', f: function(d) { return !Tree.filtered && d.min > 0; }},
+		{item: 'cmdMoveTop', f: function(d) { return d.minId > 0; }},
+		{item: 'cmdMoveDown', f: function(d) { return !Tree.filtered && d.max !== d.rows - 1; }},
+		{item: 'cmdMoveBottom', f: function(d) { return d.maxId !== Tree._downloads.length - 1; }}
+	],
+	_refreshTools_items: [
+		{items: ["cmdDelete", "delete"], f: function(d) { return d.state === COMPLETE; }},
 
-	_stateIs(s) {
-		return this.state & s;
-	}
-
-	refreshTools(d) {
+		{items: ['cmdRemoveSelected', 'cmdExport', 'cmdGetInfo', 'perDownloadSpeedLimit'],
+			f: function(d) { return !!d.count; }},
+		{items: ['cmdMirrors', 'cmdAddLimits', 'cmdRename'],
+			f: function(d) { return d.count === 1; }},
+		{items: ['cmdAddChunk', 'cmdRemoveChunk', 'cmdForceStart'],
+			f: function(d) { return d.isOf(QUEUED | RUNNING | PAUSED | CANCELED); }},
+	],
+	_refreshTools_items_deferred: [
+		{items: ['cmdLaunch', "launch"], f: function(d) { return !!d.curFile; }},
+		{items: ["cmdOpenFolder", "folder"], f: function(d) { return !!d.curFolder; }},
+	],
+	_refreshTools_init: function() {
+		this._refreshTools_item.forEach(function(e) { e.item = $(e.item); });
+		this._refreshTools_items.forEach(function(e) { e.items = $.apply(null, e.items); });
+		this._refreshTools_items_deferred.forEach(function(e) { e.items = $.apply(null, e.items); });
+	},
+	refreshTools: function(d) {
 		if (this._updating || (d && ('position' in d) && !this.selection.isSelected(d.position))) {
 			return;
 		}
@@ -1442,19 +1398,13 @@ class TreeManager {
 						items[ii].setAttribute("disabled", "true");
 					}
 				}
-				for (let i = 0, e = this._refreshTools_items_deferred.length; i < e; ++i) {
-					let items = this._refreshTools_items[i].items;
-					for (let ii = 0, ee = items.length; ii < ee; ++ii) {
-						items[ii].setAttribute("disabled", "true");
-					}
-				}
 				return;
 			}
 
 			let states = {
 				state: 0,
 				resumable: false,
-				is: this._stateIs,
+				is: function(s) { return this.state & s; },
 				isOf: QueueItem.prototype.isOf,
 				count: this.selection.count,
 				rows: this.rowCount,
@@ -1474,25 +1424,42 @@ class TreeManager {
 			let cur = this.current;
 			for (let i = 0, e = this._refreshTools_item.length; i < e; ++i) {
 				let item = this._refreshTools_item[i];
-				let disabled = item.f.call(this, states) ? "false" : "true";
+				let disabled = item.f(states) ? "false" : "true";
 				item.item.setAttribute("disabled", disabled);
 			}
 			for (let i = 0, e = this._refreshTools_items.length; i < e; ++i) {
 				let items = this._refreshTools_items[i];
-				let disabled = items.f.call(this, states) ? "false" : "true";
+				let disabled = items.f(states) ? "false" : "true";
 				items = items.items;
 				for (let ii = 0, ee = items.length; ii < ee; ++ii) {
 					items[ii].setAttribute("disabled", disabled);
 				}
 			}
-			this._refreshToolsAsync(states, cur);
+			Task.spawn((function*() {
+				try {
+					states.curFile = (cur && cur.state === COMPLETE &&
+														(yield OS.File.exists(cur.destinationLocalFile.path)));
+					states.curFolder = (cur && (yield OS.File.exists(
+						new Instances.LocalFile(cur.destinationPath).path)));
+					for (let i = 0, e = this._refreshTools_items_deferred.length; i < e; ++i) {
+						let items = this._refreshTools_items_deferred[i];
+						let disabled = items.f(states) ? "false" : "true";
+						items = items.items;
+						for (let ii = 0, ee = items.length; ii < ee; ++ii) {
+							items[ii].setAttribute("disabled", disabled);
+						}
+					}
+				}
+				catch (tex) {
+					log(LOG_ERROR, "rt (task)", tex);
+				}
+			}).bind(this));
 		}
 		catch (ex) {
 			log(LOG_ERROR, "rt", ex);
 		}
-	}
-
-	savePositions() {
+	},
+	savePositions: function() {
 		let saveArray = [];
 		for (let i = 0, e = this._downloads.length; i < e; ++i) {
 			let d = this._downloads[i];
@@ -1505,9 +1472,8 @@ class TreeManager {
 			QueueStore.savePositions(saveArray);
 			this.fireChangeEvent();
 		}
-	}
-
-	savePositionsByOffsets() {
+	},
+	savePositionsByOffsets: function() {
 		// Special case: When deleting we know that we will only reduce .position.
 		// This allows for DB updates based on offsets instead of absolute positions,
 		// reducing the number of queries (param bindings) a lot, thus avoiding
@@ -1531,9 +1497,8 @@ class TreeManager {
 			sp.finalize();
 			this.fireChangeEvent();
 		}
-	}
-
-	_invalidate_item(d, cell) {
+	},
+	_invalidate_item: function(d, cell) {
 		if (d.position >= 0 && !this.doFilterOne(d) && ~d.filteredPosition) {
 			if (cell !== undefined) {
 				this._box.invalidateCell(d.filteredPosition, this._cols[cell]);
@@ -1542,13 +1507,12 @@ class TreeManager {
 				this._box.invalidateRow(d.filteredPosition);
 			}
 		}
-	}
-
-	invalidate(d, cell) {
+	},
+	invalidate: function(d, cell) {
 		if (!d) {
 			FileExts.add();
 			this._box.invalidate();
-			this.fireChangeEvent();
+			this.refreshTools(this);
 			return;
 		}
 
@@ -1559,9 +1523,15 @@ class TreeManager {
 			return;
 		}
 		this._invalidate_item(d, cell);
-	}
+	},
+	get box() {
+		return this._box;
+	},
+	get all() {
+		return this._downloads;
+	},
 
-	getSelected() {
+	getSelected: function() {
 		if (!this.selection.count) {
 			return [];
 		}
@@ -1575,10 +1545,10 @@ class TreeManager {
 			}
 		}
 		return rv;
-	}
+	},
 
 	// returns an ASC sorted array of IDs that are currently selected.
-	_getSelectedIds(getReversed) {
+	_getSelectedIds: function(getReversed) {
 		let select = this.selection;
 		if (!select.count) {
 			return [];
@@ -1601,37 +1571,47 @@ class TreeManager {
 			Array.sort(rv, this._getSelectedIds_asc);
 		}
 		return rv;
-	}
-
-	_getSelectedIds_asc(a, b) {
-		return a - b;
-	}
-
-	_getSelectedIds_desc(a, b) {
-		return b - a;
-	}
-
-	_getSelectedFilteredIds_map(id) {
-		return this._filtered[id].position;
-	}
-
-	_getSelectedFilteredIds(reverse) {
+	},
+	_getSelectedIds_asc: function(a, b) { return a - b; },
+	_getSelectedIds_desc: function(a, b) { return b - a; },
+	_getSelectedFilteredIds_map: function(id) { return this._filtered[id].position; },
+	_getSelectedFilteredIds: function(reverse) {
 		return mapInSitu(this._getSelectedIds(reverse), this._getSelectedFilteredIds_map, this);
-	}
+	},
 
-	at(idx) {
+	// get the first selected item, NOT the item which has the input focus.
+	get current() {
+		let select = this.selection;
+		try {
+			let ci = {value: -1};
+			this.selection.getRangeAt(0, ci, {});
+			if (ci.value > -1 && ci.value < this.rowCount) {
+				return this._filtered[ci.value];
+			}
+		}
+		catch (ex) {
+			// fall-through
+		}
+		return null;
+	},
+	// get the currently focused item.
+	get focused() {
+		let ci = this.selection.currentIndex;
+		if (ci > -1 && ci < this.rowCount) {
+			return this._filtered[ci];
+		}
+		return null;
+	},
+	at: function(idx) {
 		return this._filtered[idx];
-	}
-
-	some(f, t) {
+	},
+	some: function(f, t) {
 		return this._downloads.some(f, t);
-	}
-
-	every(f, t) {
+	},
+	every: function(f, t) {
 		return this._downloads.every(f, t);
-	}
-
-	update(f, t) {
+	},
+	update: function(f, t) {
 		try {
 			this.beginUpdate();
 			try {
@@ -1645,33 +1625,28 @@ class TreeManager {
 			log(LOG_ERROR, "function threw during update", ex);
 			throw ex;
 		}
-	}
-
-	updateSelected(fn, ctx) {
-		this.beginUpdate();
-		QueueStore.beginUpdate();
+	},
+	updateSelected: function(fn, ctx) {
 		try {
-			for (let i of this.getSelected()) {
-				try {
-					fn.call(ctx, i);
-				}
-				catch (ex) {
-					log(LOG_ERROR, "Updating an item failed!");
-				}
-			}
+			this.beginUpdate();
+			QueueStore.beginUpdate();
+			new CoThreadListWalker(
+				fn,
+				this.getSelected(),
+				0,
+				ctx
+			).start((function() {
+				QueueStore.endUpdate();
+				this.invalidate();
+				this.endUpdate();
+			}).bind(this));
 		}
 		catch (ex) {
 			log(LOG_ERROR, "function threw during _gen", ex);
 			throw ex;
 		}
-		finally {
-			QueueStore.endUpdate();
-			this.invalidate();
-			this.endUpdate();
-		}
-	}
-
-	updateAll(fn, ctx) {
+	},
+	updateAll: function(fn, ctx) {
 		try {
 			this.beginUpdate();
 			QueueStore.beginUpdate();
@@ -1691,9 +1666,8 @@ class TreeManager {
 			log(LOG_ERROR, "function threw during updateAll", ex);
 			throw ex;
 		}
-	}
-
-	moveTop() {
+	},
+	moveTop: function() {
 		try {
 			this.beginUpdate();
 			let ids;
@@ -1716,9 +1690,8 @@ class TreeManager {
 		catch (ex) {
 			log(LOG_ERROR, "Mover::top", ex);
 		}
-	}
-
-	moveBottom() {
+	},
+	moveBottom: function() {
 		try {
 			this.beginUpdate();
 			let ids;
@@ -1741,9 +1714,8 @@ class TreeManager {
 		catch (ex) {
 			log(LOG_ERROR, "Mover::bottom", ex);
 		}
-	}
-
-	moveUp() {
+	},
+	moveUp: function() {
 		try {
 			if (this.filtered) {
 				throw Error("not implemented");
@@ -1776,9 +1748,8 @@ class TreeManager {
 		catch (ex) {
 			log(LOG_ERROR, "Mover::up", ex);
 		}
-	}
-
-	moveDown() {
+	},
+	moveDown: function() {
 		try {
 			if (this.filtered) {
 				throw Error("not implemented");
@@ -1814,9 +1785,8 @@ class TreeManager {
 		catch (ex) {
 			log(LOG_ERROR, "Mover::down", ex);
 		}
-	}
-
-	showSpeedLimitList(event) {
+	},
+	showSpeedLimitList: function(event) {
 		if (!this.selection.count) {
 			return false;
 		}
@@ -1829,18 +1799,15 @@ class TreeManager {
 		}
 		this._speedLimitList.limit = limit;
 		return true;
-	}
-
-	_changePerDownloadSpeedLimit_item(limit, d) {
+	},
+	_changePerDownloadSpeedLimit_item: function(limit, d) {
 		return (d.speedLimit = limit) || true;
-	}
-
-	changePerDownloadSpeedLimit() {
+	},
+	changePerDownloadSpeedLimit: function() {
 		let limit = $('perDownloadSpeedLimitList').limit;
 		this.updateSelected(this._changePerDownloadSpeedLimit_item.bind(null, limit));
-	}
-
-	startRename() {
+	},
+	startRename: function() {
 		try {
 			let ci = {value: -1};
 			this.selection.getRangeAt(0, ci, {});
@@ -1859,96 +1826,14 @@ class TreeManager {
 			log(LOG_ERROR, "Cannot rename", ex);
 		}
 	}
+};
+requireJoined(Tree, "manager/matcher");
+requireJoined(Tree, "support/atoms");
 
-	async _refreshToolsAsync(states, cur) {
-		try {
-			if (!cur || cur.state !== COMPLETE) {
-				states.curFile = states.curFolder = false;
-				this._refreshLastDest = null;
-			}
-			else if (this._refreshLastDest === cur.destinationLocalFile.path) {
-				states.curFile = this._refreshLastDestExists;
-				states.curFolder = this._refreshLastDestPathExists;
-			}
-			else {
-				this._refreshLastDest = cur.destinationLocalFile.path;
-				states.curFile = this._refreshLastDestExists = await OS.File.exists(
-					this._refreshLastDest);
-				if (states.curFile) {
-					states.curFolder = this._refreshLastDestPathExists = true;
-				}
-				else {
-					states.curFolder = this._refreshLastDestPathExists = await OS.File.exists(
-						new Instances.LocalFile(cur.destinationPath).path);
-				}
-			}
-			for (let items of this._refreshTools_items_deferred) {
-				let disabled = items.f.call(this, states) ? "false" : "true";
-				items = items.items;
-				for (let item of items) {
-					item.setAttribute("disabled", disabled);
-				}
-			}
-		}
-		catch (tex) {
-			log(LOG_ERROR, "rt (task)", tex);
-		}
-	}
-
-	async _removeByState(state, onlyGone) {
-		this.beginUpdate();
-		try {
-			QueueStore.beginUpdate();
-			var removing = [];
-			for (let d of this._downloads) {
-				if (d.state !== state) {
-					continue;
-				}
-				if (onlyGone && (await OS.File.exists(d.destinationLocalFile.path))) {
-					continue;
-				}
-				removing.push(d);
-			}
-			if (removing.length) {
-				this.remove(removing);
-			}
-			QueueStore.endUpdate();
-		}
-		finally {
-			this.invalidate();
-			this.endUpdate();
-		}
-	}
-
-	async _moveToNewLocation(download, from, to) {
-		try {
-			if (!(await OS.File.exists(from.path))) {
-				download.setUserFileName(to.leafName);
-				log(LOG_DEBUG, "gone");
-				return; // gone already
-			}
-			if ((await OS.File.exists(to.path))) {
-				Prompts.alert(window, _("rename.title"), _("rename.alreadythere", [from.leafName, to.path]));
-				log(LOG_DEBUG, "exists");
-				return;
-			}
-
-			log(LOG_DEBUG, "move " + from.path + " to " + to.path);
-			// need to move
-			await OS.File.move(from.path, to.path);
-			log(LOG_DEBUG, "move complete " + from.path + " to " + to.path);
-
-			download.setUserFileName(to.leafName);
-		}
-		catch (ex) {
-			log(LOG_DEBUG, "move failed " + from.path + " to " + to.path, ex);
-			Prompts.alert(window, _("rename.title"), _("rename.failedtomove", [from.path, to.path]));
-		}
-	}
-
-	*_uniqueList() {
+var FileHandling = {
+	_uniqueList: function*() {
 		let u = {};
-		for (let d of this.getSelected()) {
+		for (let d of Tree.getSelected()) {
 			if (d.state !== COMPLETE) {
 				continue;
 			}
@@ -1961,10 +1846,9 @@ class TreeManager {
 				yield d;
 			}
 		}
-	}
-
-	openFolder() {
-		for (let d of this.getSelected()) {
+	},
+	openFolder: function() {
+		for (let d of Tree.getSelected()) {
 			try {
 				if (new Instances.LocalFile(d.destinationPath).exists()) {
 					Utils.reveal(d.destinationFile);
@@ -1974,10 +1858,9 @@ class TreeManager {
 				log(LOG_ERROR, 'reveal', ex);
 			}
 		}
-	}
-
-	openFile() {
-		let cur = this.current;
+	},
+	openFile: function() {
+		let cur = Tree.current;
 		if (cur && cur.state === COMPLETE) {
 			try {
 				Utils.launch(cur.destinationFile);
@@ -1986,99 +1869,41 @@ class TreeManager {
 				log(LOG_INFO, 'launch', ex);
 			}
 		}
-	}
-
-	async deleteFile() {
-		try {
-			let list = [];
-			for (let d of this._uniqueList()) {
-				list.push(d);
-			}
-			let msg = '';
-			if (list.length < 25) {
-				msg = _('deletetexts');
+	},
+	deleteFile: function() {
+		Task.spawn(function*() {
+			try {
+				let list = [];
+				for (let d of this._uniqueList()) {
+					list.push(d);
+				}
+				let msg = '';
+				if (list.length < 25) {
+					msg = _('deletetexts');
+					for (let d of list) {
+						msg += "\n" + d.destinationLocalFile.leafName;
+					}
+				}
+				else {
+					msg = _('deletetextl.2', [list.length], list.length);
+				}
+				if (list.length && Prompts.confirm(
+					window, _('deletecaption'), msg, _('delete'), Prompts.CANCEL, null, 1)) {
+					return;
+				}
 				for (let d of list) {
-					msg += "\n" + d.destinationLocalFile.leafName;
+					try {
+						yield OS.File.remove(d.destinationLocalFile.path);
+					}
+					catch (ex) {
+						// no-op
+					}
 				}
+				Tree.remove(list, true);
 			}
-			else {
-				msg = _('deletetextl.2', [list.length], list.length);
+			catch (ex) {
+				log(LOG_ERROR, "deleteFile", ex);
 			}
-			if (list.length && Prompts.confirm(
-				window, _('deletecaption'), msg, _('delete'), Prompts.CANCEL, null, 1)) {
-				return;
-			}
-			for (let d of list) {
-				try {
-					await OS.File.remove(d.destinationLocalFile.path);
-				}
-				catch (ex) {
-					// no-op
-				}
-			}
-			this.remove(list, true);
-		}
-		catch (ex) {
-			log(LOG_ERROR, "deleteFile", ex);
-		}
+		}.bind(this));
 	}
-}
-
-Object.assign(TreeManager.prototype, {
-	_cpprop_iconic: "iconic progress",
-	_cpprop_iconiccomplete: "iconic progress completed",
-	_cpprop_iconicfinishing: "iconic progress finishing",
-	_cpprop_iconicverified: "iconic progress completed verified",
-	_cpprop_iconicpaused: "iconic progress paused",
-	_cpprop_iconicpausedundetermined: "iconic progress paused pausedUndetermined",
-	_cpprop_iconicpausedretrying: "iconic progress paused pausedAutoretrying",
-	_cpprop_iconicpausedundeterminedretrying: "iconic progress paused pausedUndetermined pausedAutoretrying",
-	_cpprop_iconicinprogress: "iconic progress inprogress",
-	_cpprop_iconicicanceled: "iconic progress canceled",
-	_refreshTools_item: [
-		{item: 'cmdResume', f: function(d) {
-			return d.isOf(PAUSED | QUEUED | CANCELED);
-		}},
-		{item: 'cmdPause', f: function(d) {
-			return (d.isOf(RUNNING) && d.resumable) || d.isOf(QUEUED | PAUSED | CANCELED);
-		}},
-		{item: 'cmdCancel', f: function(d) {
-			return d.isOf(PAUSED | RUNNING | QUEUED | COMPLETE);
-		}},
-
-		{item: 'cmdMoveUp', f: function(d) {
-			return !this.filtered && d.min > 0;
-		}},
-		{item: 'cmdMoveTop', f: function(d) {
-			return true;
-		}},
-		{item: 'cmdMoveDown', f: function(d) {
-			return !this.filtered && d.max !== d.rows - 1;
-		}},
-		{item: 'cmdMoveBottom', f: function(d) {
-			return true;
-		}}
-	],
-	_refreshTools_items: [
-		{items: ["cmdDelete", "delete"], f: function(d) {
-			return d.state === COMPLETE;
-		}},
-
-		{items: ['cmdRemoveSelected', 'cmdExport', 'cmdGetInfo', 'perDownloadSpeedLimit'],
-			f: function(d) { return !!d.count; }},
-		{items: ['cmdMirrors', 'cmdAddLimits', 'cmdRename'],
-			f: function(d) { return d.count === 1; }},
-		{items: ['cmdAddChunk', 'cmdRemoveChunk', 'cmdForceStart'],
-			f: function(d) { return d.isOf(QUEUED | RUNNING | PAUSED | CANCELED); }},
-	],
-	_refreshTools_items_deferred: [
-		{items: ['cmdLaunch', "launch"], f: function(d) {
-			return !!d.curFile;
-		}},
-		{items: ["cmdOpenFolder", "folder"], f: function(d) {
-			return !!d.curFolder;
-		}},
-	],
-});
-requireJoined(TreeManager.prototype, "manager/matcher");
-requireJoined(TreeManager.prototype, "support/atoms");
+};

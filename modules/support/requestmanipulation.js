@@ -3,24 +3,23 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/ */
 "use strict";
 
-class Manipulator {
-	constructor() {
-		this._m = new Map();
-	}
-
-	register(id, matcher, ...args) {
-		this._m.set(id, {
+function Manipulator() {
+	this._m = {};
+}
+Manipulator.prototype = {
+	register: function(id, matcher) {
+		this._m[id] = {
 				matcher: matcher,
-				funcs: args,
-		});
-	}
-
-	unregister(id) {
-		this._m.delete(id);
-	}
-
-	modify(context, spec) {
-		for (let [id, m] of this._m.entries()) {
+				funcs: Array.slice(arguments, 2)
+		};
+	},
+	unregister: function(id) {
+		if (id in this._m) {
+			delete this._m[id];
+		}
+	},
+	modify: function(context, spec) {
+		for (let [,m] in new Iterator(this._m)) {
 			if (m.matcher.test(spec)) {
 				try {
 					for (let func of m.funcs) {
@@ -28,17 +27,17 @@ class Manipulator {
 					}
 				}
 				catch (ex) {
-					log(LOG_ERROR, `Failed to apply request manipulator id ${id}`, ex);
+					Cu.reportError(ex);
 				}
 			}
 		}
 		return context;
 	}
-}
+};
 
 function defineManipulator(m, sp) {
 	const _m = new Manipulator();
-	exports['register' + m] = function(...args) { _m.register(...args); };
+	exports['register' + m] = function() { _m.register.apply(_m, arguments); };
 	exports['unregister' + m] = function(id) { _m.unregister(id); };
 	exports['modify' + m] = function(context) { return _m.modify(context, sp(context)); };
 }
@@ -73,12 +72,7 @@ exports.makeAnonymous = function makeAnonymous() {
 	this.setRequestHeader('Referer', '', false);
 	this.setRequestHeader('Cookie', '', false);
 	if (("nsIPrivateBrowsingChannel" in Ci) && (this instanceof Ci.nsIPrivateBrowsingChannel)) {
-		try {
-			this.setPrivate(true);
-		}
-		catch (ex) {
-			// ignored
-		}
+		try { this.setPrivate(true); } catch (ex) {}
 	}
 };
 

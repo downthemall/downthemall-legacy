@@ -12,6 +12,8 @@ const REGEXP_SWF = /\.swf\b/i;
 const REGEXP_CT = /\b(flv|ogg|ogm|avi|divx|mp4v|webm)\b/i;
 const REGEXP_STARTPARAM = /start=\d+&?/;
 
+const {Task} = requireJSM("resource://gre/modules/Task.jsm");
+
 const {
 	registerPrivatePurger,
 	unregisterPrivatePurger,
@@ -23,51 +25,40 @@ const obs = require("./observers");
 const {modifyURL} = require("./requestmanipulation");
 
 
-class ContextLRUMap {
-	constructor (num) {
-		this._normal = new LRUMap(num);
-		this._private = new LRUMap(num);
-	}
-	_m(isPrivate) {
-		return isPrivate ? this._private : this._normal;
-	}
-	"get"(key, isPrivate) {
-		return this._m(isPrivate).get(key);
-	}
-	"set"(key, val, isPrivate) {
-		return this._m(isPrivate).set(key, val);
-	}
-	has(key, isPrivate) {
-		return this._m(isPrivate).has(key);
-	}
-	"delete"(key, isPrivate) {
-		return this._m(isPrivate).delete(key);
-	}
-	clear() {
+function ContextLRUMap(num) {
+	this._normal = new LRUMap(num);
+	this._private = new LRUMap(num);
+}
+ContextLRUMap.prototype = {
+	_m: function(isPrivate) { return isPrivate ? this._private : this._normal; },
+	get: function(key, isPrivate) { return this._m(isPrivate).get(key); },
+	has: function(key, isPrivate) { return this._m(isPrivate).has(key); },
+	set: function(key, val, isPrivate) { return this._m(isPrivate).set(key, val); },
+	"delete": function(key, isPrivate) { return this._m(isPrivate).delete(key); },
+	clear: function() {
 		this._normal.clear();
 		this._private.clear();
-	}
-	clearPrivate() {
+	},
+	clearPrivate: function() {
 		this._private.clear();
 	}
-}
+};
 
 /**
  * ContentHandling
  */
-exports.ContentHandling = new class {
-	constructor() {
-		this.classDescription = "DownThemAll! ContentHandling";
-		this.classID = Components.ID("366982b8-9db9-4383-aae7-dbc2f40ba6f6");
-		this.contractID = "@downthemall.net/content/redirects;1";
-		this.xpcom_categories = ["net-channel-event-sinks"];
-		this.QueryInterface = QI([
-			Ci.nsIObserver,
-			Ci.nsIURIContentListener,
-			Ci.nsIFactory,
-			Ci.nsIChannelEventSink]
-		);
+function ContentHandlingImpl() {
+	this._init();
+}
+ContentHandlingImpl.prototype = {
+	classDescription: "DownThemAll! ContentHandling",
+	classID: Components.ID("366982b8-9db9-4383-aae7-dbc2f40ba6f6"),
+	contractID: "@downthemall.net/content/redirects;1",
+	xpcom_categories: ["net-channel-event-sinks"],
 
+	QueryInterface: QI([Ci.nsIObserver, Ci.nsIURIContentListener, Ci.nsIFactory, Ci.nsIChannelEventSink]),
+
+	_init: function ct__init() {
 		obs.add(this, "http-on-modify-request");
 
 		require("components").registerComponents([this], true);
@@ -92,9 +83,9 @@ exports.ContentHandling = new class {
 			this.globalMM.removeDelayedFrameScript(fs);
 		});
 		unload(this._uninit.bind(this));
-	}
+	},
 
-	_uninit() {
+	_uninit: function ct__uninit() {
 		Services.prefs.removeObserver('extensions.dta.listsniffedvideos', this);
 		if (this.sniffVideos) {
 			this.sniffVideos = false;
@@ -102,16 +93,16 @@ exports.ContentHandling = new class {
 		}
 		unregisterPrivatePurger(this.boundPurge);
 		obs.remove(this, 'http-on-modify-request');
-	}
-	registerHttpObservers() {
+	},
+	registerHttpObservers: function ct_registerHttpObservers() {
 		obs.add(this, 'http-on-examine-response');
 		obs.add(this, 'http-on-examine-cached-response');
-	}
-	unregisterHttpObservers() {
+	},
+	unregisterHttpObservers: function ct_unregisterHttpObservers() {
 		obs.remove(this, 'http-on-examine-response');
 		obs.remove(this, 'http-on-examine-cached-response');
-	}
-	observe(subject, topic, data) {
+	},
+	observe: function ct_observe(subject, topic, data) {
 		switch(topic) {
 		case 'http-on-modify-request':
 			this.observeRequest(subject, topic, data);
@@ -139,8 +130,8 @@ exports.ContentHandling = new class {
 			}
 			break;
 		}
-	}
-	observeRequest(channel, topic, data) {
+	},
+	observeRequest: function ct_observeRequest(channel, topic, data) {
 		if (
 			!(channel instanceof Ci.nsIHttpChannel) ||
 			!(channel instanceof Ci.nsIUploadChannel)) {
@@ -184,8 +175,8 @@ exports.ContentHandling = new class {
 		catch (ex) {
 			log(LOG_ERROR, "observe request", ex);
 		}
-	}
-	observeResponse(channel, topic, data) {
+	},
+	observeResponse: function ct_observeResponse(channel, topic, data) {
 		if (!this.sniffVideos || !(channel instanceof Ci.nsIHttpChannel)) {
 			return;
 		}
@@ -206,110 +197,107 @@ exports.ContentHandling = new class {
 			if (!(REGEXP_MEDIA.test(spec) && !REGEXP_SWF.test(spec)) && !REGEXP_CT.test(ct)) {
 				return;
 			}
-			this._observeResponseAsync(channel);
+			let uri = null;
+			let lc = null;
+			if (channel instanceof Ci.nsIInterfaceRequestor) {
+				try {
+					lc = channel.getInterface(Ci.nsILoadContext);
+				}
+				catch (ex) {
+
+				}
+			}
+			Task.spawn(function*() {
+				if (!lc) {
+					try {
+						lc = channel.notificationCallbacks.getInterface(Ci.nsILoadContext);
+					}
+					catch (ex) {
+
+					}
+				}
+				if (lc) {
+					try {
+						log(LOG_DEBUG, "got load context");
+						try {
+							let wnd = lc.topWindow;
+							uri = Services.io.newURI(wnd.location.href, wnd.document.characterSet, null);
+							log(LOG_DEBUG, "got uri from lctw " + uri.spec);
+						}
+						catch (ex) {
+							try {
+								let tfe = lc.topFrameElement;
+								let mm = tfe.messageManager;
+								let wnd = yield new Promise((resolve, reject) => {
+									let topic = `DTA::getURI:${this.getUriJob++}`;
+									mm.addMessageListener(topic, function load(m) {
+										mm.removeMessageListener(topic, load);
+										resolve(m.data);
+									});
+									mm.sendAsyncMessage("DTA:ch:getURI", {
+										topic: topic
+									});
+								});
+								uri = Services.io.newURI(wnd.location, wnd.characterSet, null);
+								log(LOG_DEBUG, "got uri from lctfe " + uri.spec);
+							}
+							catch (ex) {
+								log(LOG_DEBUG, "Cannot get from lc", ex);
+							}
+						}
+					}
+					catch (ex) {
+						// no op
+					}
+				}
+				if (!uri) {
+					try {
+						let wp;
+						if (!uri && channel.loadGroup && channel.loadGroup.groupObserver) {
+							wp = channel.loadGroup.groupObserver.QueryInterface(Ci.nsIWebProgress);
+						}
+						if (!uri && !wp) {
+							wp = channel.notificationCallbacks.getInterface(Ci.nsIWebProgress);
+						}
+						if (!wp || !wp.DOMWindow) {
+							return;
+						}
+						let wn = wp.DOMWindow.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIWebNavigation);
+						if (!wn || !wn.currentURI) {
+							return;
+						}
+						uri = wn.currentURI;
+					}
+					catch (ex) {}
+				}
+				if (!uri) {
+					log(LOG_DEBUG, "Failed to get video doc uri");
+					return;
+				}
+				log(LOG_DEBUG, channel.URI.spec + " -> " + uri.spec);
+				if (!uri.schemeIs('http') && !uri.schemeIs('https') && !uri.schemeIs('ftp') && !uri.schemeIs("data")) {
+					return;
+				}
+				this._registerVideo(uri, channel.URI, isChannelPrivate(channel));
+			}.bind(this));
 		}
 		catch (ex) {
 			log(LOG_ERROR, "observe response", ex);
 		}
-	}
-	async _observeResponseAsync(channel) {
-		let uri = null;
-		let lc = null;
-		if (channel instanceof Ci.nsIInterfaceRequestor) {
-			try {
-				lc = channel.getInterface(Ci.nsILoadContext);
-			}
-			catch (ex) {
-				// ignored
-			}
-		}
-		if (!lc) {
-			try {
-				lc = channel.notificationCallbacks.getInterface(Ci.nsILoadContext);
-			}
-			catch (ex) {
-				// ignored
-			}
-		}
-		if (lc) {
-			try {
-				log(LOG_DEBUG, "got load context");
-				try {
-					let wnd = lc.topWindow;
-					uri = Services.io.newURI(wnd.location.href, wnd.document.characterSet, null);
-					log(LOG_DEBUG, "got uri from lctw " + uri.spec);
-				}
-				catch (ex) {
-					try {
-						let tfe = lc.topFrameElement;
-						let mm = tfe.messageManager;
-						let wnd = await new Promise((resolve, reject) => {
-							let topic = `DTA::getURI:${this.getUriJob++}`;
-							mm.addMessageListener(topic, function load(m) {
-								mm.removeMessageListener(topic, load);
-								resolve(m.data);
-							});
-							mm.sendAsyncMessage("DTA:ch:getURI", {
-								topic: topic
-							});
-						});
-						uri = Services.io.newURI(wnd.location, wnd.characterSet, null);
-						log(LOG_DEBUG, "got uri from lctfe " + uri.spec);
-					}
-					catch (ex) {
-						log(LOG_DEBUG, "Cannot get from lc", ex);
-					}
-				}
-			}
-			catch (ex) {
-				// no op
-			}
-		}
-		if (!uri) {
-			try {
-				let wp;
-				if (!uri && channel.loadGroup && channel.loadGroup.groupObserver) {
-					wp = channel.loadGroup.groupObserver.QueryInterface(Ci.nsIWebProgress);
-				}
-				if (!uri && !wp) {
-					wp = channel.notificationCallbacks.getInterface(Ci.nsIWebProgress);
-				}
-				if (!wp || !wp.DOMWindow) {
-					return;
-				}
-				let wn = wp.DOMWindow.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIWebNavigation);
-				if (!wn || !wn.currentURI) {
-					return;
-				}
-				uri = wn.currentURI;
-			}
-			catch (ex) {
-				// ignored
-			}
-		}
-		if (!uri) {
-			log(LOG_DEBUG, "Failed to get video doc uri");
-			return;
-		}
-		log(LOG_DEBUG, channel.URI.spec + " -> " + uri.spec);
-		if (!uri.schemeIs('http') && !uri.schemeIs('https') && !uri.schemeIs('ftp') && !uri.schemeIs("data")) {
-			return;
-		}
-		this._registerVideo(uri, channel.URI, isChannelPrivate(channel));
-	}
+	},
 
+	_sniffVideos: false,
 	get sniffVideos() {
 		return this._sniffVideos;
-	}
+	},
 	set sniffVideos(nv) {
 		this._sniffVideos = nv;
 		if (!nv) {
 			this._videos.clear();
 		}
 		return nv;
-	}
-
-	_registerVideo(uri, vid, isPrivate) {
+	},
+	_registerVideo: function(uri, vid, isPrivate) {
 		// sanitize vid and remove the start param
 		vid = vid.clone();
 		if (vid instanceof Ci.nsIURL) {
@@ -324,23 +312,23 @@ exports.ContentHandling = new class {
 			nv.push(vid);
 			this._videos.set(uri, nv, isPrivate);
 		}
-	}
+	},
 
-	getPostDataFor(uri, isPrivate) {
+	getPostDataFor: function(uri, isPrivate) {
 		if (uri instanceof Ci.nsIURI) {
 			uri = uri.spec;
 		}
 		return this._data.get(uri, isPrivate) || "";
-	}
-	getSniffedVideosFor(uri, isPrivate) {
+	},
+	getSniffedVideosFor: function(uri, isPrivate) {
 		if (uri instanceof Ci.nsIURI) {
 			uri = uri.spec;
 		}
 		return (this._videos.get(uri, isPrivate) || []).map(a => a.clone());
-	}
+	},
 
 	// nsIChannelEventSink
-	asyncOnChannelRedirect(oldChannel, newChannel, flags, callback) {
+	asyncOnChannelRedirect: function(oldChannel, newChannel, flags, callback) {
 		try {
 			this.onChannelRedirect(oldChannel, newChannel, flags);
 		}
@@ -348,16 +336,16 @@ exports.ContentHandling = new class {
 			log(LOG_ERROR, "asyncOnChannelRedirect", ex);
 		}
 		callback.onRedirectVerifyCallback(0);
-	}
-	onChannelRedirect(oldChannel, newChannel, flags) {
+	},
+	onChannelRedirect: function(oldChannel, newChannel, flags) {
 		let oldURI = oldChannel.URI.spec;
 		let newURI = newChannel.URI.spec;
 		let isPrivate = isChannelPrivate(oldChannel);
 		oldURI = this._revRedirects.get(oldURI, isPrivate) || oldURI;
 		this._redirects.set(oldURI, newURI, isPrivate);
 		this._revRedirects.set(newURI, oldURI, isPrivate);
-	}
-	getRedirect(uri, isPrivate) {
+	},
+	getRedirect: function(uri, isPrivate) {
 		let rv = this._revRedirects.get(uri.spec, isPrivate);
 		if (!rv) {
 			return uri;
@@ -368,20 +356,21 @@ exports.ContentHandling = new class {
 		catch (ex) {
 			return uri;
 		}
-	}
-	clear() {
+	},
+	clear: function() {
 		this._data = new ContextLRUMap(5);
 		this._videos = new ContextLRUMap(20);
 		this._redirects = new ContextLRUMap(20);
 		this._revRedirects = new ContextLRUMap(100);
-	}
-	purge() {
+	},
+	purge: function() {
 		this._data.clearPrivate();
 		this._videos.clearPrivate();
 		this._redirects.clearPrivate();
 		this._revRedirects.clearPrivate();
 		log(LOG_DEBUG, "purged private data");
 	}
-}();
+};
 
+exports.ContentHandling = new ContentHandlingImpl();
 Object.freeze(exports);

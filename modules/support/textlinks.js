@@ -3,13 +3,8 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
-const XRegExp = require("thirdparty/xregexp");
-
 // Link matcher
-const regLinks = new XRegExp(
-	"\\b(?:(?:h(?:x+|tt)?ps?|f(?:x+|t)p):\\/\\/(?:[\\pL\\pN\\pS]+?:[\\pL\\pN\\pS]+?@)?|www\\d?\\.)" +
-	"[\\d\\w.-]+\\.?(?:\\/[\\p{N}\\p{L}\\pP\\pS]*)?",
-	"giu");
+const regLinks = /\b(?:(?:h(?:x+|tt)?ps?|f(?:x+|t)p):\/\/|www\d?\.)[\d\w.-]+\.?(?:\/[\d\w+&@#\/%?=~_|!:,.;\(\)$-]*)?/ig;
 // Match more exactly or more than 3 dots. Links are then assumed "cropped" and will be ignored.
 const regShortened = /\.{3,}/;
 // http cleanup
@@ -51,24 +46,24 @@ function mapper(e) {
  * @param title (string) Optional. Title/description
  * @see DOMElement
  */
-class FakeLink {
-	constructor (url, title) {
-		this.src = this.href = url;
-		if (title) {
-			this.title = title;
-		}
-	}
-	hasAttribute(attr) {
-		return (attr in this);
-	}
-	getAttribute(attr) {
-		return (attr in this) ? this[attr] : null;
-	}
-	toString() {
-		return this.href;
+function FakeLink(url, title) {
+	this.src = this.href = url;
+	if (!!title) {
+		this.title = title;
 	}
 }
-FakeLink.prototype.childNodes = Object.freeze([]);
+FakeLink.prototype = Object.freeze({
+	childNodes: Object.freeze([]),
+	hasAttribute: function(attr) {
+		return (attr in this);
+	},
+	getAttribute: function(attr) {
+		return (attr in this) ? this[attr] : null;
+	},
+	toString: function() {
+		return this.href;
+	}
+});
 
 /**
  * Parses a text looking for any URLs with supported protocols
